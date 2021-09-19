@@ -2,6 +2,8 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
 ARG USER=baking
 ARG WORKDIR=/app
+ARG CERT_PATH=/etc/ssl/certs/sql-prod-baking.crt.pem
+ARG CERT_LOCATION
 
 WORKDIR $WORKDIR
 
@@ -23,6 +25,10 @@ RUN poetry install --no-root --no-dev
 COPY --chown=$USER:$USER src/ .
 COPY --chown=$USER:$USER scripts/prestart.sh .
 
+# SSL
+RUN mkdir -p ${CERT_PATH}
+COPY ${CERT_LOCATION} ${CERT_PATH}
+
 # Starting the service
 WORKDIR $WORKDIR/src
 
@@ -33,5 +39,4 @@ ENV MODULE_NAME="baking.main"
 ENV VARIABLE_NAME="app"
 ENV WORKERS_PER_CORE=1
 ENV MAX_WORKERS=1
-
-
+ENV DB_CERT_PATH=${CERT_PATH}

@@ -3,6 +3,7 @@ import functools
 from typing import Any
 
 from sqlalchemy import create_engine
+from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import sessionmaker, object_session
 from sqlalchemy.sql.expression import true
@@ -11,7 +12,20 @@ from starlette.requests import Request
 
 from baking.config import settings as app_settings
 
-SQL_URI = f"mysql+pymysql://root:{app_settings.db_pass}@{app_settings.db_host}/{app_settings.db_name}"
+# SQL_URI = f"mysql+pymysql://{app_settings.db_user}:{app_settings.db_pass}@{app_settings.db_host}/{app_settings.db_name}"
+CERT_PATH = (
+    None if app_settings.db_cert_path == "" else {"ssl_ca": app_settings.db_cert_path}
+)
+SQL_URI = URL(
+    drivername="mysql+pymysql",
+    username=app_settings.db_user,
+    password=app_settings.db_pass,
+    host=app_settings.db_host,
+    port=3306,
+    database=app_settings.db_name,
+    query=CERT_PATH,
+)
+
 engine = create_engine(str(SQL_URI))
 SessionLocal = sessionmaker(bind=engine)
 
@@ -23,10 +37,6 @@ def resolve_table_name(name):
 
 
 raise_attribute_error = object()
-
-
-
-
 
 
 def resolve_attr(obj, attr, default=None):
@@ -50,7 +60,6 @@ def get_db(request: Request):
     return request.state.db
 
 
-
 def get_model_name_by_tablename(table_fullname: str) -> str:
     """Returns the model name of a given table."""
     return get_class_by_tablename(table_fullname=table_fullname).__name__
@@ -70,9 +79,11 @@ def get_class_by_tablename(table_fullname: str) -> Any:
 
     # try looking in the '' schema
     if not mapped_class:
-        mapped_class = _find_class(f"{configuration.db_name}.{mapped_name}")
+        mapped_class = _find_class(f"{app_settings.db_name}.{mapped_name}")
 
     if not mapped_class:
-        raise Exception(f"Incorrect tablename '{mapped_name}'. Check the name of your model.")
+        raise Exception(
+            f"Incorrect tablename '{mapped_name}'. Check the name of your model."
+        )
 
     return mapped_class

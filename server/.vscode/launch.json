@@ -1,7 +1,4 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
@@ -13,7 +10,10 @@
         "service_name": "baking-service",
         "POTR": "8888",
         "DB_PASS": "test_123",
-        "admin": "baking"
+        "DB_HOST": "baking-test.mysql.database.azure.com",
+        "DB_NAME": "baking-test",
+        "DB_USER": "baking",
+        "DB_CERT_PATH": "./src/baking/database/test.crt.pem"
       }
     }
   ]

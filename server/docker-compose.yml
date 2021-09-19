@@ -5,6 +5,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: "./"
+      args:
+          CERT_LOCATION: "./src/baking/database/test.crt.pem"
     image: "reubinoff/baking:latest"
     ports:
       - "8888:80"
@@ -12,6 +14,7 @@ services:
         DB_HOST: mysql
         DB_PASS: sql
         DB_NAME: moshereubinoff
+        DB_USER: root
     depends_on: 
       - mysql
 

@@ -17,7 +17,7 @@ from baking.models import OurBase
 ############################################################
 # SQL models...
 ############################################################
-class Item(Base):
+class Recipe(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(32))
     description = Column(String(50))
@@ -26,19 +26,19 @@ class Item(Base):
 ############################################################
 # Pydantic models...
 ############################################################
-class ItemBase(OurBase):
+class RecipeBase(OurBase):
     name: str
     description: Optional[str]
 
 
-class ItemRead(ItemBase):
+class RecipeRead(RecipeBase):
     id: Optional[int]
 
 
-class ItemCreate(ItemBase):
+class ItemCreate(RecipeBase):
     pass
 
 
 class ItemPagination(OurBase):
     total: int
-    items: List[ItemRead] = []
+    items: List[RecipeBase] = []

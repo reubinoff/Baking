@@ -6,7 +6,8 @@ from alembic import command as alembic_command
 
 from baking.config import settings
 
-from .core import Base, sessionmaker,SQL_URI
+from .core import Base, sessionmaker, SQL_URI
+
 
 def version_schema(script_location: str):
     """Applies alembic versioning to schema."""
@@ -15,6 +16,7 @@ def version_schema(script_location: str):
     alembic_cfg = AlembicConfig(settings.alembix_ini)
     alembic_cfg.set_main_option("script_location", script_location)
     alembic_command.stamp(alembic_cfg, "head")
+
 
 def get_core_tables():
     return [table for _, table in Base.metadata.tables.items()]
@@ -29,9 +31,7 @@ def init_database(engine):
     with engine.connect() as connection:
         if schema_name not in connection.dialect.get_schema_names(connection):
             connection.execute(CreateSchema(schema_name))
-        
+
     tables = get_core_tables()
 
     Base.metadata.create_all(engine, tables=tables)
-
-  
