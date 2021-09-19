@@ -16,7 +16,7 @@ jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
         env:
-          CERT_PATH_CI: /tmp/crt.pem
+          CERT_PATH_CI: crt.pem
         steps:
         # checkout the repo
         - name: 'Checkout GitHub Action'
@@ -30,7 +30,6 @@ jobs:
             password: ${{ secrets.REGISTRY_PASSWORD }}
         - run: |
             cd server
-            ls -l
             echo "${{ secrets.CERT_DATA }}" > ${{ env.CERT_PATH_CI }}
             docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }} --build-arg CERT_LOCATION=${{ env.CERT_PATH_CI }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
