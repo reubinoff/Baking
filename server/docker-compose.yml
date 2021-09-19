@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  baking-service:
+    container_name: baking-service
+    build:
+      dockerfile: Dockerfile
+      context: "./"
+    image: "reubinoff/baking:latest"
+    ports:
+      - "8888:80"
