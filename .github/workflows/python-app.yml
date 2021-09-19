@@ -30,5 +30,6 @@ jobs:
             password: ${{ secrets.REGISTRY_PASSWORD }}
         - run: |
             cd server
+            ls -l
             docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
