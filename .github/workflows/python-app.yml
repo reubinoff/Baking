@@ -29,5 +29,6 @@ jobs:
         - run: |
             cd server
             ls -l
-            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
+            echo ${{ secrets.CERT_DATA }} > /tmp/crt.pem
+            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }} --build-arg CERT_LOCATION=/tmp/crt.pem
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
