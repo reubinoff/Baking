@@ -11,9 +11,14 @@ fastapi = "^0.68.1"
 SQLAlchemy = "^1.4.23"
 pydantic = {extras = ["dotenv"], version = "^1.8.2"}
 SQLAlchemy-Utils = "^0.37.8"
+alembic = "^1.7.3"
+PyMySQL = "^1.0.2"
+sqlalchemy-filters = "^0.12.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.11.1"
+mypy = "^0.910"
+black = {version = "^21.9b0", allow-prereleases = true}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

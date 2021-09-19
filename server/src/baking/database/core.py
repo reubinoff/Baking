@@ -9,9 +9,9 @@ from sqlalchemy.sql.expression import true
 from sqlalchemy_utils import get_mapper
 from starlette.requests import Request
 
-from baking.config import configuration
+from baking.config import settings as app_settings
 
-SQL_URI = f"mysql+pymysql://root:{configuration.db_pass}@{configuration.db_host}/{configuration.db_name}"
+SQL_URI = f"mysql+pymysql://root:{app_settings.db_pass}@{app_settings.db_host}/{app_settings.db_name}"
 engine = create_engine(str(SQL_URI))
 SessionLocal = sessionmaker(bind=engine)
 

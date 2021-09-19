@@ -1,5 +1,7 @@
 {
-  "python.linting.pylintEnabled": true,
+  "python.linting.pylintEnabled": false,
   "python.linting.enabled": true,
-  "python.defaultInterpreterPath": "/Users/moshereubinoff/Library/Caches/pypoetry/virtualenvs/baking-e6zpwP2E-py3.9"
+  "python.defaultInterpreterPath": "/Users/moshereubinoff/Library/Caches/pypoetry/virtualenvs/baking-e6zpwP2E-py3.9",
+  "python.linting.mypyEnabled": true,
+  "python.formatting.provider": "black"
 }

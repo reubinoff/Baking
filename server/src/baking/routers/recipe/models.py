@@ -10,9 +10,8 @@ from sqlalchemy import (
     Boolean,
     DateTime,
 )
-from fastapi_best_practice.database.core import Base
-from fastapi_best_practice.models import OurBase
-from fastapi_best_practice.models import OurBase
+from baking.database.core import Base
+from baking.models import OurBase
 
 
 ############################################################
@@ -30,9 +29,11 @@ class Item(Base):
 class ItemBase(OurBase):
     name: str
     description: Optional[str]
- 
+
+
 class ItemRead(ItemBase):
     id: Optional[int]
+
 
 class ItemCreate(ItemBase):
     pass

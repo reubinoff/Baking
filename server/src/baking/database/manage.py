@@ -4,7 +4,7 @@ from sqlalchemy_utils import create_database, database_exists
 from alembic.config import Config as AlembicConfig
 from alembic import command as alembic_command
 
-from fastapi_best_practice.config import configuration
+from baking.config import settings
 
 from .core import Base, sessionmaker,SQL_URI
 
@@ -12,7 +12,7 @@ def version_schema(script_location: str):
     """Applies alembic versioning to schema."""
 
     # add it to alembic table
-    alembic_cfg = AlembicConfig(configuration.alembix_ini)
+    alembic_cfg = AlembicConfig(settings.alembix_ini)
     alembic_cfg.set_main_option("script_location", script_location)
     alembic_command.stamp(alembic_cfg, "head")
 
@@ -25,7 +25,7 @@ def init_database(engine):
     if not database_exists(str(SQL_URI)):
         create_database(str(SQL_URI))
 
-    schema_name = configuration.db_name
+    schema_name = settings.db_name
     with engine.connect() as connection:
         if schema_name not in connection.dialect.get_schema_names(connection):
             connection.execute(CreateSchema(schema_name))
