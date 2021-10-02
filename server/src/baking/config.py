@@ -5,11 +5,13 @@ from typing import Any, Optional
 from pydantic import BaseSettings
 
 
-CONFIG_NAME: str = os.environ.get("CONFIG_NAME", ".env")
+CONFIG_NAME: str = os.environ.get("CONFIG_NAME", ".config.local.env")
+
+print(CONFIG_NAME)
 
 
 class BakingConfig(BaseSettings):
-    service_name: str
+    service_name: str = "testing-service"  # will be replaced in env var
 
     log_level: str = "INFO"
 
@@ -20,7 +22,7 @@ class BakingConfig(BaseSettings):
     db_cert_path: str = ""
     db_debug_drop_in_startup: bool = False
 
-    alembix_ini = (f"{os.path.dirname(os.path.realpath(__file__))}/alembic.ini",)
+    alembix_ini = f"{os.path.dirname(os.path.realpath(__file__))}/alembic.ini"
 
     class Config:
         env_file = CONFIG_NAME

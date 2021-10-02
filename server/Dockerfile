@@ -16,7 +16,7 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/inst
     poetry config virtualenvs.create false
 
 # Copy using poetry.lock* in case it doesn't exist yet
-COPY --chown=$USER:$USER ./pyproject.toml ./poetry.lock* /app/
+COPY --chown=$USER:$USER ./pyproject.toml ./poetry.lock* alembic.ini $WORKDIR
 
 RUN poetry install --no-root --no-dev
 

@@ -36,4 +36,4 @@ def init_database(engine):
 
     if settings.db_debug_drop_in_startup is True:
         Base.metadata.drop_all(engine, tables=tables)
-    Base.metadata.create_all(engine, tables=tables)
+        Base.metadata.create_all(engine, tables=tables)
