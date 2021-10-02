@@ -15,6 +15,7 @@ services:
         DB_PASS: sql
         DB_NAME: moshereubinoff
         DB_USER: user
+        DB_CERT_PATH: 
     depends_on: 
       - mysql
     profiles:

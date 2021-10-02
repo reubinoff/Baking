@@ -9,7 +9,7 @@
       "program": "${workspaceFolder}/server//bin/run.py",
       "env": {
         "SERVICE_NAME": "baking-service",
-        "CONFIG_NAME": ".config.local.env"
+        "CONFIG_NAME": "src/baking/.config.local.env"
       }
     },
     {
@@ -20,7 +20,7 @@
       "program": "${workspaceFolder}/server//bin/run.py",
       "env": {
         "SERVICE_NAME": "baking-service",
-        "CONFIG_NAME": ".config.azure.env"
+        "CONFIG_NAME": "src/baking/.config.azure.env"
       }
     }
   ]

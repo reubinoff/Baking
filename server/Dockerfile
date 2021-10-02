@@ -1,4 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
 ARG USER=baking
 ARG WORKDIR=/app
@@ -16,7 +16,7 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/inst
     poetry config virtualenvs.create false
 
 # Copy using poetry.lock* in case it doesn't exist yet
-COPY --chown=$USER:$USER ./pyproject.toml ./poetry.lock* alembic.ini $WORKDIR
+COPY --chown=$USER:$USER ./pyproject.toml ./poetry.lock* $WORKDIR
 
 RUN poetry install --no-root --no-dev
 
@@ -26,9 +26,6 @@ COPY --chown=$USER:$USER scripts/prestart.sh .
 # SSL
 RUN mkdir -p ${CERT_PATH}
 COPY ${CERT_LOCATION} ${CERT_PATH}
-
-# Starting the service
-WORKDIR $WORKDIR/src
 
 
 # FastApi Configuration
