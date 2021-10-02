@@ -1,3 +1,5 @@
+import logging
+
 from sqlalchemy.schema import CreateSchema
 
 from sqlalchemy_utils import create_database, database_exists
@@ -7,6 +9,8 @@ from alembic import command as alembic_command
 from baking.config import settings
 
 from .core import Base, sessionmaker, SQL_URI
+
+LOGGER = logging.getLogger(__name__)
 
 
 def version_schema(script_location: str):
@@ -24,6 +28,7 @@ def get_tables():
 
 def init_database(engine):
     """Initializes a the database."""
+    LOGGER.info(f"conn str: {str(SQL_URI)}")
     if database_exists(str(SQL_URI)) is False:
         create_database(str(SQL_URI))
 
