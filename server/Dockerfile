@@ -1,7 +1,7 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
 ARG USER=baking
-ARG WORKDIR=/app
+ARG WORKDIR=/app/
 ARG CERT_PATH=/etc/ssl/certs/sql-prod-baking.crt.pem
 ARG CERT_LOCATION
 
