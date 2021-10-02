@@ -1,0 +1,22 @@
+{
+  "python.linting.pylintEnabled": false,
+  "python.linting.enabled": true,
+  "python.defaultInterpreterPath": "/Users/moshereubinoff/Library/Caches/pypoetry/virtualenvs/baking-e6zpwP2E-py3.9",
+  "python.linting.mypyEnabled": true,
+  "python.formatting.provider": "black",
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "driver": "MySQL",
+      "name": "local docker",
+      "database": "moshereubinoff",
+      "username": "root",
+      "password": "sql"
+    }
+  ]
+}

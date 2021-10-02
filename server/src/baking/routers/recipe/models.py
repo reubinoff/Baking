@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from sqlalchemy import (
@@ -10,9 +11,13 @@ from sqlalchemy import (
     Boolean,
     DateTime,
 )
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from baking.database.core import Base
 from baking.models import OurBase
-
+from baking.routers.ingredients.enums import IngrediantType
+from baking.routers.ingredients.models import Ingredient
 
 ############################################################
 # SQL models...
@@ -21,6 +26,30 @@ class Recipe(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(32))
     description = Column(String(50))
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # auther of the recipe
+    public = Column(Boolean)
+    user_id = Column(Integer, ForeignKey("user.id"), index=True, nullable=False)
+
+    procedures = relationship("Procedure", lazy="joined")
+    ingredients = relationship("Ingredient", lazy="joined")
+
+    @hybrid_property
+    def hydration(self) -> int:
+        water = None
+        flour = None
+        if self.ingredients:
+            i: Ingredient = None
+            for i in self.ingredients:
+                if i.type == IngrediantType.water:
+                    water = i.quanity
+                elif i.type == IngrediantType.flour:
+                    flour = i.quanity
+            if water and flour:
+                return (water / flour) * 100
+        return -1
 
 
 ############################################################
@@ -35,10 +64,10 @@ class RecipeRead(RecipeBase):
     id: Optional[int]
 
 
-class ItemCreate(RecipeBase):
+class RecipeCreate(RecipeBase):
     pass
 
 
-class ItemPagination(OurBase):
+class RecipePagination(OurBase):
     total: int
     items: List[RecipeBase] = []

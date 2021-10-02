@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Server Local Debug",
+      "type": "python",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/server",
+      "program": "${workspaceFolder}/server//bin/run.py",
+      "env": {
+        "SERVICE_NAME": "baking-service",
+        "CONFIG_NAME": ".config.local.env"
+      }
+    },
+    {
+      "name": "Server Azure Debug",
+      "type": "python",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/server",
+      "program": "${workspaceFolder}/server//bin/run.py",
+      "env": {
+        "SERVICE_NAME": "baking-service",
+        "CONFIG_NAME": ".config.azure.env"
+      }
+    }
+  ]
+}

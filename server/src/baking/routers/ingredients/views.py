@@ -9,37 +9,40 @@ from baking.models import OurBase
 from baking.database.core import get_db
 from baking.database.services import common_parameters, search_filter_sort_paginate
 
-from baking.routers.recipe.models import RecipeCreate, RecipeRead
+from baking.routers.recipe.models import ItemCreate
 from baking.routers.recipe.service import create, get
+from baking.routers.recipe.models import RecipeRead
 
 router = APIRouter()
 
 
 @router.get("", response_model=RecipeRead)
-def get_recipes(*, common: dict = Depends(common_parameters)):
+def get_items(*, common: dict = Depends(common_parameters)):
     """
     Get all recipes.
     """
+    logger.info(f" this is the admin mail ")
+
     return search_filter_sort_paginate(model="Recipe", **common)
 
 
 @router.get("/{recipe_id}", response_model=RecipeRead)
-def get_recipe(*, db_session: Session = Depends(get_db), recipe_id: int):
+def get_item(*, db_session: Session = Depends(get_db), item_id: int):
     """
     Update a recipe.
     """
-    recipe = get(db_session=db_session, recipe_id=recipe_id)
-    if not recipe:
+    item = get(db_session=db_session, item_id=item_id)
+    if not item:
         raise HTTPException(
-            status_code=404, detail="The recipes with this id does not exist."
+            status_code=404, detail="The items with this id does not exist."
         )
-    return recipe
+    return item
 
 
 @router.post("", response_model=RecipeRead)
-def create_recipe(*, db_session: Session = Depends(get_db), recipe_in: RecipeCreate):
+def create_item(*, db_session: Session = Depends(get_db), item_in: ItemCreate):
     """
     Create a new recipes.
     """
-    recipe = create(db_session=db_session, recipe_in=recipe_in)
-    return recipe
+    item = create(db_session=db_session, item_in=item_in)
+    return item

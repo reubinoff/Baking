@@ -12,7 +12,6 @@ from starlette.requests import Request
 
 from baking.config import settings as app_settings
 
-# SQL_URI = f"mysql+pymysql://{app_settings.db_user}:{app_settings.db_pass}@{app_settings.db_host}/{app_settings.db_name}"
 CERT_PATH = (
     None if app_settings.db_cert_path == "" else {"ssl_ca": app_settings.db_cert_path}
 )
@@ -36,21 +35,14 @@ def resolve_table_name(name):
     return "_".join([x.lower() for x in names if x])
 
 
-raise_attribute_error = object()
-
-
-def resolve_attr(obj, attr, default=None):
-    """Attempts to access attr via dotted notation, returns none if attr does not exist."""
-    try:
-        return functools.reduce(getattr, attr.split("."), obj)
-    except AttributeError:
-        return default
-
-
 class CustomBase:
     @declared_attr
     def __tablename__(self):
         return resolve_table_name(self.__name__)
+
+    def dict(self):
+        """Returns a dict representation of a model."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 Base = declarative_base(cls=CustomBase)

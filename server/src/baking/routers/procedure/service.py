@@ -1,10 +1,10 @@
 from typing import Optional, List
 
-from .models import RecipeRead, Recipe, RecipeCreate
+from .models import RecipeRead, ItemCreate, Recipe
 
 
 def get(*, db_session, item_id: int) -> Optional[Recipe]:
-    """Returns a recipe based on the given item id."""
+    """Returns a item based on the given item id."""
     return db_session.query(Recipe).filter(Recipe.id == item_id).one_or_none()
 
 
@@ -13,10 +13,10 @@ def get_all(*, db_session) -> List[Optional[Recipe]]:
     return db_session.query(Recipe)
 
 
-def create(*, db_session, recipe_in: RecipeCreate) -> Recipe:
+def create(*, db_session, item_in: ItemCreate) -> Recipe:
     """Creates a new item."""
-    recipe = Recipe(**recipe_in.dict())
+    item = Recipe(**item_in.dict())
 
-    db_session.add(recipe)
+    db_session.add(item)
     db_session.commit()
-    return recipe
+    return item

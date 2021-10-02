@@ -18,13 +18,13 @@ def version_schema(script_location: str):
     alembic_command.stamp(alembic_cfg, "head")
 
 
-def get_core_tables():
+def get_tables():
     return [table for _, table in Base.metadata.tables.items()]
 
 
 def init_database(engine):
     """Initializes a the database."""
-    if not database_exists(str(SQL_URI)):
+    if database_exists(str(SQL_URI)) is False:
         create_database(str(SQL_URI))
 
     schema_name = settings.db_name
@@ -32,6 +32,8 @@ def init_database(engine):
         if schema_name not in connection.dialect.get_schema_names(connection):
             connection.execute(CreateSchema(schema_name))
 
-    tables = get_core_tables()
+    tables = get_tables()
 
+    if settings.db_debug_drop_in_startup is True:
+        Base.metadata.drop_all(engine, tables=tables)
     Base.metadata.create_all(engine, tables=tables)
