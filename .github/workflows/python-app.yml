@@ -28,8 +28,14 @@ jobs:
             login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
+    
         - run: |
             cd server
             echo "${{ secrets.CERT_DATA }}" > ${{ env.CERT_PATH_CI }}
             docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }} --build-arg CERT_LOCATION=${{ env.CERT_PATH_CI }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
+        
+        - uses: azure/webapps-deploy@v2
+          with:
+            app-name: 'baking-service'
+            images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}'
