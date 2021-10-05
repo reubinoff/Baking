@@ -43,4 +43,5 @@ jobs:
         - uses: azure/webapps-deploy@v2
           with:
             app-name: 'baking-service'
-            images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}'
+            images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
+            
