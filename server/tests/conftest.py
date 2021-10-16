@@ -9,7 +9,7 @@ from starlette.config import environ
 environ["DB_PASS"] = "sql"
 environ["DB_HOST"] = "127.0.0.1"
 environ["DB_NAME"] = "ttt"
-environ["DB_USER"] = "test"
+environ["DB_USER"] = "pytest_db_user"
 
 
 from baking import config

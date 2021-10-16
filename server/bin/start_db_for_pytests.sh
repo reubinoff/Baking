@@ -1,5 +1,5 @@
 #!/bin/bash
-USER=test
+USER=pytest_db_user
 ROOT_PWD=rootsql
 docker run --name baking-pytest --rm -d -e MYSQL_ROOT_PASSWORD=$ROOT_PWD -e MYSQL_USER=$USER -e MYSQL_PASSWORD=sql -p 3306:3306 mysql 
 

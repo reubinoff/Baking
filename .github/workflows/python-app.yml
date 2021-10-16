@@ -15,7 +15,7 @@ jobs:
             image: mysql:latest
             env:
               MYSQL_DB: ttt
-              MYSQL_USER: test
+              MYSQL_USER: pytest_db_user
               MYSQL_PASSWORD: sql
               MYSQL_ROOT_PASSWORD: rootsql
             ports:
@@ -41,8 +41,8 @@ jobs:
         - name: Verify MySQL
           run: | 
             sudo apt-get install -y mysql-client 
-            mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -utest -psql -e "SHOW DATABASES"
-            mysql -h 127.0.0.1 -u root -p${{ job.services.mysql.env['MYSQL_ROOT_PASSWORD'] }} -e  "GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';"
+            mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -u${{ job.services.mysql.env['MYSQL_USER'] }} -p${{ job.services.mysql.env['MYSQL_PASSWORD'] }} -e "SHOW DATABASES"
+            mysql -h 127.0.0.1 -u root -p${{ job.services.mysql.env['MYSQL_ROOT_PASSWORD'] }} -e  "GRANT ALL PRIVILEGES ON *.* TO '${{ job.services.mysql.env['MYSQL_USER'] }}'@'%';"
             
 
         - name: Install Poetry
