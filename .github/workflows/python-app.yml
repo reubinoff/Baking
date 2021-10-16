@@ -41,6 +41,7 @@ jobs:
         - name: 'Run Pytests'
           run: |
             cd server
+            poetry env use 3.9
             poetry install 
             poetry run python -m pytest -vvvxs   
 
