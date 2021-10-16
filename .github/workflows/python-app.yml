@@ -17,6 +17,7 @@ jobs:
               MYSQL_DB: ttt
               MYSQL_USER: test
               MYSQL_PASSWORD: sql
+              MYSQL_ROOT_PASSWORD: rootsql
             ports:
               - "3306:3306"
             options: >-
