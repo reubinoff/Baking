@@ -5,4 +5,4 @@ docker run --name baking-pytest --rm -d -e MYSQL_ROOT_PASSWORD=$ROOT_PWD -e MYSQ
 
 docker ps | grep baking | awk '{print $1}'
 sleep 10
-mysql -h 127.0.0.1 -u root -p$ROOT_PWD -e  "GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';"
+mysql -h 127.0.0.1 -u root -p$ROOT_PWD -e  "GRANT ALL PRIVILEGES ON *.* TO 'pytest_db_user'@'%';"
