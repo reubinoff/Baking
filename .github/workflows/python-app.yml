@@ -32,11 +32,19 @@ jobs:
         # checkout the repo
         - name: 'Checkout GitHub Action'
           uses: actions/checkout@main
+
       
         - uses: actions/setup-python@v2
           with:
             python-version: '3.9' 
         
+        - name: Verify MySQL
+          run: | 
+            sudo apt-get install -y mysql-client 
+            mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -utest -psql -e "SHOW DATABASES"
+            mysql -h 127.0.0.1 -u root -p${{ job.services.mysql.env['MYSQL_ROOT_PASSWORD'] }} -e  "GRANT ALL PRIVILEGES ON *.* TO 'test'@'%';"
+            
+
         - name: Install Poetry
           uses: snok/install-poetry@v1
 
