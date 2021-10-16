@@ -12,13 +12,15 @@ jobs:
         runs-on: ubuntu-latest
         services:
           mysql:
-            image: mysql
+            image: mysql:latest
             env:
               MYSQL_DB: ttt
               MYSQL_USER: test
               MYSQL_PASSWORD: sql
             ports:
               - "3306:3306"
+            options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
         env:
           CERT_PATH_CI: crt.pem
         steps:
