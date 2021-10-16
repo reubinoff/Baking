@@ -7,7 +7,7 @@ from starlette.config import environ
 
 # set test config
 environ["DB_PASS"] = "sql"
-environ["DB_HOST"] = "127.0.0.1"
+environ["DB_HOST"] = "mysql"
 environ["DB_NAME"] = "ttt"
 environ["DB_USER"] = "test"
 

@@ -2,23 +2,18 @@
 
 name: Python Baking app
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the develop branch
   push:
     branches: [ develop ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 
 jobs:
     test:
         runs-on: ubuntu-latest
         services:
           mysql:
-            image: mysql:5.7
+            image: mysql
             env:
-              MYSQL_HOST: 127.0.0.1
               MYSQL_DB: ttt
               MYSQL_USER: test
               MYSQL_PASSWORD: sql
