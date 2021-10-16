@@ -42,13 +42,7 @@ def pytest_runtest_makereport(item, call):
 @pytest.fixture(scope="session")
 def db():
     init_database(engine)
-    schema_engine = engine.execution_options(
-        schema_translate_map={
-            None: "dispatch_organization_default",
-            "dispatch_core": "dispatch_core",
-        }
-    )
-    Session.configure(bind=schema_engine)
+    Session.configure(bind=engine)
     yield
     drop_database(str(SQL_URI))
 
@@ -76,5 +70,5 @@ def recipe(session):
 
 
 @pytest.fixture
-def participants(session):
+def recipes(session):
     return [RecipeFactory(), RecipeFactory()]

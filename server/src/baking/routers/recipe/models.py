@@ -23,7 +23,8 @@ from baking.routers.ingredients.models import (
     IngredientRead,
 )
 from baking.routers.procedure.models import Procedure, ProcedureCreate
-from baking.routers.users.models import User, UserRead
+
+# from baking.routers.users.models import User, UserRead
 
 
 ############################################################
@@ -75,6 +76,10 @@ class RecipeCreate(RecipeBase):
     # procedures = List[ProcedureCreate]
 
     # user_id = Optional[UserRead]
+    pass
+
+
+class RecipeUpdate(RecipeBase):
     pass
 
 

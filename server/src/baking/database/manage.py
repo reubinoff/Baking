@@ -29,8 +29,10 @@ def get_tables():
 def init_database(engine):
     """Initializes a the database."""
     LOGGER.info(f"conn str: {str(SQL_URI)}")
+    required_tables_creation = False
     if database_exists(str(SQL_URI)) is False:
         create_database(str(SQL_URI))
+        required_tables_creation = True
 
     schema_name = settings.db_name
     with engine.connect() as connection:
@@ -39,6 +41,6 @@ def init_database(engine):
 
     tables = get_tables()
 
-    if settings.db_debug_drop_in_startup is True:
+    if settings.db_debug_drop_in_startup is True or required_tables_creation is True:
         Base.metadata.drop_all(engine, tables=tables)
         Base.metadata.create_all(engine, tables=tables)

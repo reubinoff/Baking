@@ -11,10 +11,19 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
+        services:
+          mysql:
+            image: mysql:5.7
+            env:
+              MYSQL_HOST: 127.0.0.1
+              MYSQL_DB: ttt
+              MYSQL_USER: test
+              MYSQL_PASSWORD: sql
+            ports:
+              - "3306:3306"
         env:
           CERT_PATH_CI: crt.pem
         steps:
@@ -22,6 +31,13 @@ jobs:
         - name: 'Checkout GitHub Action'
           uses: actions/checkout@main
         
+
+        - name: 'Run Pytests'
+        - run: |
+            cd server
+            poetry install 
+            poetry run python -m pytest -vvvxs   
+
         - name: 'Login via Azure CLI'
           uses: azure/login@v1
           with:
