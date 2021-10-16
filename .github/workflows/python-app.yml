@@ -33,7 +33,7 @@ jobs:
         
 
         - name: 'Run Pytests'
-        - run: |
+          run: |
             cd server
             poetry install 
             poetry run python -m pytest -vvvxs   
