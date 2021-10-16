@@ -50,8 +50,12 @@ jobs:
             cd server
             poetry env use 3.9
             poetry install 
-            poetry run python -m pytest -vvvxs   
-
+            poetry run python -m pytest --cov=src/baking/routers --cov-fail-under=80 --cov-report xml 
+        - name: Coveralls
+          uses: coverallsapp/github-action@master
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            path--to-lcov: coverage.xml
             
     deploy:
         runs-on: ubuntu-latest
