@@ -15,7 +15,7 @@ from baking.config import settings as app_settings
 CERT_PATH = (
     None if app_settings.db_cert_path == "" else {"ssl_ca": app_settings.db_cert_path}
 )
-SQL_URI = URL(
+SQL_URI = URL.create(
     drivername="mysql+pymysql",
     username=app_settings.db_user,
     password=app_settings.db_pass,

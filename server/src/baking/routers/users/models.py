@@ -30,19 +30,19 @@ class User(Base, TimeStampMixin):
 ############################################################
 # Pydantic models...
 ############################################################
-class RecipeBase(OurBase):
-    name: str
+class UserBase(OurBase):
+    username: str
     description: Optional[str]
 
 
-class RecipeRead(RecipeBase):
+class UserRead(UserBase):
     id: Optional[int]
 
 
-class ItemCreate(RecipeBase):
+class UserCreate(UserBase):
     pass
 
 
-class ItemPagination(OurBase):
+class UserPagination(OurBase):
     total: int
-    items: List[RecipeBase] = []
+    users: List[UserBase] = []

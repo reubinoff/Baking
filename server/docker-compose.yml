@@ -23,22 +23,16 @@ services:
 
   mysql:
     container_name: db
-    image: mysql/mysql-server:latest
+    image: mysql:latest
     command: --default-authentication-plugin=caching_sha2_password
     restart: always
     ports:
         - "3306:3306"
-    expose: 
-      - "3306"
+    expose:
+      - 3306
     environment:
-        MYSQL_ROOT_PASSWORD: "sql"
+        MYSQL_ROOT_PASSWORD: "sqlroot"
         MYSQL_PASSWORD: "sql"
         MYSQL_DATABASE: "moshereubinoff"
         MYSQL_USER: "user"
-    volumes:
-        - my-db:/var/lib/mysql
     command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
-
-
-volumes:
-    my-db:

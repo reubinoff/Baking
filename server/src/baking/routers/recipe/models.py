@@ -15,41 +15,47 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from baking.database.core import Base
-from baking.models import OurBase
+from baking.models import OurBase, TimeStampMixin
 from baking.routers.ingredients.enums import IngrediantType
-from baking.routers.ingredients.models import Ingredient
+from baking.routers.ingredients.models import (
+    Ingredient,
+    IngredientCreate,
+    IngredientRead,
+)
+from baking.routers.procedure.models import Procedure, ProcedureCreate
+from baking.routers.users.models import User, UserRead
+
 
 ############################################################
 # SQL models...
 ############################################################
-class Recipe(Base):
+class Recipe(Base, TimeStampMixin):
     id = Column(Integer, primary_key=True)
     name = Column(String(32))
     description = Column(String(50))
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    # auther of the recipe ###############################################################
+    # public = Column(Boolean)
+    # user_id = Column(Integer, ForeignKey("user.id"), index=True, nullable=False)
+    ###########################################################################################
 
-    # auther of the recipe
-    public = Column(Boolean)
-    user_id = Column(Integer, ForeignKey("user.id"), index=True, nullable=False)
+    # procedures = relationship("Procedure", lazy="joined")
+    # ingredients = relationship("Ingredient", lazy="joined")
 
-    procedures = relationship("Procedure", lazy="joined")
-    ingredients = relationship("Ingredient", lazy="joined")
-
-    @hybrid_property
-    def hydration(self) -> int:
-        water = None
-        flour = None
-        if self.ingredients:
-            i: Ingredient = None
-            for i in self.ingredients:
-                if i.type == IngrediantType.water:
-                    water = i.quanity
-                elif i.type == IngrediantType.flour:
-                    flour = i.quanity
-            if water and flour:
-                return (water / flour) * 100
-        return -1
+    # @hybrid_property
+    # def hydration(self) -> int:
+    #     water = None
+    #     flour = None
+    #     if self.ingredients:
+    #         i: Ingredient = None
+    #         for i in self.ingredients:
+    #             if i.type == IngrediantType.water:
+    #                 water = i.quanity
+    #             elif i.type == IngrediantType.flour:
+    #                 flour = i.quanity
+    #         if water and flour:
+    #             return (water / flour) * 100
+    #     return -1
 
 
 ############################################################
@@ -65,9 +71,13 @@ class RecipeRead(RecipeBase):
 
 
 class RecipeCreate(RecipeBase):
+    # ingredients = List[IngredientCreate]
+    # procedures = List[ProcedureCreate]
+
+    # user_id = Optional[UserRead]
     pass
 
 
 class RecipePagination(OurBase):
     total: int
-    items: List[RecipeBase] = []
+    recipes: List[RecipeBase] = []

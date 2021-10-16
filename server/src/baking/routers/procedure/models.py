@@ -34,10 +34,5 @@ class ProcedureRead(ProcedureBase):
     id: Optional[int]
 
 
-class ItemCreate(ProcedureBase):
+class ProcedureCreate(ProcedureBase):
     pass
-
-
-class ItemPagination(OurBase):
-    total: int
-    items: List[ProcedureBase] = []

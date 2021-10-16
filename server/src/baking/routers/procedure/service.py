@@ -1,22 +1,24 @@
 from typing import Optional, List
 
-from .models import RecipeRead, ItemCreate, Recipe
+from .models import ProcedureRead, ProcedureCreate, Procedure
 
 
-def get(*, db_session, item_id: int) -> Optional[Recipe]:
-    """Returns a item based on the given item id."""
-    return db_session.query(Recipe).filter(Recipe.id == item_id).one_or_none()
+def get(*, db_session, procedure_id: int) -> Optional[Procedure]:
+    """Returns a item based on the given Procedure id."""
+    return (
+        db_session.query(Procedure).filter(Procedure.id == procedure_id).one_or_none()
+    )
 
 
-def get_all(*, db_session) -> List[Optional[Recipe]]:
-    """Returns all items."""
-    return db_session.query(Recipe)
+def get_all(*, db_session) -> List[Optional[Procedure]]:
+    """Returns all Procedures."""
+    return db_session.query(Procedure)
 
 
-def create(*, db_session, item_in: ItemCreate) -> Recipe:
-    """Creates a new item."""
-    item = Recipe(**item_in.dict())
+def create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
+    """Creates a new Procedure."""
+    procedure = Procedure(**procedure_in.dict())
 
-    db_session.add(item)
+    db_session.add(procedure)
     db_session.commit()
-    return item
+    return procedure
