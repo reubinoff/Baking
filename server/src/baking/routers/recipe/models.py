@@ -22,7 +22,8 @@ from baking.routers.ingredients.models import (
     IngredientCreate,
     IngredientRead,
 )
-from baking.routers.procedure.models import Procedure, ProcedureCreate
+
+# from baking.routers.procedure.models import Procedure, ProcedureCreate
 
 # from baking.routers.users.models import User, UserRead
 
@@ -41,8 +42,12 @@ class Recipe(Base, TimeStampMixin):
     ###########################################################################################
 
     # procedures = relationship("Procedure", lazy="joined")
-    # ingredients = relationship("Ingredient", lazy="joined")
-
+    ingredients = relationship(
+        "Ingredient",
+        lazy="subquery",
+        cascade="all, delete-orphan",
+        back_populates="recipe",
+    )
     # @hybrid_property
     # def hydration(self) -> int:
     #     water = None
@@ -69,10 +74,11 @@ class RecipeBase(OurBase):
 
 class RecipeRead(RecipeBase):
     id: Optional[int]
+    ingredients: List[IngredientCreate]
 
 
 class RecipeCreate(RecipeBase):
-    # ingredients = List[IngredientCreate]
+    ingredients: Optional[List[IngredientCreate]]
     # procedures = List[ProcedureCreate]
 
     # user_id = Optional[UserRead]

@@ -13,12 +13,7 @@ class RecipeMixin(object):
 
     @declared_attr
     def recipe_id(cls):  # noqa
-        return Column(
-            Integer,
-            ForeignKey("recipe.id", ondelete="CASCADE"),
-            index=True,
-            nullable=False,
-        )
+        return Column(Integer, ForeignKey("recipe.id", ondelete="CASCADE"))
 
     @declared_attr
     def recipe(cls):  # noqa

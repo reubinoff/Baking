@@ -2,7 +2,8 @@ from typing import Optional, List
 
 from .models import RecipeRead, Recipe, RecipeCreate, RecipeUpdate
 from baking.routers.ingredients.service import create as create_ingredient
-from baking.routers.procedure.service import create as create_procedure
+
+# from baking.routers.procedure.service import create as create_procedure
 
 
 def get(*, db_session, recipe_id: int) -> Optional[Recipe]:
@@ -17,12 +18,11 @@ def get_all(*, db_session) -> List[Optional[Recipe]]:
 
 def create(*, db_session, recipe_in: RecipeCreate) -> Recipe:
     """Creates a new Recipe."""
-    recipe = Recipe(**recipe_in.dict())
 
-    # ingredients = [
-    #     create_ingredient(db_session=db_session, ingredient_in=ingredient_in)
-    #     for ingredient_in in recipe_in.ingredients
-    # ]
+    ingredients = [
+        create_ingredient(db_session=db_session, ingredient_in=ingredient_in)
+        for ingredient_in in recipe_in.ingredients
+    ]
 
     # procedures = [
     #     create_procedure(db_session=db_session, procedure_in=procedure_in)
@@ -32,7 +32,7 @@ def create(*, db_session, recipe_in: RecipeCreate) -> Recipe:
     recipe = Recipe(
         **recipe_in.dict(exclude={"procedures", "ingredients"}),
         # procedures=procedures,
-        # ingredients=ingredients
+        ingredients=ingredients
     )
 
     db_session.add(recipe)

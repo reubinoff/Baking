@@ -1,13 +1,14 @@
 from enum import Enum
 
 
-class Units(str, Enum):
+class IngrediantUnits(str, Enum):
     grams = "Grams"
     liter = "Liter"
     ml = "MilliLiter"
 
     def __str__(self) -> str:
         return str.__str__(self)
+
 
 class IngrediantType(str, Enum):
     water = "Water"

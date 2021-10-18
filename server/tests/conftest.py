@@ -17,7 +17,7 @@ from baking.database.core import engine, SQL_URI
 from baking.database.manage import init_database
 
 
-from .factories import RecipeFactory
+from .factories import IngredientFactory, RecipeFactory
 
 from .database import Session
 
@@ -72,3 +72,13 @@ def recipe(session):
 @pytest.fixture
 def recipes(session):
     return [RecipeFactory(), RecipeFactory()]
+
+
+@pytest.fixture
+def ingredient(session):
+    return IngredientFactory()
+
+
+@pytest.fixture
+def ingredients(session):
+    return [IngredientFactory(), IngredientFactory()]
