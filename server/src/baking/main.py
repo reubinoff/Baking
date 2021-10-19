@@ -19,6 +19,9 @@ init_database(engine=engine)
 
 
 app = FastAPI(
+    title="Baking Hub",
+    description="Hub for great bread recipes",
+    version="0.2.1",
     middleware=get_middlewares(),
     openapi_url="/docs/openapi.json",
 )
