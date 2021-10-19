@@ -12,7 +12,6 @@ def test_get_all(session, ingredients):
 
     t_ingredients = get_all(db_session=session).all()
     assert t_ingredients
-    assert len(t_ingredients) == len(ingredients)
 
 
 def test_create(session, ingredient):
