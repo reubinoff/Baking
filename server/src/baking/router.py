@@ -23,6 +23,7 @@ api_router = APIRouter(
         401: {"model": ErrorResponse},
         403: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
+        422: {"model": ErrorResponse},
         500: {"model": ErrorResponse},
     },
 )

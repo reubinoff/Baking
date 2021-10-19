@@ -103,9 +103,9 @@ def search_filter_sort_paginate(
         query = db_session.query(model_cls)
 
         if sort_by is not None and isinstance(sort_by, List) and len(sort_by) > 0:
-            print(sort_by)
+            # print(sort_by)
             sort_spec = create_sort_spec(model, sort_by, descending)
-            # query = apply_sort(query, sort_spec)
+            query = apply_sort(query, sort_spec)
 
     except FieldNotFound as e:
         raise ValidationError(
@@ -117,6 +117,14 @@ def search_filter_sort_paginate(
     except BadFilterFormat as e:
         raise ValidationError(
             [ErrorWrapper(InvalidFilterError(msg=str(e)), loc="filter")],
+            model=BaseModel,
+        )
+
+    except AttributeError as e:
+        raise ValidationError(
+            [
+                ErrorWrapper(FieldNotFoundError(msg=str(e)), loc="filter"),
+            ],
             model=BaseModel,
         )
 

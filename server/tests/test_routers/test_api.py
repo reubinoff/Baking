@@ -1,7 +1,7 @@
 import pytest
 import schemathesis
 from fastapi.testclient import TestClient
-from schemathesis.checks import ALL_CHECKS
+from schemathesis.checks import ALL_CHECKS, DEFAULT_CHECKS
 
 from hypothesis import settings, HealthCheck
 
@@ -31,4 +31,4 @@ def test_api(db, case):
     case.headers = case.headers or {}
     # case.headers["Authorization"] = f"Bearer {token}"
     response = case.call_asgi(base_url="http://testserver/")
-    case.validate_response(response, checks=ALL_CHECKS)
+    case.validate_response(response, checks=DEFAULT_CHECKS)

@@ -8,7 +8,7 @@ from alembic import command as alembic_command
 
 from baking.config import settings
 
-from .core import Base, sessionmaker, SQL_URI
+from .core import Base, sessionmaker, get_sql_url
 
 LOGGER = logging.getLogger(__name__)
 
@@ -28,10 +28,10 @@ def get_tables():
 
 def init_database(engine):
     """Initializes a the database."""
-    LOGGER.info(f"conn str: {str(SQL_URI)}")
+    LOGGER.info(f"conn str: {get_sql_url()}")
     required_tables_creation = False
-    if database_exists(str(SQL_URI)) is False:
-        create_database(str(SQL_URI))
+    if database_exists(get_sql_url()) is False:
+        create_database(get_sql_url())
         required_tables_creation = True
 
     schema_name = settings.db_name

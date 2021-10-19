@@ -1,7 +1,7 @@
 import re
 import functools
 from typing import Any
-
+from functools import lru_cache
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
@@ -12,20 +12,28 @@ from starlette.requests import Request
 
 from baking.config import settings as app_settings
 
-CERT_PATH = (
-    None if app_settings.db_cert_path == "" else {"ssl_ca": app_settings.db_cert_path}
-)
-SQL_URI = URL.create(
-    drivername="mysql+pymysql",
-    username=app_settings.db_user,
-    password=app_settings.db_pass,
-    host=app_settings.db_host,
-    port=3306,
-    database=app_settings.db_name,
-    query=CERT_PATH,
-)
+DB_SETTINGS = {}
 
-engine = create_engine(str(SQL_URI))
+
+@lru_cache
+def get_sql_url() -> str:
+    settings = DB_SETTINGS
+    if app_settings.db_cert_path and app_settings.db_cert_path != "":
+        settings.update({"ssl_ca": app_settings.db_cert_path})
+    return str(
+        URL.create(
+            drivername="postgresql+psycopg2",
+            username=app_settings.db_user,
+            password=app_settings.db_pass,
+            host=app_settings.db_host,
+            port=5432,
+            database=app_settings.db_name,
+            query=settings,
+        )
+    )
+
+
+engine = create_engine(get_sql_url(), encoding="utf8")
 SessionLocal = sessionmaker(bind=engine)
 
 

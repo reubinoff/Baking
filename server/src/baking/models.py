@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 
 from pydantic import BaseModel, validator
+from pydantic.types import conint, constr
+
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, event, ForeignKey
 from sqlalchemy.orm import relationship
@@ -39,6 +41,8 @@ class TimeStampMixin(object):
 
 #################################################################
 
+PrimaryKey = conint(gt=0, lt=2147483647)
+NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=4)
 
 ########################## Pydantic models ##########################
 class OurBase(BaseModel):

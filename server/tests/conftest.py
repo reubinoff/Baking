@@ -6,14 +6,14 @@ from starlette.config import environ
 
 
 # set test config
-environ["DB_PASS"] = "sql"
+environ["DB_PASS"] = "rootsql"
 environ["DB_HOST"] = "127.0.0.1"
 environ["DB_NAME"] = "ttt"
-environ["DB_USER"] = "pytest_db_user"
+environ["DB_USER"] = "postgres"
 
 
 from baking import config
-from baking.database.core import engine, SQL_URI
+from baking.database.core import engine, get_sql_url
 from baking.database.manage import init_database
 
 
@@ -44,7 +44,7 @@ def db():
     init_database(engine)
     Session.configure(bind=engine)
     yield
-    drop_database(str(SQL_URI))
+    drop_database(get_sql_url())
 
 
 @pytest.fixture(scope="function", autouse=True)

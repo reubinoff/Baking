@@ -12,15 +12,13 @@ jobs:
         runs-on: ubuntu-latest
         services:
           mysql:
-            image: mysql:latest
+            image: postgres:latest
             env:
-              MYSQL_USER: pytest_db_user
-              MYSQL_PASSWORD: sql
-              MYSQL_ROOT_PASSWORD: rootsql
+              POSTGRES_PASSWORD: rootsql
             ports:
-              - "3306:3306"
+              - "5432:5432"
             options: >-
-              --health-cmd "mysqladmin ping"
+              --health-cmd pg_isready
               --health-interval 10s
               --health-timeout 5s
               --health-retries 5

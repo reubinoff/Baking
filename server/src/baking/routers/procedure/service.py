@@ -20,10 +20,14 @@ def get_all(*, db_session) -> List[Optional[Procedure]]:
 def create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
     """Creates a new Procedure."""
 
-    ingredients = [
-        create_ingredient(db_session=db_session, ingredient_in=ingredient_in)
-        for ingredient_in in procedure_in.ingredients
-    ]
+    ingredients = []
+    if procedure_in.ingredients is not None and isinstance(
+        procedure_in.ingredients, List
+    ):
+        ingredients = [
+            create_ingredient(db_session=db_session, ingredient_in=ingredient_in)
+            for ingredient_in in procedure_in.ingredients
+        ]
 
     procedure = Procedure(
         **procedure_in.dict(exclude={"ingredients"}), ingredients=ingredients

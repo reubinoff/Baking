@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 init_database(engine=engine)
 
+
 app = FastAPI(
     middleware=get_middlewares(),
     openapi_url="/docs/openapi.json",

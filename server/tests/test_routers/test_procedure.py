@@ -12,7 +12,6 @@ def test_get_all(session, procedures):
 
     t_procedures = get_all(db_session=session).all()
     assert t_procedures
-    assert len(t_procedures) == 2
 
 
 def test_create(session, ingredients):

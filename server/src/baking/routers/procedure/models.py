@@ -1,5 +1,6 @@
 from typing import List, Optional
-from baking.models import RecipeMixin
+from baking.models import NameStr, RecipeMixin
+from pydantic import Field
 
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
@@ -17,13 +18,14 @@ class Procedure(Base, RecipeMixin):
     """
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(32))
-    description = Column(String(100))
+    name = Column(String)
+    description = Column(String)
     order = Column(Integer)
 
     ingredients = relationship(
         "Ingredient",
         lazy="subquery",
+        cascade="all, delete-orphan",
         back_populates="procedure",
     )
 
@@ -32,22 +34,19 @@ class Procedure(Base, RecipeMixin):
 # Pydantic models...
 ############################################################
 class ProcedureBase(OurBase):
-    name: str
-    description: Optional[str]
-    order: Optional[int] = 1
+    name: NameStr
+    description: Optional[str] = Field(None, nullable=True)
+    order: Optional[int] = Field(1)
+
+    ingredients: Optional[List[IngredientCreate]]
 
 
 class ProcedureRead(ProcedureBase):
     id: int
-    name: str
-    description: Optional[str]
-    order: Optional[int]
-
-    ingredients: Optional[List[IngredientCreate]]
 
 
 class ProcedureCreate(ProcedureBase):
-    ingredients: Optional[List[IngredientCreate]]
+    pass
 
 
 class ProcedureUpdate(ProcedureBase):

@@ -11,22 +11,23 @@ def get(*, db_session, recipe_id: int) -> Optional[Recipe]:
 
 
 def get_all(*, db_session) -> List[Optional[Recipe]]:
-    """Returns all items."""
+    """Returns all recipes."""
     return db_session.query(Recipe)
 
 
 def create(*, db_session, recipe_in: RecipeCreate) -> Recipe:
     """Creates a new Recipe."""
+    if db_session is None:
+        return None
+    procedures = []
+    if recipe_in.procedures is not None and isinstance(recipe_in.procedures, List):
+        procedures = [
+            create_procedure(db_session=db_session, procedure_in=procedure_in)
+            for procedure_in in recipe_in.procedures
+        ]
 
-    procedures = [
-        create_procedure(db_session=db_session, procedure_in=procedure_in)
-        for procedure_in in recipe_in.procedures
-    ]
-
-    recipe = Recipe(
-        **recipe_in.dict(exclude={"procedures", "ingredients"}), procedures=procedures
-    )
-
+    recipe = Recipe(**recipe_in.dict(exclude={"procedures"}), procedures=procedures)
+    # print(recipe_in.dict())
     db_session.add(recipe)
     db_session.commit()
     return recipe

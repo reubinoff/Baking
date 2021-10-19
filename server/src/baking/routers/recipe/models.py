@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
+from pydantic import Field, validator
 
 from sqlalchemy import (
     Column,
@@ -15,7 +16,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from baking.database.core import Base
-from baking.models import OurBase, TimeStampMixin
+from baking.models import OurBase, TimeStampMixin, NameStr
 from baking.routers.ingredients.enums import IngrediantType
 from baking.routers.ingredients.models import (
     Ingredient,
@@ -33,8 +34,8 @@ from baking.routers.procedure.models import Procedure, ProcedureCreate
 ############################################################
 class Recipe(Base, TimeStampMixin):
     id = Column(Integer, primary_key=True)
-    name = Column(String(32))
-    description = Column(String(100))
+    name = Column(String)
+    description = Column(String)
 
     # auther of the recipe ###############################################################
     # public = Column(Boolean)
@@ -67,18 +68,23 @@ class Recipe(Base, TimeStampMixin):
 # Pydantic models...
 ############################################################
 class RecipeBase(OurBase):
-    name: Optional[str]
-    description: Optional[str]
+    name: NameStr
+    description: Optional[str] = Field(None, nullable=True)
+    procedures: Optional[List[ProcedureCreate]]
+
+    @validator("name")
+    def title_required(cls, v):
+        if not v or "\x00" in v:
+            raise ValueError("must not be empty string")
+        return v
 
 
 class RecipeRead(RecipeBase):
     id: int
-    procedures: Optional[List[ProcedureCreate]]
 
 
 class RecipeCreate(RecipeBase):
-    name: str
-    procedures: Optional[List[ProcedureCreate]]
+    pass
 
 
 class RecipeUpdate(RecipeBase):
