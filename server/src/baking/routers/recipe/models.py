@@ -67,16 +67,17 @@ class Recipe(Base, TimeStampMixin):
 # Pydantic models...
 ############################################################
 class RecipeBase(OurBase):
-    name: str
+    name: Optional[str]
     description: Optional[str]
 
 
 class RecipeRead(RecipeBase):
-    id: Optional[int]
-    procedures: List[ProcedureCreate]
+    id: int
+    procedures: Optional[List[ProcedureCreate]]
 
 
 class RecipeCreate(RecipeBase):
+    name: str
     procedures: Optional[List[ProcedureCreate]]
 
 
@@ -86,4 +87,6 @@ class RecipeUpdate(RecipeBase):
 
 class RecipePagination(OurBase):
     total: int
-    recipes: List[RecipeBase] = []
+    itemsPerPage: int
+    page: int
+    recipes: List[RecipeRead] = []

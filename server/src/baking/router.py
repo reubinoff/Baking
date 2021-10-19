@@ -1,11 +1,31 @@
 from fastapi import Request
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import List, Optional
 
 from baking.routers.recipe.views import router as recipe_router
 from baking.auth.services import get_current_user
 
-api_router = APIRouter(default_response_class=JSONResponse)
+
+class ErrorMessage(BaseModel):
+    msg: str
+
+
+class ErrorResponse(BaseModel):
+    detail: Optional[List[ErrorMessage]]
+
+
+api_router = APIRouter(
+    default_response_class=JSONResponse,
+    responses={
+        400: {"model": ErrorResponse},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+        500: {"model": ErrorResponse},
+    },
+)
 
 authenticated_api_router = APIRouter()
 

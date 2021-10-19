@@ -4,10 +4,19 @@ from typing import List
 
 from fastapi import Depends, Query
 from fastapi.logger import logger
+import sqlalchemy
 
 from sqlalchemy import or_, orm, func, desc
 from sqlalchemy_filters import apply_pagination, apply_sort, apply_filters
+from pydantic.error_wrappers import ErrorWrapper, ValidationError
+from pydantic import BaseModel
 
+from baking.exceptions import (
+    FieldNotFound,
+    FieldNotFoundError,
+    BadFilterFormat,
+    InvalidFilterError,
+)
 
 from .core import (
     Base,
@@ -16,24 +25,19 @@ from .core import (
     get_db,
 )
 
+
 def common_parameters(
     db_session: orm.Session = Depends(get_db),
-    page: int = 1,
-    items_per_page: int = Query(5, alias="itemsPerPage"),
-    query_str: str = Query(None, alias="q"),
-    filter_spec: str = Query([], alias="filter"),
+    page: int = Query(1, gt=0, lt=2147483647),
+    items_per_page: int = Query(5, alias="itemsPerPage", gt=-2, lt=2147483647),
     sort_by: List[str] = Query([], alias="sortBy[]"),
     descending: List[bool] = Query([], alias="descending[]"),
 ):
-    if filter_spec:
-        filter_spec = json.loads(filter_spec)
 
     return {
         "db_session": db_session,
         "page": page,
         "items_per_page": items_per_page,
-        "query_str": query_str,
-        "filter_spec": filter_spec,
         "sort_by": sort_by,
         "descending": descending,
     }
@@ -74,41 +78,67 @@ def create_sort_spec(model, sort_by, descending):
                     }
                 )
             else:
-                sort_spec.append({"model": model, "field": field, "direction": direction})
+                sort_spec.append(
+                    {"model": model, "field": field, "direction": direction}
+                )
     logger.debug(f"Sort Spec: {json.dumps(sort_spec, indent=2)}")
     return sort_spec
-
 
 
 def search_filter_sort_paginate(
     db_session,
     model,
-    query_str: str = None,
-    filter_spec: List[dict] = None,
     page: int = 1,
     items_per_page: int = 5,
     sort_by: List[str] = None,
     descending: List[bool] = None,
+    # current_user: DispatchUser = None,
+    # role: UserRoles = UserRoles.member,
 ):
     """Common functionality for searching, filtering, sorting, and pagination."""
+    if db_session is None:
+        return
     model_cls = get_class_by_tablename(model)
-    sort_spec = create_sort_spec(model, sort_by, descending)
+    try:
+        query = db_session.query(model_cls)
 
-    query = db_session.query(model_cls)
+        if sort_by is not None and isinstance(sort_by, List) and len(sort_by) > 0:
+            print(sort_by)
+            sort_spec = create_sort_spec(model, sort_by, descending)
+            # query = apply_sort(query, sort_spec)
 
-    if query_str:
-        sort = False if sort_by else True
-        query = search(query_str=query_str, query=query, model=model, sort=sort)
-
-    if filter_spec:
-        query = apply_filters(query, filter_spec)
-
-    query = apply_sort(query, sort_spec)
+    except FieldNotFound as e:
+        raise ValidationError(
+            [
+                ErrorWrapper(FieldNotFoundError(msg=str(e)), loc="filter"),
+            ],
+            model=BaseModel,
+        )
+    except BadFilterFormat as e:
+        raise ValidationError(
+            [ErrorWrapper(InvalidFilterError(msg=str(e)), loc="filter")],
+            model=BaseModel,
+        )
 
     if items_per_page == -1:
         items_per_page = None
 
-    query, pagination = apply_pagination(query, page_number=page, page_size=items_per_page)
+    # sometimes we get bad input for the search function
+    # TODO investigate moving to a different way to parsing queries that won't through errors
+    # e.g. websearch_to_tsquery
+    # https://www.postgresql.org/docs/current/textsearch-controls.html
+    try:
+        query, pagination = apply_pagination(
+            query, page_number=page, page_size=items_per_page
+        )
+    except sqlalchemy.exc.ProgrammingError as e:
+        logger.debug(e)
+        return {
+            "items": [],
+            "itemsPerPage": items_per_page,
+            "page": page,
+            "total": 0,
+        }
 
     return {
         "items": query.all(),

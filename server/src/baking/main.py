@@ -17,7 +17,10 @@ logger = logging.getLogger(__name__)
 
 init_database(engine=engine)
 
-app = FastAPI(middleware=get_middlewares())
+app = FastAPI(
+    middleware=get_middlewares(),
+    openapi_url="/docs/openapi.json",
+)
 app.include_router(api_router)
 app.add_exception_handler(Exception, base_error_handler)
 
