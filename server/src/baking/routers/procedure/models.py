@@ -36,7 +36,7 @@ class Procedure(Base, RecipeMixin):
 class ProcedureBase(OurBase):
     name: NameStr
     description: Optional[str] = Field(None, nullable=True)
-    order: Optional[int] = Field(1)
+    order: Optional[int] = Field(1, gt=0, lt=100)
 
     ingredients: Optional[List[IngredientCreate]]
 
@@ -51,3 +51,10 @@ class ProcedureCreate(ProcedureBase):
 
 class ProcedureUpdate(ProcedureBase):
     pass
+
+
+class ProcedurePagination(OurBase):
+    total: int
+    itemsPerPage: int
+    page: int
+    recipes: List[ProcedureRead] = []

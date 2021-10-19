@@ -53,7 +53,7 @@ def create_recipe(*, db_session: Session = Depends(get_db), recipe_in: RecipeCre
     return recipe
 
 
-@router.delete("/{recipe_id}")
+@router.delete("/{recipe_id}", response_model=RecipeRead)
 def delete_recipe(*, db_session: Session = Depends(get_db), recipe_id: PrimaryKey):
     """Delete a recipe."""
     recipe = get(db_session=db_session, recipe_id=recipe_id)
@@ -63,6 +63,7 @@ def delete_recipe(*, db_session: Session = Depends(get_db), recipe_id: PrimaryKe
             detail=[{"msg": "The recipe with this id does not exist."}],
         )
     delete(db_session=db_session, recipe_id=recipe_id)
+    return recipe
 
 
 @router.put("/{recipe_id}", response_model=RecipeRead)

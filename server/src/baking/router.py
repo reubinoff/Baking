@@ -5,6 +5,8 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 from baking.routers.recipe.views import router as recipe_router
+from baking.routers.procedure.views import router as procedure_router
+
 from baking.auth.services import get_current_user
 
 
@@ -33,6 +35,9 @@ authenticated_api_router = APIRouter()
 
 authenticated_api_router.include_router(
     recipe_router, prefix="/recipe", tags=["recipes"]
+)
+authenticated_api_router.include_router(
+    procedure_router, prefix="/procedure", tags=["recipes"]
 )
 
 
