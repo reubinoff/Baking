@@ -35,10 +35,7 @@ jobs:
           with:
             python-version: '3.9' 
         
-        - name: Verify MySQL
-          run: | 
-            sudo apt-get install -y mysql-client 
-            mysql -h 127.0.0.1 -u root -prootsql -e  "GRANT ALL PRIVILEGES ON *.* TO 'pytest_db_user'@'%';"
+      
 
         - name: Install Poetry
           uses: snok/install-poetry@v1

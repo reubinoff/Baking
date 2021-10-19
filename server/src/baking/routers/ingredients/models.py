@@ -10,7 +10,7 @@ from baking.database.core import Base
 from baking.models import NameStr, OurBase
 from baking.models import RecipeMixin
 from sqlalchemy.sql.schema import ForeignKey
-
+from pydantic import Field
 from .enums import IngrediantUnits, IngrediantType
 
 ############################################################
@@ -38,7 +38,7 @@ class Ingredient(Base):
 ############################################################
 class IngredientBase(OurBase):
     name: NameStr
-    quantity: Optional[int]
+    quantity: Optional[int] = Field(1, gt=0, lt=100000)
     units: Optional[IngrediantUnits] = IngrediantUnits.grams
     type: Optional[IngrediantType] = IngrediantType.Other
 
@@ -50,7 +50,7 @@ class IngredientRead(IngredientBase):
 
 class IngredientCreate(IngredientBase):
     name: NameStr
-    quantity: int
+    quantity: int = Field(1, gt=0, lt=100000)
     units: IngrediantUnits
     type: IngrediantType
 
