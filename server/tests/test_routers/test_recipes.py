@@ -15,18 +15,18 @@ def test_get_all(session, recipes):
     assert len(t_recipes) == 2
 
 
-def test_create(session, ingredients):
+def test_create(session, procedures):
     from baking.routers.recipe.service import create
     from baking.routers.recipe.models import RecipeCreate
 
     recipe_name = "test"
 
-    recipe_in = RecipeCreate(name=recipe_name, ingredients=ingredients)
+    recipe_in = RecipeCreate(name=recipe_name, procedures=procedures)
 
     recipe = create(db_session=session, recipe_in=recipe_in)
     assert recipe
-    assert len(recipe.ingredients) == len(ingredients)
-    assert recipe.ingredients[0].recipe.name == recipe_name
+    assert len(recipe.procedures) == len(procedures)
+    assert recipe.procedures[0].recipe.name == recipe_name
 
 
 def test_update(session, recipe):

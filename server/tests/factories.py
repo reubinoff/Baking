@@ -1,3 +1,4 @@
+from baking.routers.procedure.models import Procedure
 from faker import Faker
 
 from factory import Sequence, post_generation, SubFactory, LazyAttribute
@@ -66,3 +67,16 @@ class IngredientFactory(BaseFactory):
         """Factory Configuration."""
 
         model = Ingredient
+
+
+class ProcedureFactory(BaseFactory):
+    """Ingredient Factory."""
+
+    name = Sequence(lambda n: f"recipe_{n}")
+    description = Sequence(lambda n: f"blaBla_{n}")
+    order = FuzzyInteger(1, 10)
+
+    class Meta:
+        """Factory Configuration."""
+
+        model = Procedure

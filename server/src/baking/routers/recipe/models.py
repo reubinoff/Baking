@@ -23,7 +23,7 @@ from baking.routers.ingredients.models import (
     IngredientRead,
 )
 
-# from baking.routers.procedure.models import Procedure, ProcedureCreate
+from baking.routers.procedure.models import Procedure, ProcedureCreate
 
 # from baking.routers.users.models import User, UserRead
 
@@ -34,16 +34,15 @@ from baking.routers.ingredients.models import (
 class Recipe(Base, TimeStampMixin):
     id = Column(Integer, primary_key=True)
     name = Column(String(32))
-    description = Column(String(50))
+    description = Column(String(100))
 
     # auther of the recipe ###############################################################
     # public = Column(Boolean)
     # user_id = Column(Integer, ForeignKey("user.id"), index=True, nullable=False)
     ###########################################################################################
 
-    # procedures = relationship("Procedure", lazy="joined")
-    ingredients = relationship(
-        "Ingredient",
+    procedures = relationship(
+        "Procedure",
         lazy="subquery",
         cascade="all, delete-orphan",
         back_populates="recipe",
@@ -74,15 +73,11 @@ class RecipeBase(OurBase):
 
 class RecipeRead(RecipeBase):
     id: Optional[int]
-    ingredients: List[IngredientCreate]
+    procedures: List[ProcedureCreate]
 
 
 class RecipeCreate(RecipeBase):
-    ingredients: Optional[List[IngredientCreate]]
-    # procedures = List[ProcedureCreate]
-
-    # user_id = Optional[UserRead]
-    pass
+    procedures: Optional[List[ProcedureCreate]]
 
 
 class RecipeUpdate(RecipeBase):

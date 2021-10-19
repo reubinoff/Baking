@@ -18,9 +18,9 @@ from .enums import IngrediantUnits, IngrediantType
 ############################################################
 
 
-class Ingredient(Base, RecipeMixin):
+class Ingredient(Base):
     """
-    for example: water, 30, grams
+    for example: water, 30, grams, flour
     """
 
     id = Column(Integer, primary_key=True)
@@ -29,9 +29,8 @@ class Ingredient(Base, RecipeMixin):
     units = Column(String(32), default=IngrediantUnits.grams)
     type = Column(String(32), default=IngrediantType.Other)
 
-    # procedure_id = Column(
-    #     Integer, ForeignKey("procedure.id"), index=True, nullable=True
-    # )
+    procedure_id = Column(Integer, ForeignKey("procedure.id", ondelete="CASCADE"))
+    procedure = relationship("Procedure")
 
 
 ############################################################
