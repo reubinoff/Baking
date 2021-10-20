@@ -55,7 +55,7 @@ def update(
 
 
 def delete(*, db_session, procedure_id: int):
-    """Deletes a recipe."""
-    project = db_session.query(Procedure).filter(Procedure.id == procedure_id).first()
-    db_session.delete(project)
+    """Deletes a procedure."""
+    procedure = db_session.query(Procedure).filter(Procedure.id == procedure_id).first()
+    db_session.delete(procedure)
     db_session.commit()

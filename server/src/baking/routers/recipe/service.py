@@ -49,6 +49,6 @@ def update(*, db_session, recipe: Recipe, recipe_in: RecipeUpdate) -> Recipe:
 
 def delete(*, db_session, recipe_id: int):
     """Deletes a recipe."""
-    project = db_session.query(Recipe).filter(Recipe.id == recipe_id).first()
-    db_session.delete(project)
+    recipe = db_session.query(Recipe).filter(Recipe.id == recipe_id).first()
+    db_session.delete(recipe)
     db_session.commit()

@@ -28,10 +28,10 @@ def create(*, db_session, ingredient_in: IngredientCreate) -> Ingredient:
 
 def delete(*, db_session, ingredient_id: int):
     """Deletes a ingredient."""
-    project = (
+    ingredient = (
         db_session.query(Ingredient).filter(Ingredient.id == ingredient_id).first()
     )
-    db_session.delete(project)
+    db_session.delete(ingredient)
     db_session.commit()
 
 

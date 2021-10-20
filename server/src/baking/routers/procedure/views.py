@@ -79,7 +79,7 @@ def update_recipe(
     if not procedure:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=[{"msg": "The recipe with this id does not exist."}],
+            detail=[{"msg": "The procedure with this id does not exist."}],
         )
     procedure = update(
         db_session=db_session, procedure=procedure, procedure_in=procedure_in

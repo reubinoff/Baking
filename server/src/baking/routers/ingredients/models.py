@@ -24,10 +24,10 @@ class Ingredient(Base):
     """
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(32))
+    name = Column(String)
     quantity = Column(Integer)
-    units = Column(String(32), default=IngrediantUnits.grams)
-    type = Column(String(32), default=IngrediantType.Other)
+    units = Column(String, default=IngrediantUnits.grams)
+    type = Column(String, default=IngrediantType.Other)
 
     procedure_id = Column(Integer, ForeignKey("procedure.id", ondelete="CASCADE"))
     procedure = relationship("Procedure")
@@ -45,7 +45,6 @@ class IngredientBase(OurBase):
 
 class IngredientRead(IngredientBase):
     id: Optional[int]
-    # procedure_id: Optional[int]
 
 
 class IngredientCreate(IngredientBase):
