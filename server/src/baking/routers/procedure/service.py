@@ -19,7 +19,6 @@ def get_all(*, db_session) -> List[Optional[Procedure]]:
 
 def create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
     """Creates a new Procedure."""
-
     ingredients = []
     if procedure_in.ingredients is not None and isinstance(
         procedure_in.ingredients, List
@@ -36,6 +35,21 @@ def create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
     db_session.add(procedure)
     db_session.commit()
     return procedure
+
+
+def get_or_create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
+    """Gets or creates a new procedure."""
+    # prefer the Procedure id if available
+    if procedure_in.id:
+        q = db_session.query(Procedure).filter(Procedure.id == procedure_in.id)
+    else:
+        q = db_session.query(Procedure).filter_by(name=procedure_in.name)
+
+    instance = q.first()
+    if instance:
+        return instance
+
+    return create(db_session=db_session, procedure_in=procedure_in)
 
 
 def update(

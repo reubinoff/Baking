@@ -16,7 +16,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from baking.database.core import Base
-from baking.models import OurBase, TimeStampMixin, NameStr
+from baking.models import OurBase, PrimaryKey, TimeStampMixin, NameStr
 from baking.routers.ingredients.enums import IngrediantType
 from baking.routers.ingredients.models import (
     Ingredient,
@@ -44,7 +44,6 @@ class Recipe(Base, TimeStampMixin):
 
     procedures = relationship(
         "Procedure",
-        lazy="subquery",
         cascade="all, delete-orphan",
         back_populates="recipe",
     )
@@ -68,7 +67,7 @@ class Recipe(Base, TimeStampMixin):
 # Pydantic models...
 ############################################################
 class RecipeBase(OurBase):
-    name: NameStr
+    name: Optional[NameStr]
     description: Optional[str] = Field(None, nullable=True)
     procedures: Optional[List[ProcedureCreate]]
 
@@ -80,15 +79,16 @@ class RecipeBase(OurBase):
 
 
 class RecipeRead(RecipeBase):
-    id: int
+    id: PrimaryKey
+    name: NameStr
 
 
 class RecipeCreate(RecipeBase):
-    pass
+    name: NameStr
 
 
 class RecipeUpdate(RecipeBase):
-    pass
+    procedures: Optional[List[ProcedureCreate]] = []
 
 
 class RecipePagination(OurBase):

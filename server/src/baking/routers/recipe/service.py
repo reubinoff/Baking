@@ -3,6 +3,7 @@ from typing import Optional, List
 from .models import RecipeRead, Recipe, RecipeCreate, RecipeUpdate
 
 from baking.routers.procedure.service import create as create_procedure
+from baking.routers.procedure.service import get_or_create as get_or_create_procedure
 
 
 def get(*, db_session, recipe_id: int) -> Optional[Recipe]:
@@ -22,7 +23,7 @@ def create(*, db_session, recipe_in: RecipeCreate) -> Recipe:
     procedures = []
     if recipe_in.procedures is not None and isinstance(recipe_in.procedures, List):
         procedures = [
-            create_procedure(db_session=db_session, procedure_in=procedure_in)
+            get_or_create_procedure(db_session=db_session, procedure_in=procedure_in)
             for procedure_in in recipe_in.procedures
         ]
 
@@ -37,11 +38,19 @@ def update(*, db_session, recipe: Recipe, recipe_in: RecipeUpdate) -> Recipe:
     """Updates a recipe."""
     recipe_data = recipe.dict()
 
-    update_data = recipe_in.dict(exclude_unset=True, exclude={})
+    procedures = []
+    for p in recipe_in.procedures:
+        print("<><><><><<>")
+        procedures.append(
+            get_or_create_procedure(db_session=db_session, procedure_in=p)
+        )
+
+    update_data = recipe_in.dict(exclude_unset=True, exclude={"procedures"})
 
     for field in recipe_data:
         if field in update_data:
             setattr(recipe, field, update_data[field])
+    recipe.procedures = procedures
 
     db_session.commit()
     return recipe

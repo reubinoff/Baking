@@ -11,6 +11,8 @@ from baking.database.core import engine, sessionmaker
 from pydantic.error_wrappers import ErrorWrapper, ValidationError
 from fastapi.logger import logger as log
 
+from sqlalchemy.exc import IntegrityError
+
 
 @functools.lru_cache()
 def get_middlewares() -> Optional[Sequence[Middleware]]:
@@ -68,5 +70,18 @@ async def exceptions(request: Request, call_next) -> Response:
                 "detail": [{"msg": "Unknown", "loc": ["Unknown"], "type": "Unknown"}]
             },
         )
-
+    except IntegrityError as e:
+        log.exception(e)
+        response = JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={
+                "detail": [
+                    {
+                        "msg": "An object with this id already exists.",
+                        "loc": ["Unknown"],
+                        "type": "Unknown",
+                    }
+                ]
+            },
+        )
     return response

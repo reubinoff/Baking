@@ -1,5 +1,5 @@
 from typing import List, Optional
-from baking.models import NameStr, RecipeMixin
+from baking.models import NameStr, PrimaryKey, RecipeMixin
 from pydantic import Field
 
 from sqlalchemy import Column, Integer, String
@@ -42,11 +42,11 @@ class ProcedureBase(OurBase):
 
 
 class ProcedureRead(ProcedureBase):
-    id: int
+    id: PrimaryKey
 
 
 class ProcedureCreate(ProcedureBase):
-    pass
+    id: Optional[PrimaryKey]
 
 
 class ProcedureUpdate(ProcedureBase):
