@@ -12,14 +12,9 @@ from starlette.requests import Request
 
 from baking.config import settings as app_settings
 
-DB_SETTINGS = {}
-
 
 @lru_cache
 def get_sql_url() -> str:
-    settings = DB_SETTINGS
-    if app_settings.db_cert_path and app_settings.db_cert_path != "":
-        settings.update({"ssl_ca": app_settings.db_cert_path})
     return str(
         URL.create(
             drivername="postgresql+psycopg2",
@@ -28,9 +23,14 @@ def get_sql_url() -> str:
             host=app_settings.db_host,
             port=5432,
             database=app_settings.db_name,
-            query=settings,
         )
     )
+
+
+def get_ssl_args():
+    if app_settings.db_cert_path and app_settings.db_cert_path != "":
+        return {"sslrootcert": app_settings.db_cert_path}
+    return None
 
 
 engine = create_engine(get_sql_url(), encoding="utf8")
