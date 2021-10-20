@@ -71,8 +71,6 @@ jobs:
     
         - run: |
             cd server
-            # echo "${{ secrets.CERT_DATA }}" > ${{ env.CERT_PATH_CI }}
-            # docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }} --build-arg CERT_LOCATION=${{ env.CERT_PATH_CI }}
             docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
         
