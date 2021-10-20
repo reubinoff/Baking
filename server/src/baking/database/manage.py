@@ -8,7 +8,7 @@ from alembic import command as alembic_command
 
 from baking.config import settings
 
-from .core import Base, sessionmaker, get_sql_url
+from .core import Base, get_sql_url
 
 LOGGER = logging.getLogger(__name__)
 

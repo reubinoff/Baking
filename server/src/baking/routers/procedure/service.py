@@ -2,7 +2,10 @@ from typing import Optional, List
 
 from .models import ProcedureRead, ProcedureCreate, Procedure, ProcedureUpdate
 
-from baking.routers.ingredients.service import create as create_ingredient
+from baking.routers.ingredients.service import (
+    create as create_ingredient,
+    get_or_create as get_or_create_ingidient,
+)
 
 
 def get(*, db_session, procedure_id: int) -> Optional[Procedure]:
@@ -14,7 +17,7 @@ def get(*, db_session, procedure_id: int) -> Optional[Procedure]:
 
 def get_all(*, db_session) -> List[Optional[Procedure]]:
     """Returns all Procedures."""
-    return db_session.query(Procedure)
+    return db_session.query(Procedure).order_by(Procedure.order.desc())
 
 
 def create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
@@ -24,7 +27,7 @@ def create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
         procedure_in.ingredients, List
     ):
         ingredients = [
-            create_ingredient(db_session=db_session, ingredient_in=ingredient_in)
+            get_or_create_ingidient(db_session=db_session, ingredient_in=ingredient_in)
             for ingredient_in in procedure_in.ingredients
         ]
 
@@ -40,15 +43,17 @@ def create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
 def get_or_create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
     """Gets or creates a new procedure."""
     # prefer the Procedure id if available
+    q = None
     if procedure_in.id:
         q = db_session.query(Procedure).filter(Procedure.id == procedure_in.id)
-    else:
-        q = db_session.query(Procedure).filter_by(name=procedure_in.name)
 
-    instance = q.first()
-    if instance:
-        return instance
+    # else:
+    #     q = db_session.query(Procedure).filter_by(name=procedure_in.name)
 
+    if q is not None:
+        instance = q.first()
+        if instance:
+            return instance
     return create(db_session=db_session, procedure_in=procedure_in)
 
 
@@ -58,12 +63,19 @@ def update(
     """Updates a procedure."""
     recipe_data = procedure.dict()
 
-    update_data = procedure_in.dict(exclude_unset=True, exclude={})
+    ingredients = []
+    print(procedure_in.ingredients)
+    for i in procedure_in.ingredients:
+        ingredients.append(
+            get_or_create_ingidient(db_session=db_session, ingredient_in=i)
+        )
+
+    update_data = procedure_in.dict(exclude_unset=True, exclude={"ingredients"})
 
     for field in recipe_data:
         if field in update_data:
             setattr(procedure, field, update_data[field])
-
+    procedure.ingredients = ingredients
     db_session.commit()
     return procedure
 

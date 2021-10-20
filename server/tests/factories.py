@@ -72,7 +72,7 @@ class IngredientFactory(BaseFactory):
 class ProcedureFactory(BaseFactory):
     """Ingredient Factory."""
 
-    name = Sequence(lambda n: f"recipe_{n}")
+    name = Sequence(lambda n: f"procedure_{n}")
     description = Sequence(lambda n: f"blaBla_{n}")
     order = FuzzyInteger(1, 10)
 

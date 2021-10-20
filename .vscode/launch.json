@@ -16,7 +16,8 @@
       "program": "${workspaceFolder}/server//bin/run.py",
       "env": {
         "SERVICE_NAME": "baking-service",
-        "CONFIG_NAME": "src/baking/.config.local.env"
+        "CONFIG_NAME": "src/baking/.config.local.env",
+        "DB_DEBUG_DROP_IN_STARTUP": "False"
       }
     },
     {

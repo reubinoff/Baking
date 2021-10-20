@@ -7,7 +7,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from baking.database.core import Base
-from baking.models import NameStr, OurBase
+from baking.models import NameStr, OurBase, PrimaryKey
 from baking.models import RecipeMixin
 from sqlalchemy.sql.schema import ForeignKey
 from pydantic import Field
@@ -44,10 +44,11 @@ class IngredientBase(OurBase):
 
 
 class IngredientRead(IngredientBase):
-    id: Optional[int]
+    id: PrimaryKey
 
 
 class IngredientCreate(IngredientBase):
+    id: Optional[PrimaryKey]
     name: NameStr
     quantity: int = Field(1, gt=0, lt=100000)
     units: IngrediantUnits

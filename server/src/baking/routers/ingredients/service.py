@@ -26,6 +26,20 @@ def create(*, db_session, ingredient_in: IngredientCreate) -> Ingredient:
     return ingredient
 
 
+def get_or_create(*, db_session, ingredient_in: IngredientCreate) -> Ingredient:
+    """Gets or creates a new Ingredient."""
+    # prefer the Ingredient id if available
+    q = None
+    if ingredient_in.id:
+        q = db_session.query(Ingredient).filter(Ingredient.id == ingredient_in.id)
+
+    if q is not None:
+        instance = q.first()
+        if instance:
+            return instance
+    return create(db_session=db_session, ingredient_in=ingredient_in)
+
+
 def delete(*, db_session, ingredient_id: int):
     """Deletes a ingredient."""
     ingredient = (
