@@ -25,7 +25,7 @@ COPY --chown=$USER:$USER scripts/prestart.sh .
 
 # SSL
 RUN mkdir -p ${CERT_PATH}
-COPY ${CERT_LOCATION} ${CERT_PATH}
+# COPY ${CERT_LOCATION} ${CERT_PATH}
 
 
 # FastApi Configuration
