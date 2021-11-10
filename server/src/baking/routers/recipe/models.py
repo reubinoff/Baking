@@ -33,7 +33,7 @@ class Recipe(Base, TimeStampMixin):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     description = Column(String)
-
+    test = Column(String, nullable=True)
     # auther of the recipe ###############################################################
     # public = Column(Boolean)
     # user_id = Column(Integer, ForeignKey("user.id"), index=True, nullable=False)
