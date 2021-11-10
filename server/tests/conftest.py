@@ -1,14 +1,15 @@
 import pytest
-
+import random
 from sqlalchemy_utils import drop_database
 from starlette.testclient import TestClient
 from starlette.config import environ
 
+from factory import Sequence
 
 # set test config
 environ["DB_PASS"] = "rootsql"
 environ["DB_HOST"] = "127.0.0.1"
-environ["DB_NAME"] = "ttt"
+environ["DB_NAME"] = "baking-db-test-" + str(random.random())
 environ["DB_USER"] = "postgres"
 
 
@@ -91,4 +92,4 @@ def procedure(session):
 
 @pytest.fixture
 def procedures(session):
-    return [ProcedureFactory(), ProcedureFactory()]
+    return [ProcedureFactory(), ProcedureFactory(), ProcedureFactory()]
