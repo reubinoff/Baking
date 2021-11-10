@@ -18,5 +18,6 @@
       "username": "root",
       "password": "sql"
     }
-  ]
+  ],
+  "python.linting.flake8Enabled": false
 }

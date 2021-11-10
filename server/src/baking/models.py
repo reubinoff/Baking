@@ -1,10 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 from pydantic.types import conint, constr
 
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, event, ForeignKey
+from sqlalchemy import Column, DateTime, Integer, event, ForeignKey
 from sqlalchemy.orm import relationship
 
 ########################## SQLAlchemy models ##########################
