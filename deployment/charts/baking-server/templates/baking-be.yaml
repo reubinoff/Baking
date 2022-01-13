@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      name: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        name: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.baking.repository }}:{{ .Values.baking.imageVersion }}"
+          ports:
+            - name: http
+              containerPort: {{ .Values.baking.containerPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.baking.livenessProbe.path }}
+              port: {{ .Values.baking.livenessProbe.port }}
+            initialDelaySeconds: 30
+            timeoutSeconds: 3
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.baking.readinessProbe.path }}
+              port: {{ .Values.baking.readinessProbe.port }}
+            initialDelaySeconds: 30
+            timeoutSeconds: 3

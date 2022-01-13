@@ -13,15 +13,15 @@ schemathesis.fixups.install(["fast_api"])
 schema = schemathesis.from_asgi("/docs/openapi.json", app, base_url="/")
 
 
-# @pytest.fixture(scope="session")
-# def token():
-#     client = TestClient(app)
-#     response = client.post(
-#         "/api/v1/default/auth/register",
-#         json={"email": "test@example.com", "password": "test123"},
-#     )
-#     assert response.status_code == 200
-#     return response.json()["token"]
+@pytest.fixture(scope="session")
+def token():
+    client = TestClient(app)
+    response = client.post(
+        "/api/v1/default/auth/register",
+        json={"email": "test@example.com", "password": "test123"},
+    )
+    assert response.status_code == 200
+    return response.json()["token"]
 
 
 @schema.parametrize()

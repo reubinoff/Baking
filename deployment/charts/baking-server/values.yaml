@@ -1,0 +1,22 @@
+
+general:
+  version: 0.0.1
+
+baking:
+  repository: tiangolo/uvicorn-gunicorn-fastapi
+  imageVersion: python3.9-slim
+
+  containerPort: 8000
+
+  livenessProbe:
+    path: /
+    port: 81
+  readinessProbe:
+    path: /
+    port: 80
+
+db:
+  host: "localhost"
+  port: "3360"
+  username: "test"
+  password: "test"

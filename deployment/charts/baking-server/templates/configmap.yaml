@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
+  serviceName: "Baking-Service"
+  dbHost: {{ .Values.db.host | quote }}
+  dbPort: {{ .Values.db.port | quote }}
+  dbUsername: {{ .Values.db.username | quote }}
+  dbPassword: {{ .Values.db.password | quote }}

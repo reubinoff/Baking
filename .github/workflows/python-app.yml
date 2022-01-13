@@ -73,10 +73,6 @@ jobs:
           run: |
             cd server
             docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
-            docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
-        
-        - uses: azure/webapps-deploy@v2
-          with:
-            app-name: 'baking-service'
-            images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
+            # docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/baking-app:${{ github.sha }}
+      
             
