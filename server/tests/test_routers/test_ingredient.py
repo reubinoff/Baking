@@ -1,4 +1,5 @@
-def test_get(session, ingredient):
+
+def test_get(session, cleaner, ingredient):
     from baking.routers.ingredients.service import get
 
     t_ingredient = get(db_session=session, ingredient_id=ingredient.id)

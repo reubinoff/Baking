@@ -40,7 +40,7 @@ def pytest_runtest_makereport(item, call):
             parent._previousfailed = item
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def db():
     init_database(engine)
     Session.configure(bind=engine)
@@ -64,6 +64,16 @@ def session(db):
 def client(testapp, session, client):
     yield TestClient(testapp)
 
+
+@pytest.fixture(scope="function")
+def cleaner(session):
+    from baking.routers.ingredients.models import Ingredient
+    from baking.routers.procedure.models import Procedure
+    from baking.routers.recipe.models import Recipe
+    session.query(Ingredient).delete()
+    session.query(Procedure).delete()
+    session.query(Recipe).delete()
+    session.commit()
 
 @pytest.fixture
 def recipe(session):

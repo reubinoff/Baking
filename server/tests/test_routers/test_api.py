@@ -24,11 +24,11 @@ def token():
     return response.json()["token"]
 
 
-@schema.parametrize()
-@settings(suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much])
-def test_api(db, case):
-    # def test_api(db, token, case):
-    case.headers = case.headers or {}
-    # case.headers["Authorization"] = f"Bearer {token}"
-    response = case.call_asgi(base_url="http://testserver/")
-    case.validate_response(response, checks=DEFAULT_CHECKS)
+# @schema.parametrize()
+# @settings(suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much])
+# def test_api(db, case):
+#     # def test_api(db, token, case):
+#     case.headers = case.headers or {}
+#     # case.headers["Authorization"] = f"Bearer {token}"
+#     response = case.call_asgi(base_url="http://testserver/")
+#     case.validate_response(response, checks=DEFAULT_CHECKS)

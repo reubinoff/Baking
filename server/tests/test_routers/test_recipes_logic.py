@@ -1,4 +1,4 @@
-def test_create_and_update(session, procedures, procedure):
+def test_create_and_update(session, cleaner, procedures, procedure):
     from baking.routers.recipe.service import create, get
     from baking.routers.recipe.models import RecipeCreate
 
