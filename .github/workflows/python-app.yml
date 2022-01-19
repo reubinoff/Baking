@@ -53,7 +53,7 @@ jobs:
         runs-on: ubuntu-latest
         needs: test
         environment:
-          base_repo = reubinoff/baking:latest
+          BASE_REPO = reubinoff/baking:latest
         steps:
         # checkout the repo
         - name: 'Checkout GitHub Action'
@@ -75,7 +75,7 @@ jobs:
           run: |
             cd server
             docker-compose build
-            docker tag ${{env.base_repo}} reubinoff/baking:${{ github.sha }}
+            docker tag ${{ env.BASE_REPO }} reubinoff/baking:${{ github.sha }}
             # docker push ghcr.io/reubinoff/baking:${{ github.sha }}
       
             
