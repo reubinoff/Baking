@@ -6,4 +6,4 @@ services:
       dockerfile: "Dockerfile"
       args:
         - service_name=test_arg
-    image: "reubinoff.azurecr.io/baking:0.0.1"
+    image: "reubinoff/baking:latest"
