@@ -13,7 +13,7 @@ schemathesis.fixups.install(["fast_api"])
 schema = schemathesis.from_asgi("/docs/openapi.json", app, base_url="/")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def token():
     client = TestClient(app)
     response = client.post(
