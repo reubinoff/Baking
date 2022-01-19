@@ -40,7 +40,7 @@ def pytest_runtest_makereport(item, call):
             parent._previousfailed = item
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def db():
     init_database(engine)
     Session.configure(bind=engine)
