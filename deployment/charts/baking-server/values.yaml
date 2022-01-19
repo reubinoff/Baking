@@ -3,8 +3,8 @@ general:
   version: 0.0.1
 
 baking:
-  repository: tiangolo/uvicorn-gunicorn-fastapi
-  imageVersion: python3.9-slim
+  repository: reubinoff.azurecr.io/baking
+  imageVersion: 0.0.1
 
   containerPort: 8000
 
@@ -20,3 +20,4 @@ db:
   port: "3360"
   username: "test"
   password: "test"
+  name: "baking"
