@@ -78,6 +78,6 @@ jobs:
             cd server
             docker-compose build
             docker tag ${{ env.BASE_REPO }}:latest ${{ env.BASE_REPO }}:${{ github.sha }}
-            # docker push ${{ env.REGISTRY }}/$ {{ env.BASE_REPO }}:${{ github.sha }}
+            docker push ${{ env.REGISTRY }}/$ {{ env.BASE_REPO }}:${{ github.sha }}
       
             
