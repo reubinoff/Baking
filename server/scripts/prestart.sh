@@ -2,12 +2,17 @@
 
 
 #DB 
+echo "hello $db_host"
+while ! pg_isready 
+do
+    echo "$(date) - waiting for database to start"
+    sleep 10
+done
 echo "Running migration..."
-export CONFIG_NAME=""
 
 
 cd ./baking
-alembic upgrade head
+# alembic upgrade head
 
 
 echo "starting!!"

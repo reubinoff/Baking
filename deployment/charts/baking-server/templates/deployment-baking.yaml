@@ -8,7 +8,10 @@ spec:
       name: {{ .Chart.Name }}
   template:
     metadata:
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
+        app: {{ .Chart.Name }}
         name: {{ .Chart.Name }}
     spec:
       containers:
@@ -26,12 +29,12 @@ spec:
             httpGet:
               path: {{ .Values.baking.livenessProbe.path }}
               port: {{ .Values.baking.livenessProbe.port }}
-            initialDelaySeconds: 30
+            initialDelaySeconds: 5
             timeoutSeconds: 3
-            periodSeconds: 15
+            periodSeconds: 30
           readinessProbe:
             httpGet:
               path: {{ .Values.baking.readinessProbe.path }}
               port: {{ .Values.baking.readinessProbe.port }}
-            initialDelaySeconds: 30
+            initialDelaySeconds: 5
             timeoutSeconds: 3

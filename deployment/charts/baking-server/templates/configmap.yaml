@@ -5,8 +5,9 @@ metadata:
 data:
   myvalue: "Hello World"
   serviceName: "Baking-Service"
-  db_host: {{ .Values.db.host | quote }}
-  db_port: {{ .Values.db.port | quote }}
+
+
+  db_hos: "{{ .Release.Name }}-{{ .Values.db.host }}"
   db_user: {{ .Values.db.username | quote }}
   db_pass: {{ .Values.db.password | quote }}
   db_name: {{ .Values.db.name | quote }}

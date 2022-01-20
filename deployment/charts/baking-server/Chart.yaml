@@ -13,4 +13,4 @@ dependencies:
   - name: postgresql
     version: "^10"
     repository: "@bitnami"
-    alias: postgres-db
+    # alias: test-postgres-db

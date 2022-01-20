@@ -3,21 +3,27 @@ general:
   version: 0.0.1
 
 baking:
-  repository: reubinoff.azurecr.io/baking
-  imageVersion: 0.0.1
+  repository: reubinoff/baking
+  imageVersion: latest
 
-  containerPort: 8000
+  containerPort: 80
+  targetPort: 8080
 
   livenessProbe:
-    path: /
-    port: 81
+    path: /healthcheck
+    port: 80
   readinessProbe:
-    path: /
+    path: /healthcheck
     port: 80
 
 db:
-  host: "localhost"
-  port: "3360"
-  username: "test"
-  password: "test"
+  host: "postgresql"
+  username: "postgres"
+  password: "secretpassword"
   name: "baking"
+
+
+postgresql:
+  postgresqlPassword: "secretpassword"
+  postgresqlDatabase: "baking"
+    
