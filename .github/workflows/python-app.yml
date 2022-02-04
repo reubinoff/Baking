@@ -98,12 +98,19 @@ jobs:
       env:
         BASE_REPO: reubinoff/baking
         REGISTRY: reubinoff.azurecr.io
+        CONTEXT: baking
       steps:
 
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
           version: v3.7.2
+
+      - uses: azure/k8s-set-context@v2
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          context: ${{ env.CONTEXT }}
 
       - name: crate kubeconfig
         run: |
