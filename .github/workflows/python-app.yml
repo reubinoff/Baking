@@ -101,6 +101,9 @@ jobs:
         CONTEXT: baking
       steps:
 
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
@@ -112,7 +115,7 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           context: ${{ env.CONTEXT }}
 
-      - name: Install k8s
+      - name: helm install
         run: |
           cd deployment/charts/baking-server
           helm upgrade --install --create-namespace -n baking-deploy \
