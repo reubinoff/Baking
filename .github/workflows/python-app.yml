@@ -104,6 +104,10 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           context: ${{ env.CONTEXT }}
 
+      - name: Add dependency chart repos
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+        
       - name: helm install
         run: |
           cd deployment/charts/baking-server
