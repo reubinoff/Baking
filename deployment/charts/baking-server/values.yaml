@@ -3,8 +3,8 @@ general:
   version: 0.0.1
 
 baking:
-  repository: reubinoff/baking
-  imageVersion: latest
+  repository:  "reubinoff.azurecr.io/reubinoff/baking"
+  imageVersion: "latest"
 
   containerPort: 80
   targetPort: 8080

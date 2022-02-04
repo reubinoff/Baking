@@ -7,7 +7,7 @@ data:
   serviceName: "Baking-Service"
 
 
-  db_hos: "{{ .Release.Name }}-{{ .Values.db.host }}"
+  db_host: "{{ .Release.Name }}-{{ .Values.db.host }}"
   db_user: {{ .Values.db.username | quote }}
   db_pass: {{ .Values.db.password | quote }}
   db_name: {{ .Values.db.name | quote }}

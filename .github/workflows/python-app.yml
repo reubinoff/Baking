@@ -54,7 +54,6 @@ jobs:
         needs: test
         env:
           BASE_REPO: reubinoff/baking
-          TARGET_IMAGE: reubinoff/baking
           REGISTRY: reubinoff.azurecr.io
         steps:
         # checkout the repo
