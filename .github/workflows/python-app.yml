@@ -81,36 +81,5 @@ jobs:
             docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:latest
 
 
-    deploy:
-      runs-on: ubuntu-latest
-      needs: build
-      env:
-        BASE_REPO: reubinoff/baking
-        REGISTRY: reubinoff.azurecr.io
-        CONTEXT: baking
-      steps:
 
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@main
-
-      - name: Install Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.7.2
-
-      - uses: azure/k8s-set-context@v2
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-          context: ${{ env.CONTEXT }}
-
-      - name: helm install
-        run: |
-          cd deployment/charts/baking-server
-          helm dependency build
-          helm upgrade --install --create-namespace -n baking-deploy \
-           --set imageVersion=${{ github.sha }} \
-           baking-service ./
-
-    
           
