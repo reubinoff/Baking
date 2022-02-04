@@ -112,10 +112,6 @@ jobs:
           kubeconfig: ${{ secrets.KUBECONFIG }}
           context: ${{ env.CONTEXT }}
 
-      - name: crate kubeconfig
-        run: |
-          echo ${{ secrets.KUBECONFIG }} > ~/.kube/config
-
       - name: Install k8s
         run: |
           cd deployment/charts/baking-server
