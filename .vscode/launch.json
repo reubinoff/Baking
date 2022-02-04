@@ -5,7 +5,9 @@
       "name": "Flutter",
       "type": "dart",
       "request": "launch",
-      "program": "${workspaceFolder}/flutter_client/lib/main.dart"
+      "program": "${workspaceFolder}/flutter_client/lib/main.dart",
+      "flutterMode": "debug"
+
     },
     {
       "name": "Python: Current File",
