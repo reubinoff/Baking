@@ -113,7 +113,7 @@ jobs:
           cd deployment/charts/baking-server
           helm dependency build
           helm upgrade --install --create-namespace -n baking-deploy \
-           --set imageVersion=${{ github.sha }} \
+           --set baking.imageVersion=${{ github.sha }} \
            baking-service ./
 
     
