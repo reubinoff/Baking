@@ -55,7 +55,7 @@ jobs:
         env:
           BASE_REPO: reubinoff/baking
           TARGET_IMAGE: reubinoff/baking
-          REGISTRY: ghcr.io 
+          REGISTRY: reubinoff.azurecr.io
         steps:
         # checkout the repo
         - name: 'Checkout GitHub Action'
@@ -66,18 +66,22 @@ jobs:
         #   with:
         #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-        # - name: 'Build and push image'
-        #   uses: azure/docker-login@v1
-        #   with:
-        #     login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        #     username: ${{ secrets.REGISTRY_USERNAME }}
-        #     password: ${{ secrets.REGISTRY_PASSWORD }}
-        - name: Log in to the Container registry
-          uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        - name: 'Build and push image'
+          uses: azure/docker-login@v1
           with:
-            registry: ${{ env.REGISTRY }}
-            username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }} 
+            login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+            username: ${{ secrets.REGISTRY_USERNAME }}
+            password: ${{ secrets.REGISTRY_PASSWORD }}
+
+
+
+
+        # - name: Log in to the Container registry
+        #   uses: docker/login-action@v1
+        #   with:
+        #     registry: ${{ env.REGISTRY }}
+        #     username: ${{ github.actor }}
+        #     password: ${{ secrets.GITHUB_TOKEN }} 
 
         - name: Build And Publish Docker
           run: |
