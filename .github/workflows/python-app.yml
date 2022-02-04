@@ -43,9 +43,9 @@ jobs:
         - name: 'Run Pytests'
           run: |
             cd server
-            # poetry env use 3.9
-            # poetry install 
-            # poetry run python -m pytest -xv --cov=src/baking/routers --cov-fail-under=80 --cov-report html 
+            poetry env use 3.9
+            poetry install 
+            poetry run python -m pytest -xv --cov=src/baking/routers --cov-fail-under=80 --cov-report html 
 
     build:
         runs-on: ubuntu-latest
@@ -88,6 +88,8 @@ jobs:
         BASE_REPO: reubinoff/baking
         REGISTRY: reubinoff.azurecr.io
         CONTEXT: baking
+        NAMESPACE: baking-deploy
+        DEPLOYMENT_NAME: baking-service
       steps:
 
       - name: 'Checkout GitHub Action'
@@ -112,9 +114,9 @@ jobs:
         run: |
           cd deployment/charts/baking-server
           helm dependency build
-          helm upgrade --install --create-namespace -n baking-deploy \
+          helm upgrade --install --create-namespace -n ${{ env.NAMESPACE }} \
            --set baking.imageVersion=${{ github.sha }} \
-           baking-service ./
+           ${{ env.DEPLOYMENT_NAME }} ./
 
     
           
