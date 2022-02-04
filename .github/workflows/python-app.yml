@@ -36,8 +36,6 @@ jobs:
         - uses: actions/setup-python@v2
           with:
             python-version: '3.9' 
-        
-      
 
         - name: Install Poetry
           uses: snok/install-poetry@v1
@@ -72,15 +70,6 @@ jobs:
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
 
-
-
-
-        # - name: Log in to the Container registry
-        #   uses: docker/login-action@v1
-        #   with:
-        #     registry: ${{ env.REGISTRY }}
-        #     username: ${{ github.actor }}
-        #     password: ${{ secrets.GITHUB_TOKEN }} 
 
         - name: Build And Publish Docker
           run: |
