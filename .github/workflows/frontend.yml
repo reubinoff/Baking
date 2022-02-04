@@ -27,7 +27,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - name: test
+      - name: web build
         run: |
           cd flutter_client
           flutter build web
@@ -45,9 +45,22 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      - name: test
+      - name: android build
         run: |
           cd flutter_client
           flutter build apk
           flutter build appbundle
           ls -l
+
+  build-ios:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: android ios
+        run: |
+          cd flutter_client
+          lutter build ios --release --no-codesign
