@@ -11,8 +11,10 @@ jobs:
       - uses: actions/checkout@v2
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # or: 'beta' or 'master'
-      - run: cd flutter_client
-      - run: flutter --version
-      - run: flutter pub get
-      - run: flutter test
+          channel: 'stable'
+      - name: test
+        run: |
+          cd flutter_client
+          flutter --version
+          flutter pub get
+          flutter test
