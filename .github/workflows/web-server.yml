@@ -3,22 +3,20 @@ name: web-ci
 on:
   push:
     branches: [ develop, main]
-
+  workflow_run:
+    workflows: ["flutter-ci"]
+    types: 
+      - completed
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v2
+      - uses: actions/download-artifact@master
         with:
-          channel: 'stable'
-      - name: test
-        run: |
-          cd flutter_client
-          flutter --version
-          flutter pub get
-          flutter format --set-exit-if-changed .
-          flutter analyze .
-          flutter test
-
- 
+          name: release-web
+          path: web-server/public/
+      - run: |
+          ls -l
+          ls -l web-server
+          ls -l web-server/public
