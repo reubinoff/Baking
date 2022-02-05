@@ -5,12 +5,12 @@ web:
   repository:  "reubinoff.azurecr.io/reubinoff/web"
   imageVersion: "latest"
 
-  containerPort: 80
-  targetPort: 3000
+  containerPort: 3000
+  targetPort: 80
 
   livenessProbe:
     path: /healthcheck
-    port: 80
+    port: 3000
   readinessProbe:
     path: /healthcheck
-    port: 80
+    port: 3000
