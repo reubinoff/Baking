@@ -1,10 +1,9 @@
 name: web-ci
 
 on:
-  push:
-    branches: [ develop, main]
   workflow_run:
     workflows: ["flutter-ci"]
+    branches: [ develop, main]
     types: 
       - completed
 jobs:
