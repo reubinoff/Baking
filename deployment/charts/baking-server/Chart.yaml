@@ -1,5 +1,5 @@
 apiVersion: v2
-name: baking-server
+name: reubinoff-baking
 description: A Helm chart for baking service
 type: application
 

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}-server
 spec:
   selector:
     matchLabels:
@@ -9,18 +9,18 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap-server.yaml") . | sha256sum }}
       labels:
         app: {{ .Chart.Name }}
         name: {{ .Chart.Name }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-service
           image: "{{ .Values.baking.repository }}:{{ .Values.baking.imageVersion }}"
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
-                name: {{ .Release.Name }}-configmap
+                name: {{ .Release.Name }}-configmap-server
           ports:
             - name: http
               containerPort: {{ .Values.baking.containerPort }}

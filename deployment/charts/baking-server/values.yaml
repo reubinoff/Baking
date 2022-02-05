@@ -16,6 +16,20 @@ baking:
     path: /healthcheck
     port: 80
 
+web:
+  repository:  "reubinoff.azurecr.io/reubinoff/web"
+  imageVersion: "latest"
+
+  containerPort: 3000
+  targetPort: 80
+
+  livenessProbe:
+    path: /healthcheck
+    port: 3000
+  readinessProbe:
+    path: /healthcheck
+    port: 3000
+
 db:
   host: "postgresql"
   username: "postgres"
