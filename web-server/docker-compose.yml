@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  baking-service:
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+      args:
+        - service_name=test_arg
+    image: "reubinoff/web:latest"

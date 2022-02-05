@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      name: {{ .Chart.Name }}
+  template:
+    metadata:
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        app: {{ .Chart.Name }}
+        name: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.web.repository }}:{{ .Values.web.imageVersion }}"
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-configmap
+          ports:
+            - name: http
+              containerPort: {{ .Values.baking.containerPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.baking.livenessProbe.path }}
+              port: {{ .Values.baking.livenessProbe.port }}
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.baking.readinessProbe.path }}
+              port: {{ .Values.baking.readinessProbe.port }}
+            initialDelaySeconds: 5
+            timeoutSeconds: 3

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: web-server
+description: A Helm chart for web servie as front of baking app
+type: application
+
+sources:
+  - "https://github.com/reubinoff/baking_recipes/"
+
+version: 0.1.0
+appVersion: "1.0.0"

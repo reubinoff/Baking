@@ -41,17 +41,73 @@ jobs:
   bundle-nodejs-web:
     runs-on: ubuntu-latest
     needs: build-web
+    env:
+      BASE_REPO: reubinoff/web
+      REGISTRY: reubinoff.azurecr.io
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@master
         with:
           name: release-web
           path: web-server/public/
-      - run: |
-          ls -l
-          ls -l web-server
-          ls -l web-server/public
+
+      - name: 'Log in to the Container registry'
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build And Publish Docker
+        run: |
+          cd web-server
+          docker-compose build
+          docker tag ${{ env.BASE_REPO }}:latest ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
+          docker tag ${{ env.BASE_REPO }}:latest ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:latest
+          docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:latest
+
+  deploy-web:
+      runs-on: ubuntu-latest
+      needs: bundle-nodejs-web
+      env:
+        BASE_REPO: reubinoff/web
+        REGISTRY: reubinoff.azurecr.io
+        CONTEXT: baking
+        NAMESPACE: baking-deploy
+        DEPLOYMENT_NAME: baking-web-service
+      steps:
+
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.7.2
+
+      - uses: azure/k8s-set-context@v2
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+          context: ${{ env.CONTEXT }}
+
+      - name: helm install
+        run: |
+          cd deployment/charts/web-server
+          helm upgrade --install --create-namespace -n ${{ env.NAMESPACE }} \
+           --set baking.imageVersion=${{ github.sha }} \
+           ${{ env.DEPLOYMENT_NAME }} ./
+
     
+          
+
+
+
+
+
+
+
   # build-android:
   #   runs-on: ubuntu-latest
   #   needs: test
