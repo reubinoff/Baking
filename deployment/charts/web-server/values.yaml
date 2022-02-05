@@ -2,7 +2,7 @@ general:
   version: 0.0.1
 
 web:
-  repository:  "reubinoff.azurecr.io/reubinoff/baking"
+  repository:  "reubinoff.azurecr.io/reubinoff/web"
   imageVersion: "latest"
 
   containerPort: 80
