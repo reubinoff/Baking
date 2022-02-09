@@ -23,7 +23,7 @@ app = FastAPI(
     description="Hub for great bread recipes",
     version="0.2.1",
     middleware=get_middlewares(),
-    openapi_url="/docs/openapi.json",
+    root_path=f"/{settings.root_path}"
 )
 app.include_router(api_router)
 app.add_exception_handler(Exception, base_error_handler)

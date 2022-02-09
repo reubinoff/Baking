@@ -11,3 +11,5 @@ data:
   db_user: {{ .Values.db.username | quote }}
   db_pass: {{ .Values.db.password | quote }}
   db_name: {{ .Values.db.name | quote }}
+
+  root_path: {{ .Values.rootPath}}

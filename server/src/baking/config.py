@@ -22,6 +22,7 @@ class BakingConfig(BaseSettings):
 
     alembix_ini = f"{os.path.dirname(os.path.realpath(__file__))}/alembic.ini"
 
+    root_path = ""
     class Config:
         env_file = CONFIG_NAME
 

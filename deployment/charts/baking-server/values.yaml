@@ -15,6 +15,8 @@ baking:
   readinessProbe:
     path: /healthcheck
     port: 80
+  
+  rootPath: api
 
 web:
   repository:  "reubinoff.azurecr.io/reubinoff/web"
