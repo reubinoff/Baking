@@ -10,7 +10,7 @@ from baking.exceptions import base_error_handler
 from baking.middlewares import get_middlewares
 from baking.database.manage import init_database
 from baking.database.core import engine
-from fastapi import logger
+from fastapi.logger import logger
 
 init_logger()
 # logger = logging.getLogger(__name__)
