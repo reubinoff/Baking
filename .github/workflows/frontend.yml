@@ -67,37 +67,37 @@ jobs:
   #         docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
   #         docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:latest
 
-  deploy-web:
-      runs-on: ubuntu-latest
-      needs: bundle-nodejs-web
-      env:
-        BASE_REPO: reubinoff/web
-        REGISTRY: reubinoff.azurecr.io
-        CONTEXT: baking
-        NAMESPACE: baking-deploy
-        DEPLOYMENT_NAME: baking-web-service
-      steps:
+  # deploy-web:
+  #     runs-on: ubuntu-latest
+  #     needs: bundle-nodejs-web
+  #     env:
+  #       BASE_REPO: reubinoff/web
+  #       REGISTRY: reubinoff.azurecr.io
+  #       CONTEXT: baking
+  #       NAMESPACE: baking-deploy
+  #       DEPLOYMENT_NAME: baking-web-service
+  #     steps:
 
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@main
+  #     - name: 'Checkout GitHub Action'
+  #       uses: actions/checkout@main
 
-      - name: Install Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.7.2
+  #     - name: Install Helm
+  #       uses: azure/setup-helm@v1
+  #       with:
+  #         version: v3.7.2
 
-      - uses: azure/k8s-set-context@v2
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-          context: ${{ env.CONTEXT }}
+  #     - uses: azure/k8s-set-context@v2
+  #       with:
+  #         method: kubeconfig
+  #         kubeconfig: ${{ secrets.KUBECONFIG }}
+  #         context: ${{ env.CONTEXT }}
 
-      - name: helm install
-        run: |
-          cd deployment/charts/web-server
-          helm upgrade --install --create-namespace -n ${{ env.NAMESPACE }} \
-           --set baking.imageVersion=${{ github.sha }} \
-           ${{ env.DEPLOYMENT_NAME }} ./
+  #     - name: helm install
+  #       run: |
+  #         cd deployment/charts/web-server
+  #         helm upgrade --install --create-namespace -n ${{ env.NAMESPACE }} \
+  #          --set baking.imageVersion=${{ github.sha }} \
+  #          ${{ env.DEPLOYMENT_NAME }} ./
 
 
   build-android:
