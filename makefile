@@ -1,6 +1,10 @@
 
 DOCKER_REG=reubinoff.azurecr.io/reubinoff
 
+DB_ROOT_PWD=rootsql
+
+DB_CONTAINER_NAME=baking_pytest_from_make
+
 build-server:
 	cd server; \
 		docker-compose build
@@ -23,3 +27,14 @@ deploy:
 	cd deployment/charts/baking-server; \
 		helm upgrade --install baking-test ./
 
+test-server:
+	cd server; \
+		poetry run python -m pytest -xv
+
+run-db:
+	docker run --name ${DB_CONTAINER_NAME} --rm -d -e POSTGRES_PASSWORD=$(DB_ROOT_PWD)  -p 5432:5432 postgres 
+
+stop-db:
+	$(eval DB_CONTAINER_NAME=$(shell sh -c "docker container ls | grep ${DB_CONTAINER_NAME}" | awk '{print $$1}'))
+	@ echo ${DB_CONTAINER_NAME}
+	docker stop ${DB_CONTAINER_NAME}
