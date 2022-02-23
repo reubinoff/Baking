@@ -16,7 +16,10 @@ baking:
     path: /healthcheck
     port: 80
   
-  rootPath: api
+  # imagePullPolicy: IfNotPresent
+  imagePullPolicy: Always
+  rootPath: ""
+  isDebug: False
 
 web:
   repository:  "reubinoff.azurecr.io/reubinoff/web"

@@ -38,3 +38,16 @@ stop-db:
 	$(eval DB_CONTAINER_NAME=$(shell sh -c "docker container ls | grep ${DB_CONTAINER_NAME}" | awk '{print $$1}'))
 	@ echo ${DB_CONTAINER_NAME}
 	docker stop ${DB_CONTAINER_NAME}
+
+heroku-service-deploy:
+	cd server; \
+		heroku container:push -a reubinoff-baking-service web; \
+		heroku container:release -a reubinoff-baking-service web
+
+heroku-client-deploy:
+	cd flutter_client; \
+		~/development/flutter/bin/flutter build web 
+	cp -r flutter_client/build/web/* web-server/public
+	cd web-server; \
+		heroku container:push -a reubinoff-baking-web web; \
+		heroku container:release -a reubinoff-baking-web web

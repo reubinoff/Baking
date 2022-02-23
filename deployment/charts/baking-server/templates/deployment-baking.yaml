@@ -17,7 +17,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}-service
           image: "{{ .Values.baking.repository }}:{{ .Values.baking.imageVersion }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.baking.imagePullPolicy }}
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-configmap-server

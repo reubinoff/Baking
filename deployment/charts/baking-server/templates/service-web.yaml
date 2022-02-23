@@ -5,7 +5,7 @@ metadata:
     service.beta.kubernetes.io/azure-dns-label-name: baking-web-reubinoff
   name: {{ .Chart.Name }}-web
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: {{ .Values.web.targetPort }}
       targetPort: {{ .Values.web.containerPort }}

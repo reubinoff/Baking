@@ -5,7 +5,7 @@ metadata:
     service.beta.kubernetes.io/azure-dns-label-name: baking-service-reubinoff
   name: {{ .Chart.Name }}-service
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: {{ .Values.baking.targetPort }}
       targetPort: {{ .Values.baking.containerPort }}

@@ -1,7 +1,7 @@
 import os
-
 from pydantic import BaseSettings
 class BakingConfig(BaseSettings):
+    is_debug: bool = True
     service_name: str = "testing-service"  # will be replaced in env var
 
     log_level: str = "INFO"
@@ -15,7 +15,7 @@ class BakingConfig(BaseSettings):
 
     alembix_ini = f"{os.path.dirname(os.path.realpath(__file__))}/alembic.ini"
 
-    root_path = ""
+    root_path:str = ""
 
 
 settings = BakingConfig()
