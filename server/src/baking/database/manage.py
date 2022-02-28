@@ -31,8 +31,9 @@ def init_database(engine):
     LOGGER.info(f"conn str: {get_sql_url()}")
     required_tables_creation = False
     if database_exists(get_sql_url()) is False:
-        create_database(get_sql_url())
-        required_tables_creation = True
+        raise Exception("No database exists")
+        # create_database(get_sql_url())
+        # required_tables_creation = True
 
     schema_name = settings.db_name
     with engine.connect() as connection:
