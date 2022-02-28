@@ -43,6 +43,9 @@ jobs:
     needs: build-web
     env:
      ACCOUNT_NAME: reubinoffbakingweb
+     CDN_PROFILE: baking-web-cdb-profile
+     CDN_ENDPOINT: baking
+     RESOURCE_GROUP: baking-aks
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@master
@@ -59,11 +62,11 @@ jobs:
         with:
           inlineScript: |
               az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --auth-mode key -d '$web' -s web-server/public
-      # - name: Purge CDN endpoint
-      #   uses: azure/CLI@v1
-      #   with:
-      #     inlineScript: |
-      #       az cdn endpoint purge --content-paths  "/*" --profile-name "CDN_PROFILE_NAME" --name "CDN_ENDPOINT" --resource-group "RESOURCE_GROUP"
+      - name: Purge CDN endpoint
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.CDN_PROFILE }} --name ${{ env.CDN_ENDPOINT }} --resource-group ${{ env.RESOURCE_GROUP }}
 
     # Azure logout
       - name: logout
