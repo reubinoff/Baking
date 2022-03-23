@@ -45,3 +45,13 @@ def init_database(engine):
     if settings.db_debug_drop_in_startup is True or required_tables_creation is True:
         Base.metadata.drop_all(engine, tables=tables)
         Base.metadata.create_all(engine, tables=tables)
+
+def internal_create_database_for_tests(engine):
+    create_database(get_sql_url())
+    schema_name = settings.db_name
+    with engine.connect() as connection:
+        if schema_name not in connection.dialect.get_schema_names(connection):
+            connection.execute(CreateSchema(schema_name))
+    tables = get_tables()
+    Base.metadata.drop_all(engine, tables=tables)
+    Base.metadata.create_all(engine, tables=tables)

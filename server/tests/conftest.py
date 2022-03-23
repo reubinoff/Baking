@@ -12,16 +12,17 @@ environ["DB_HOST"] = "127.0.0.1"
 environ["DB_NAME"] = "baking-db-test-" + str(random.random())
 environ["DB_USER"] = "postgres"
 
-
 from baking import config
 from baking.database.core import engine, get_sql_url
-from baking.database.manage import init_database
+from baking.database.manage import init_database, internal_create_database_for_tests
 
 
 from .factories import IngredientFactory, ProcedureFactory, RecipeFactory
 
 from .database import Session
 
+
+internal_create_database_for_tests(engine)
 
 def pytest_runtest_setup(item):
     if "slow" in item.keywords and not item.config.getoption("--runslow"):
