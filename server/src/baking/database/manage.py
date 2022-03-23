@@ -48,7 +48,8 @@ def init_database(engine):
 
 
 def internal_create_database_for_tests(engine):
-    create_database(get_sql_url())
+    if database_exists(get_sql_url()) is False:
+        create_database(get_sql_url())
     schema_name = settings.db_name
     with engine.connect() as connection:
         if schema_name not in connection.dialect.get_schema_names(connection):
