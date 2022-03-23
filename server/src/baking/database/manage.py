@@ -46,6 +46,7 @@ def init_database(engine):
         Base.metadata.drop_all(engine, tables=tables)
         Base.metadata.create_all(engine, tables=tables)
 
+
 def internal_create_database_for_tests(engine):
     create_database(get_sql_url())
     schema_name = settings.db_name

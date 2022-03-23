@@ -5,6 +5,8 @@ name: server-ci
 on:
   push:
     branches: [ develop, main]
+    paths:
+    - 'server/**'
 
 
 jobs:

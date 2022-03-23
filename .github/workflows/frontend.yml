@@ -3,6 +3,8 @@ name: flutter-ci
 on:
   push:
     branches: [ develop, main]
+    paths:
+    - 'flutter_client/**'
 
 jobs:
   test:
