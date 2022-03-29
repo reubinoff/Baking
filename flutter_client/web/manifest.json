@@ -1,6 +1,6 @@
 {
-    "name": "flutter_client",
-    "short_name": "flutter_client",
+    "name": "baking_client",
+    "short_name": "baking_client",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

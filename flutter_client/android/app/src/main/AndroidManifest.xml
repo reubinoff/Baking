@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.flutter_client">
+    package="com.example.baking_client">
    <application
-        android:label="flutter_client"
+        android:label="baking_client"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

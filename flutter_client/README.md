@@ -1,4 +1,4 @@
-# flutter_client
+# baking_client
 
 A new Flutter project.
 
