@@ -17,17 +17,17 @@ from sqlalchemy.exc import IntegrityError
 
 @functools.lru_cache()
 def get_middlewares() -> Optional[Sequence[Middleware]]:
-    # origins = [
-    #     "http://domainname.com",
-    #     "https://domainname.com",
-    #     "http://localhost",
-    #     "http://localhost:8080",
-    # ]
+    origins = [
+        "https://app.baking.reubinoff.com",
+        # "https://domainname.com",
+        "http://localhost",
+        # "http://localhost:8080",
+    ]
 
     middlewares = [
         Middleware(
             CORSMiddleware,
-            allow_origins=["*"],
+            allow_origins=origins,
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],
