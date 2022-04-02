@@ -42,21 +42,24 @@ class HomePage extends StatelessWidget {
         title: Text(title),
         centerTitle: false,
       ),
-      body: FutureBuilder<List<Recipe>>(
-        future: fetchData(http.Client()),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(
-              child: Text('An error has occurred!'),
-            );
-          } else if (snapshot.hasData) {
-            return RecipeList(recipes: snapshot.data!);
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+      body: RefreshIndicator(
+        onRefresh: () => fetchData(http.Client()),
+        child: FutureBuilder<List<Recipe>>(
+          future: fetchData(http.Client()),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text("Error: ${snapshot.error}"),
+              );
+            } else if (snapshot.hasData) {
+              return RecipeList(recipes: snapshot.data!);
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
       ),
     );
   }
