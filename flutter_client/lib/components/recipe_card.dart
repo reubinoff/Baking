@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:baking_client/models/recipe.dart';
 import 'package:flutter/material.dart';
 
@@ -19,8 +17,6 @@ class RecipeCard extends StatelessWidget {
   }
 
   Card getCard(BuildContext context) {
-    var ran = Random();
-
     return Card(
         elevation: 4.0,
         child: Column(
