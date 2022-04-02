@@ -17,6 +17,9 @@ cryptography = "^3.4.8"
 colorlog = "^6.4.1"
 SQLAlchemy-Utils = "^0.37.*"
 psycopg2-binary = "^2.9.*"
+python-multipart = "^0.0.5"
+filetype = "^1.0.10"
+azure-storage-blob = "^12.11.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.11.1"

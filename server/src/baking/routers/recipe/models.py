@@ -33,6 +33,8 @@ class Recipe(Base, TimeStampMixin):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     description = Column(String)
+    image_url = Column(String)
+    image_identidier = Column(String)
     # auther of the recipe ###############################################################
     # public = Column(Boolean)
     # user_id = Column(Integer, ForeignKey("user.id"), index=True, nullable=False)
@@ -80,6 +82,7 @@ class RecipeRead(RecipeBase):
     id: PrimaryKey
     name: NameStr
     hydration: int
+    image_url: Optional[str]
 
 
 class RecipeCreate(RecipeBase):

@@ -32,7 +32,7 @@ def db():
     return session()
 
 def get_words(num_of_words):
-    return ' '.join([WORDS[random.randint(0, len(WORDS))].decode() for i in range(num_of_words)])
+    return ' '.join([WORDS[random.randint(0, len(WORDS)-1)].decode() for i in range(num_of_words)])
 
 def load_db():
     session = db()
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     alembic_cfg.set_main_option("script_location", settings.revisions_location)
     alembic_command.upgrade(alembic_cfg, revision)
     print("Migration ended")
-    load_db()
+    # load_db()
 
     uvicorn.run(
         "src.baking.main:app",

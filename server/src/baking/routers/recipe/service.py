@@ -1,5 +1,7 @@
 from typing import Optional, List
 
+from baking.models import FileUploadData
+
 from .models import RecipeRead, Recipe, RecipeCreate, RecipeUpdate
 
 from baking.routers.procedure.service import create as create_procedure
@@ -55,6 +57,15 @@ def update(*, db_session, recipe: Recipe, recipe_in: RecipeUpdate) -> Recipe:
     db_session.commit()
     return recipe
 
+
+def update_image(*, db_session, recipe_id: int, image: FileUploadData):
+    """Updates a recipe."""
+    recipe: Recipe = db_session.query(Recipe).filter(Recipe.id == 2).first()
+    recipe.image_url = image.url
+    recipe.image_identidier = image.identidier
+
+    db_session.commit()
+    return recipe
 
 def delete(*, db_session, recipe_id: int):
     """Deletes a recipe."""

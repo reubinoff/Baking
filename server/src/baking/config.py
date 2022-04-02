@@ -18,5 +18,7 @@ class BakingConfig(BaseSettings):
 
     root_path:str = ""
 
+    azure_storage_connection_string: str = ""
+
 
 settings = BakingConfig()

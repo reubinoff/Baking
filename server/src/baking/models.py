@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 from pydantic.types import conint, constr
 
 from sqlalchemy.ext.declarative import declared_attr
@@ -59,5 +59,9 @@ class OurBase(BaseModel):
             else None
         }
 
+
+class FileUploadData(BaseModel):
+    url: HttpUrl
+    identidier: str
 
 #################################################################

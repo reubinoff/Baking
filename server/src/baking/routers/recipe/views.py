@@ -1,4 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from baking.utils.azure import delete_image_from_blob, upload_image_to_blob
+from baking.utils.general import is_image
+import filetype
+
+from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
 from fastapi.logger import logger
 from fastapi import status
 
@@ -16,7 +20,7 @@ from baking.routers.recipe.models import (
     RecipeRead,
     RecipeUpdate,
 )
-from baking.routers.recipe.service import create, get, delete, update
+from baking.routers.recipe.service import create, get, delete, update, update_image
 
 router = APIRouter()
 
@@ -82,3 +86,35 @@ def update_recipe(
         )
     recipe = update(db_session=db_session, recipe=recipe, recipe_in=recipe_in)
     return recipe
+
+
+@router.post("/{recipe_id}/img")
+async def update_recipe_img(*,
+                            db_session: Session = Depends(get_db),
+                            recipe_id: PrimaryKey,
+                            file: UploadFile = File(...)):
+    """Update a recipe image."""
+    if file is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=[{"msg": "No file was uploaded."}],
+        )
+    is_file_image = is_image(file.content_type)
+
+    try:
+        uploaded_file = upload_image_to_blob(file.filename, file.file.read())
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_410_GONE,
+            detail=[{"msg": "Upload failed"}],
+        )
+    try:
+        recipe = update_image(db_session=db_session,
+                          recipe_id=recipe_id, image=uploaded_file)
+    except Exception as e:
+        delete_image_from_blob(uploaded_file.identidier)
+        raise HTTPException(
+            status_code=status.HTTP_410_GONE,
+            detail=[{"msg": "Update failed"}],
+        )
+    return {"file_path": file.filename, "is_valid": is_file_image, **uploaded_file.dict()}
