@@ -10,10 +10,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const appTitle = 'Isolate Demo';
+    const appTitle = 'Baking';
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Cocktail App",
+      title: "Baking",
       theme: ThemeData(
         primarySwatch: Colors.brown,
         fontFamily: "Pacifico",

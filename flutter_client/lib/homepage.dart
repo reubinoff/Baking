@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  final String api = "http://localhost:8888/recipe";
+  final String api = "http://localhost:8888/recipe?itemsPerPage=10";
   final String title;
 
   List<Recipe> parseRecipe(String responseBody) {
@@ -68,8 +68,11 @@ class RecipeList extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: 1,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
       ),
+      padding: const EdgeInsets.all(16),
       itemCount: recipes.length,
       itemBuilder: (BuildContext context, int index) {
         return Center(
@@ -79,11 +82,3 @@ class RecipeList extends StatelessWidget {
     );
   }
 }
-/*
-  const ListTile(
-                            leading: Icon(Icons.album),
-                            title: Text('The Enchanted Nightingale'),
-                            subtitle: Text(
-                                'Music by Julie Gable. Lyrics by Sidney Stein.'),
-                          )
-                          */
