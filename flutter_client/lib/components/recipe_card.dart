@@ -20,9 +20,7 @@ class RecipeCard extends StatelessWidget {
 
   Card getCard(BuildContext context) {
     var ran = Random();
-    final cardImage = NetworkImage(
-        'https://source.unsplash.com/random/800x600?bread&' +
-            ran.nextInt(100).toString());
+
     return Card(
         elevation: 4.0,
         child: Column(
@@ -46,7 +44,7 @@ class RecipeCard extends StatelessWidget {
             SizedBox(
               height: 200.0,
               child: Ink.image(
-                image: cardImage,
+                image: NetworkImage(recipe.imageUrl),
                 fit: BoxFit.cover,
               ),
             ),

@@ -12,8 +12,9 @@ class HomePage extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  final String api =
-      "https://service.baking.reubinoff.com/recipe?itemsPerPage=10";
+  // final String api =
+  //     "https://service.baking.reubinoff.com/recipe?itemsPerPage=10";
+  final String api = "http://localhost:8888/recipe?itemsPerPage=10";
   final String title;
 
   List<Recipe> parseRecipe(String responseBody) {
