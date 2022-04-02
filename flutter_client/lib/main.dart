@@ -14,10 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Baking",
-      theme: ThemeData(
-        primarySwatch: Colors.brown,
-        fontFamily: "Pacifico",
-      ),
+      theme: ThemeData(primarySwatch: Colors.blueGrey, fontFamily: "Pacifico"),
       home: const HomePage(
         title: appTitle,
       ),
