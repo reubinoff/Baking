@@ -17,10 +17,10 @@ word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 response = requests.get(word_site)
 WORDS = response.content.splitlines()
 
-TOTAL_RECIPES = 2
+TOTAL_RECIPES = 30
 
-URL = "http://localhost:8888"
-# URL = "https://service.baking.reubinoff.com"
+# URL = "http://localhost:8888"
+URL = "https://service.baking.reubinoff.com"
 
 def get_types():
     from baking.routers.ingredients.enums import IngrediantType

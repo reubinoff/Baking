@@ -24,10 +24,8 @@ class HomePage extends StatelessWidget {
   }
 
   Future<List<Recipe>> fetchData(http.Client client) async {
-    final response = await client.get(Uri.parse(api), headers: {
-      "Accept": "application/json",
-      "Access-Control_Allow_Origin": "*"
-    });
+    final response = await client
+        .get(Uri.parse(api), headers: {"Accept": "application/json"});
     if (response.statusCode == 200) {
       return parseRecipe(response.body);
     } else {
