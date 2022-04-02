@@ -8,7 +8,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.responses import JSONResponse
 
 from baking.database.core import engine, sessionmaker
-from pydantic.error_wrappers import ErrorWrapper, ValidationError
+from pydantic.error_wrappers import ValidationError
 from fastapi.logger import logger as log
 from fastapi.middleware.cors import CORSMiddleware
 

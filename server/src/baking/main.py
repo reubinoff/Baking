@@ -29,7 +29,7 @@ app = FastAPI(
     middleware=get_middlewares(),
     docs_url=None if settings.is_debug is False else "/docs",
     openapi_url=None if settings.is_debug is False else "/docs/openapi.json",
- 
+
     root_path=f"{settings.root_path}"
 )
 app.include_router(api_router)
