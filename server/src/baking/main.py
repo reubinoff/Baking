@@ -12,7 +12,6 @@ from baking.database.manage import init_database
 from baking.database.core import engine
 from fastapi.logger import logger
 
-from fastapi.middleware.cors import CORSMiddleware
 
 init_logger()
 # logger = logging.getLogger(__name__)
@@ -35,21 +34,6 @@ app = FastAPI(
 )
 app.include_router(api_router)
 app.add_exception_handler(Exception, base_error_handler)
-
-origins = ["*"]
-# origins = [
-#     "http://domainname.com",
-#     "https://domainname.com",
-#     "http://localhost",
-#     "http://localhost:8080",
-# ]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 logger.info(f"Debug mode is : {settings.is_debug}")

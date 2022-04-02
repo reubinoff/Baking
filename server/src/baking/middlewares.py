@@ -10,17 +10,33 @@ from fastapi.responses import JSONResponse
 from baking.database.core import engine, sessionmaker
 from pydantic.error_wrappers import ErrorWrapper, ValidationError
 from fastapi.logger import logger as log
+from fastapi.middleware.cors import CORSMiddleware
 
 from sqlalchemy.exc import IntegrityError
 
 
 @functools.lru_cache()
 def get_middlewares() -> Optional[Sequence[Middleware]]:
+    # origins = [
+    #     "http://domainname.com",
+    #     "https://domainname.com",
+    #     "http://localhost",
+    #     "http://localhost:8080",
+    # ]
+  
+
     middlewares = [
         Middleware(BaseHTTPMiddleware, dispatch=db_session_middleware),
         Middleware(BaseHTTPMiddleware, dispatch=add_security_headers),
         Middleware(BaseHTTPMiddleware, dispatch=exceptions),
         # Middleware(SentryMiddleware)
+        Middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        ),
     ]
 
     return middlewares
