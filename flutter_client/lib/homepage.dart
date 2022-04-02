@@ -39,6 +39,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        centerTitle: false,
       ),
       body: FutureBuilder<List<Recipe>>(
         future: fetchData(http.Client()),

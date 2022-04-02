@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from baking.database.core import engine, sessionmaker
 from pydantic.error_wrappers import ValidationError
 from fastapi.logger import logger as log
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 
 from sqlalchemy.exc import IntegrityError
 
