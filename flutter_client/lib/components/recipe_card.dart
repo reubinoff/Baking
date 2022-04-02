@@ -21,7 +21,7 @@ class RecipeCard extends StatelessWidget {
   Card getCard(BuildContext context) {
     var ran = Random();
     final cardImage = NetworkImage(
-        'https://source.unsplash.com/random/800x600?house&' +
+        'https://source.unsplash.com/random/800x600?bread&' +
             ran.nextInt(100).toString());
     return Card(
         elevation: 4.0,
