@@ -23,10 +23,9 @@ def get_middlewares() -> Optional[Sequence[Middleware]]:
     #     "http://localhost",
     #     "http://localhost:8080",
     # ]
-  
 
     middlewares = [
-           Middleware(
+        Middleware(
             CORSMiddleware,
             allow_origins=["*"],
             allow_credentials=True,
@@ -37,7 +36,7 @@ def get_middlewares() -> Optional[Sequence[Middleware]]:
         Middleware(BaseHTTPMiddleware, dispatch=add_security_headers),
         Middleware(BaseHTTPMiddleware, dispatch=exceptions),
         # Middleware(SentryMiddleware)
-     
+
     ]
 
     return middlewares
