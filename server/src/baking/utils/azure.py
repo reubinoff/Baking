@@ -1,4 +1,6 @@
+from functools import lru_cache
 import os
+from re import I
 import uuid
 from azure.storage.blob import BlobServiceClient
 from baking.config import settings
@@ -6,18 +8,20 @@ from baking.models import FileUploadData
 from fastapi.logger import logger
 
 
-blob_service_client: BlobServiceClient = BlobServiceClient.from_connection_string(
-    settings.azure_storage_connection_string)
+
 
 IMAGES_CONTAINER = "images"
 
-
+@lru_cache
+def _get_blob_client():
+    blob_service_client: BlobServiceClient = BlobServiceClient.from_connection_string(settings.azure_storage_connection_string)
+    return blob_service_client
 
 
 def upload_image_to_blob(file_name: str, file_content: bytes) -> FileUploadData:
     try:
         filename = str(uuid.uuid4()) + os.path.splitext(file_name)[1]
-        blob_client = blob_service_client.get_blob_client(
+        blob_client = _get_blob_client().get_blob_client(
             container=IMAGES_CONTAINER, blob=filename)
         blob_client.upload_blob(file_content)
 
@@ -33,7 +37,7 @@ def delete_image_from_blob(identidier: str):
         return None
 
     try:
-        blob_client = blob_service_client.get_blob_client(
+        blob_client = _get_blob_client().get_blob_client(
             container=IMAGES_CONTAINER, blob=identidier)
         blob_client.delete_blob()
     except Exception as e:

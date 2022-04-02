@@ -76,7 +76,7 @@ def update_recipe(
     recipe_in: RecipeUpdate
 ):
     """Update a recipe."""
-    check_and_raise(db_session=db_session, recipe_id=recipe_id)
+    recipe = check_and_raise(db_session=db_session, recipe_id=recipe_id)
     recipe = update(db_session=db_session, recipe=recipe, recipe_in=recipe_in)
     return recipe
 
