@@ -1,3 +1,4 @@
+from xml.dom.minidom import Identified
 from baking.utils.azure import delete_image_from_blob, upload_image_to_blob
 from baking.utils.general import is_image
 import filetype
@@ -39,12 +40,7 @@ def get_recipe(*, db_session: Session = Depends(get_db), recipe_id: int):
     """
     Update a recipe.
     """
-    recipe = get(db_session=db_session, recipe_id=recipe_id)
-    if not recipe:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=[{"msg": "The recipe with this id does not exist."}],
-        )
+    recipe = check_and_raise(db_session=db_session, recipe_id=recipe_id)
     return recipe
 
 
@@ -66,7 +62,9 @@ def delete_recipe(*, db_session: Session = Depends(get_db), recipe_id: PrimaryKe
             status_code=status.HTTP_404_NOT_FOUND,
             detail=[{"msg": "The recipe with this id does not exist."}],
         )
+    Identifier_to_delete = recipe.image_identidier
     delete(db_session=db_session, recipe_id=recipe_id)
+    delete_image_from_blob(Identifier_to_delete)
     return recipe
 
 
@@ -78,15 +76,19 @@ def update_recipe(
     recipe_in: RecipeUpdate
 ):
     """Update a recipe."""
+    check_and_raise(db_session=db_session, recipe_id=recipe_id)
+    recipe = update(db_session=db_session, recipe=recipe, recipe_in=recipe_in)
+    return recipe
+
+
+def check_and_raise(db_session, recipe_id):
     recipe = get(db_session=db_session, recipe_id=recipe_id)
     if not recipe:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=[{"msg": "The recipe with this id does not exist."}],
         )
-    recipe = update(db_session=db_session, recipe=recipe, recipe_in=recipe_in)
     return recipe
-
 
 @router.post("/{recipe_id}/img")
 async def update_recipe_img(*,
@@ -99,6 +101,7 @@ async def update_recipe_img(*,
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=[{"msg": "No file was uploaded."}],
         )
+    recipe = check_and_raise(db_session=db_session, recipe_id=recipe_id)
     is_file_image = is_image(file.content_type)
 
     try:
@@ -110,7 +113,7 @@ async def update_recipe_img(*,
         )
     try:
         recipe = update_image(db_session=db_session,
-                          recipe_id=recipe_id, image=uploaded_file)
+                              recipe=recipe, image=uploaded_file)
     except Exception as e:
         delete_image_from_blob(uploaded_file.identidier)
         raise HTTPException(

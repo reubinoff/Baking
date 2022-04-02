@@ -29,10 +29,13 @@ def upload_image_to_blob(file_name: str, file_content: bytes) -> FileUploadData:
 
 
 def delete_image_from_blob(identidier: str):
+    if identidier is None or identidier == "":
+        return None
+
     try:
         blob_client = blob_service_client.get_blob_client(
             container=IMAGES_CONTAINER, blob=identidier)
         blob_client.delete_blob()
     except Exception as e:
         logger.error(e)
-        raise e
+        raise 

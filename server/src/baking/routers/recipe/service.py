@@ -58,9 +58,8 @@ def update(*, db_session, recipe: Recipe, recipe_in: RecipeUpdate) -> Recipe:
     return recipe
 
 
-def update_image(*, db_session, recipe_id: int, image: FileUploadData):
+def update_image(*, db_session, recipe: Recipe, image: FileUploadData):
     """Updates a recipe."""
-    recipe: Recipe = db_session.query(Recipe).filter(Recipe.id == 2).first()
     recipe.image_url = image.url
     recipe.image_identidier = image.identidier
 
