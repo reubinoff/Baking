@@ -26,17 +26,18 @@ def get_middlewares() -> Optional[Sequence[Middleware]]:
   
 
     middlewares = [
-        Middleware(BaseHTTPMiddleware, dispatch=db_session_middleware),
-        Middleware(BaseHTTPMiddleware, dispatch=add_security_headers),
-        Middleware(BaseHTTPMiddleware, dispatch=exceptions),
-        # Middleware(SentryMiddleware)
-        Middleware(
+           Middleware(
             CORSMiddleware,
             allow_origins=["*"],
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],
         ),
+        Middleware(BaseHTTPMiddleware, dispatch=db_session_middleware),
+        Middleware(BaseHTTPMiddleware, dispatch=add_security_headers),
+        Middleware(BaseHTTPMiddleware, dispatch=exceptions),
+        # Middleware(SentryMiddleware)
+     
     ]
 
     return middlewares
