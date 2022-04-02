@@ -17,7 +17,7 @@ word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 response = requests.get(word_site)
 WORDS = response.content.splitlines()
 
-TOTAL_RECIPES = 30
+TOTAL_RECIPES = 15
 
 # URL = "http://localhost:8888"
 URL = "https://service.baking.reubinoff.com"
@@ -32,7 +32,14 @@ def get_words(num_of_words):
 
 def create_recipes():
     current_directory = os.path.dirname(os.path.abspath(__file__))
-    files = [{'file': open(current_directory+'/test_a.jpeg', 'rb')}, {'file': open(current_directory+'/test_b.jpeg', 'rb')}]
+    content = []
+    with open(current_directory+'/test_a.jpeg', 'rb') as f:
+        content.append(f.read())
+    with open(current_directory+'/test_b.jpeg', 'rb') as f:
+        content.append(f.read())
+
+    files = [{'file': ("image.jpeg", content[0])},
+             {'file': ("image.jpeg", content[1])}]
     for i in range(1, TOTAL_RECIPES):
         p = []
         for j in range(1, random.randint(2, 5)):
