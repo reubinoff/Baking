@@ -6,11 +6,11 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 // import 'package:flutter/material.dart';
-import 'package:baking_client/components/recipe_card.dart';
+// import 'package:baking_client/components/recipe_card.dart';
 import 'package:baking_client/models/recipe.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:baking_client/main.dart';
+// import 'package:baking_client/main.dart';
 
 void main() {
   testWidgets('Baking app test', (WidgetTester tester) async {
