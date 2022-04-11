@@ -8,6 +8,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:baking_client/components/recipe_card.dart';
 import 'package:baking_client/models/recipe.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // import 'package:baking_client/main.dart';
@@ -22,7 +23,7 @@ void main() {
       hydration: 20,
       imageUrl: '',
     );
-
+    debugPrint(r.toString());
     // // Verify that our counter starts at 0.
     // expect(find.text('0'), findsOneWidget);
     // expect(find.text('1'), findsNothing);
