@@ -3,7 +3,7 @@ class Recipe {
   final String description;
   final int id;
   final int hydration;
-  final String imageUrl;
+  final String? imageUrl;
 
   const Recipe(
       {required this.name,

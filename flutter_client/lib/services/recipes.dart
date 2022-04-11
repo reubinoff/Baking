@@ -27,11 +27,13 @@ class RecipeNotifier extends ValueNotifier<List<Recipe>> {
 
   Future<void> reload() async {
     _listRecipes = <Recipe>[];
+    _hasMoreRecipe = true;
     _page = 1;
     try {
       await httpGetRecipe(_page);
     } catch (e) {
       debugPrint(e.toString());
+      debugPrintStack();
     }
   }
 
@@ -42,6 +44,7 @@ class RecipeNotifier extends ValueNotifier<List<Recipe>> {
         await httpGetRecipe(_page);
       } catch (e) {
         debugPrint(e.toString());
+        debugPrintStack();
       }
       _loading = false;
     }

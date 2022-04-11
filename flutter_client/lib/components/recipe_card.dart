@@ -1,5 +1,6 @@
 import 'package:baking_client/models/recipe.dart';
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class RecipeCard extends StatelessWidget {
   const RecipeCard({
@@ -14,6 +15,35 @@ class RecipeCard extends StatelessWidget {
     return Container(
       child: getCard(context),
     );
+  }
+
+  _getImage(BuildContext context) {
+    if (recipe.imageUrl == null || recipe.imageUrl!.isEmpty) {
+      return Stack(children: <Widget>[
+        Center(
+            child: Ink.image(
+          image: const AssetImage('assets/images/bread_placeholder.jpeg'),
+          fit: BoxFit.cover,
+        ))
+      ]);
+    } else {
+      final FadeInImage breadImage = FadeInImage.memoryNetwork(
+        placeholder: kTransparentImage,
+        image: recipe.imageUrl ?? '',
+        fit: BoxFit.cover,
+      );
+
+      return Stack(
+        children: <Widget>[
+          const Center(child: CircularProgressIndicator()),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: breadImage,
+          )
+        ],
+      );
+    }
   }
 
   Card getCard(BuildContext context) {
@@ -39,10 +69,7 @@ class RecipeCard extends StatelessWidget {
                 )),
             SizedBox(
               height: 200.0,
-              child: Ink.image(
-                image: NetworkImage(recipe.imageUrl),
-                fit: BoxFit.cover,
-              ),
+              child: _getImage(context),
             ),
             Container(
               padding: const EdgeInsets.all(16.0),
