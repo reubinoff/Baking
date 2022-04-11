@@ -38,13 +38,17 @@ class RecipeNotifier extends ValueNotifier<List<Recipe>> {
   Future<void> getMore() async {
     if (_hasMoreRecipe && !_loading) {
       _loading = true;
-      await httpGetRecipe(_page);
+      try {
+        await httpGetRecipe(_page);
+      } catch (e) {
+        debugPrint(e.toString());
+      }
       _loading = false;
     }
   }
 
   List<Recipe> _parseRecipe(String responseBody) {
-    final data = json.decode(responseBody)["items"] as List<dynamic>;
+    final data = json.decode(responseBody)['items'] as List<dynamic>;
     if (data.isEmpty) {
       return [];
     }
@@ -71,31 +75,3 @@ class RecipeNotifier extends ValueNotifier<List<Recipe>> {
     value = _listRecipes;
   }
 }
-
-// class UserService {
-//   final String api =
-//       "https://service.baking.reubinoff.com/recipe?itemsPerPage=10";
-// // final String api = "http://localhost:8888/recipe?itemsPerPage=10";
-
-//   List<Recipe> _parseRecipe(String responseBody) {
-//     final parsed =
-//         jsonDecode(responseBody)["items"].cast<Map<String, dynamic>>();
-//     return parsed.map<Recipe>((json) => Recipe.fromJson(json)).toList();
-//   }
-
-//   Future<List<Recipe>> _fetchData(http.Client client) async {
-//     final response = await client
-//         .get(Uri.parse(api), headers: {"Accept": "application/json"});
-//     if (response.statusCode == 200) {
-//       return _parseRecipe(response.body);
-//     } else {
-//       throw Exception('Failed to load recipe');
-//     }
-//   }
-
-//   Future<List<Recipe>> getRecipes(int page, int itemsPerPage) async {
-//     final client = http.Client();
-//     final List<Recipe> recipes = await _fetchData(client);
-//     return recipes;
-//   }
-// }

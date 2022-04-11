@@ -6,14 +6,22 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 // import 'package:flutter/material.dart';
+import 'package:baking_client/components/recipe_card.dart';
+import 'package:baking_client/models/recipe.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:baking_client/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Baking app test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    const Recipe r = Recipe(
+      id: 1,
+      description: 'test',
+      name: 'name',
+      hydration: 20,
+      imageUrl: '',
+    );
 
     // // Verify that our counter starts at 0.
     // expect(find.text('0'), findsOneWidget);
