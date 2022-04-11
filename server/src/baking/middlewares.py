@@ -20,7 +20,8 @@ def get_middlewares() -> Optional[Sequence[Middleware]]:
     origins = [
         "https://app.baking.reubinoff.com",
         # "https://domainname.com",
-        "http://localhost:63622",
+        "http://localhost:5*",
+        "*",
         # "http://localhost:8080",
     ]
 

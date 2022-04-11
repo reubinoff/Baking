@@ -48,7 +48,10 @@ class RecipeCard extends StatelessWidget {
 
   Card getCard(BuildContext context) {
     return Card(
-        elevation: 4.0,
+        elevation: 15.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
         child: Column(
           children: [
             ListTile(

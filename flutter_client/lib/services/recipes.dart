@@ -26,6 +26,7 @@ class RecipeNotifier extends ValueNotifier<List<Recipe>> {
   }
 
   Future<void> reload() async {
+    _value = [];
     _listRecipes = <Recipe>[];
     _hasMoreRecipe = true;
     _page = 1;
