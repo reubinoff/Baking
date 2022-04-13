@@ -18,6 +18,33 @@ def test_create_and_update(session, cleaner, procedures, procedure):
     assert len(recipe.procedures) == len(procedures) + 1
 
 
+def test_query(session, recipe):
+    from baking.routers.recipe.service import get
+    from baking.routers.recipe.models import RecipeUpdate
+    from baking.database.services import search_filter_sort_paginate, common_parameters
+
+    common_parameters_in = {
+        "db_session": session,
+        "page": 1,
+        "items_per_page": 1,
+        "sort_by": [],
+        "descending": [],
+        "query_str": recipe.name
+    }
+   
+    recipe_q = search_filter_sort_paginate(model="Recipe", **common_parameters_in)
+
+    assert recipe_q
+    assert len(recipe_q["items"]) == 1
+    assert recipe.name == recipe_q["items"][0].name
+
+    common_parameters_in["query_str"] = "not_found"
+    recipe_q = search_filter_sort_paginate(model="Recipe", **common_parameters_in)
+
+    assert recipe_q
+    assert len(recipe_q["items"]) == 0
+
+
 def test_hydration(session):
     from baking.routers.recipe.service import create
     from baking.routers.recipe.models import RecipeCreate
