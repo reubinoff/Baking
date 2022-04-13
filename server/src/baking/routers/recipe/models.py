@@ -14,6 +14,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy_utils import TSVectorType
+
 
 from baking.database.core import Base
 from baking.models import OurBase, PrimaryKey, TimeStampMixin, NameStr
@@ -39,6 +41,12 @@ class Recipe(Base, TimeStampMixin):
     # public = Column(Boolean)
     # user_id = Column(Integer, ForeignKey("user.id"), index=True, nullable=False)
     ###########################################################################################
+
+    search_vector = Column(
+          TSVectorType(
+              "description", "name"
+          )
+    )
 
     procedures = relationship(
         "Procedure",

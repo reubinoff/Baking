@@ -1,4 +1,3 @@
-import imp
 import logging
 from re import I
 import random
@@ -65,7 +64,7 @@ if __name__ == "__main__":
     alembic_cfg.set_main_option("script_location", settings.revisions_location)
     alembic_command.upgrade(alembic_cfg, revision)
     print("Migration ended")
-    # load_db()
+    load_db()
 
     uvicorn.run(
         "src.baking.main:app",

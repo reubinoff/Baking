@@ -10,6 +10,7 @@ from sqlalchemy import or_, orm, func, desc
 from sqlalchemy_filters import apply_pagination, apply_sort, apply_filters
 from pydantic.error_wrappers import ErrorWrapper, ValidationError
 from pydantic import BaseModel
+from pydantic.types import Json, constr
 
 from baking.exceptions import (
     FieldNotFound,
@@ -25,6 +26,8 @@ from .core import (
     get_db,
 )
 
+QueryStr = constr(regex=r"^[ -~\u0590-\u05FF\u200f\u200e ]+$", min_length=1)
+
 
 def common_parameters(
     db_session: orm.Session = Depends(get_db),
@@ -32,6 +35,8 @@ def common_parameters(
     items_per_page: int = Query(5, alias="itemsPerPage", gt=-2, lt=2147483647),
     sort_by: List[str] = Query([], alias="sortBy[]"),
     descending: List[bool] = Query([], alias="descending[]"),
+    query_str: QueryStr = Query(None, alias="q"),
+
 ):
 
     return {
@@ -40,10 +45,11 @@ def common_parameters(
         "items_per_page": items_per_page,
         "sort_by": sort_by,
         "descending": descending,
+        "query_str": query_str
     }
 
 
-def search(*, query_str: str, query: Query, model: str, sort=False):
+def search(*, query_str: str, query: orm.Query, model: str, sort=False):
     """Perform a search based on the query."""
     search_model = get_class_by_tablename(model)
 
@@ -88,6 +94,7 @@ def create_sort_spec(model, sort_by, descending):
 def search_filter_sort_paginate(
     db_session,
     model,
+    query_str: str = None,
     page: int = 1,
     items_per_page: int = 5,
     sort_by: List[str] = None,
@@ -101,6 +108,12 @@ def search_filter_sort_paginate(
     model_cls = get_class_by_tablename(model)
     try:
         query = db_session.query(model_cls)
+
+
+        if query_str:
+            sort = False if sort_by else True
+            query = search(query_str=query_str, query=query,
+                    model=model, sort=sort)
 
         if sort_by is not None and isinstance(sort_by, List) and len(sort_by) > 0:
             # print(sort_by)

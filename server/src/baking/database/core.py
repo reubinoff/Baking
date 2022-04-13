@@ -7,6 +7,9 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.orm import sessionmaker, object_session
 from sqlalchemy.sql.expression import true
+from sqlalchemy_searchable import make_searchable
+
+
 from sqlalchemy_utils import get_mapper, get_class_by_table
 from starlette.requests import Request
 
@@ -63,6 +66,7 @@ class CustomBase:
 
 
 Base = declarative_base(cls=CustomBase)
+make_searchable(Base.metadata)
 
 
 def get_db(request: Request):
