@@ -20,6 +20,7 @@ psycopg2-binary = "^2.9.*"
 python-multipart = "^0.0.5"
 filetype = "^1.0.10"
 azure-storage-blob = "^12.11.0"
+SQLAlchemy-Searchable = "^1.4.1"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.11.1"
