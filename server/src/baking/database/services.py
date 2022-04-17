@@ -1,6 +1,11 @@
 import json
+from logging import Logger
+import logging
 
 from typing import List, Type
+from baking.database.filters.filters import Filter
+from baking.models import FilterObject
+from pyparsing import Regex
 from sortedcontainers import SortedSet
 
 from fastapi import Depends, Query
@@ -15,7 +20,7 @@ from baking.database.filters import apply_pagination, apply_sort, apply_filters
 # from sqlalchemy_filters.models import Field, get_model_from_spec
 
 from pydantic.error_wrappers import ErrorWrapper, ValidationError
-from pydantic import BaseModel
+from pydantic import BaseModel, ConstrainedStr
 from pydantic.types import Json, constr
 
 from baking.exceptions import (
@@ -32,9 +37,11 @@ from .core import (
     get_db,
 )
 
+
+LOGGER = logging.getLogger(__name__)
+
 QueryStr = constr(
     regex=r"^[ -~\u0590-\u05FF\u200f\u200e ]+$", min_length=1)
-
 
 def common_parameters(
     db_session: orm.Session = Depends(get_db),
@@ -79,6 +86,8 @@ def create_sort_spec(model, sort_by, descending):
     sort_spec = []
     if sort_by and descending:
         for field, direction in zip(sort_by, descending):
+            if field not in model.__fields__:
+                continue
             direction = "desc" if direction else "asc"
 
             # we have a complex field, we may need to join
@@ -106,7 +115,7 @@ def search_filter_sort_paginate(
     model,
     *,
     query_str: str = None,
-    filter_spec: List[dict] = None,
+    filter_spec: List[FilterObject] = None,
     page: int = 1,
     items_per_page: int = 5,
     sort_by: List[str] = None,
@@ -128,7 +137,8 @@ def search_filter_sort_paginate(
                     model=model, sort=sort)
 
 
-        if filter_spec:
+        if filter_spec and isinstance(filter_spec, List):
+            validate_filter(filter_spec)
             # query = apply_filter_specific_joins(model_cls, filter_spec, query)
             query = apply_filters(query, filter_spec)
     
@@ -184,3 +194,19 @@ def search_filter_sort_paginate(
         "page": pagination.page_number,
         "total": pagination.total_results,
     }
+
+def validate_filter(filter_spec):
+    for f in filter_spec:
+        if isinstance(f, dict) is False:
+            LOGGER.warning("Invalid filter: %s", str(f))
+            raise ValidationError(
+                        [
+                            ErrorWrapper(FieldNotFoundError(
+                                msg=str("invalid filter")), loc="filter"),
+                        ],
+                        model=FilterObject,
+                    )
+        try:
+            _ =FilterObject.parse_obj(f)
+        except ValidationError as e:
+            LOGGER.warning("Invalid filter: %s", e)

@@ -5,6 +5,30 @@ def test_get(session, cleaner, recipe):
     assert t_recipe.id == recipe.id
 
 
+def test_search_filter_sort_paginate_query(session, cleaner, recipe):
+    name = recipe.name
+    from baking.database.services import search_filter_sort_paginate, common_parameters
+
+    results = search_filter_sort_paginate(db_session=session, model="Recipe", query_str=name)
+    assert results
+    assert results["items"]
+    assert len(results["items"]) > 0
+    assert results["items"][0].name == name
+
+
+def test_search_filter_sort_paginate_filter(session, cleaner, recipe):
+    name = recipe.name
+    from baking.database.services import search_filter_sort_paginate, common_parameters
+    filter = [{"model": "Recipe", "field": "name",
+               "op": "like", "value": f"%{name}%"}]
+    results = search_filter_sort_paginate(
+        db_session=session, model="Recipe", filter_spec=filter)
+    assert results
+    assert results["items"]
+    assert len(results["items"]) > 0
+    assert results["items"][0].name == name
+
+
 def test_get_all(session, recipes):
     from baking.routers.recipe.service import get_all
 

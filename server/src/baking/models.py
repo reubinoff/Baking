@@ -1,4 +1,5 @@
 from datetime import datetime
+from attr import attr
 
 from pydantic import BaseModel, HttpUrl
 from pydantic.types import conint, constr
@@ -7,6 +8,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy import Column, DateTime, Integer, event, ForeignKey
 from sqlalchemy.orm import relationship
 
+from baking.database.filters.filters import Operator
 ########################## SQLAlchemy models ##########################
 
 
@@ -64,4 +66,10 @@ class FileUploadData(BaseModel):
     url: HttpUrl
     identidier: str
 
+
+class FilterObject(BaseModel):
+    model: str
+    field: str
+    op: str
+    value: str
 #################################################################
