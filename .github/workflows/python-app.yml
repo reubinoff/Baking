@@ -7,6 +7,7 @@ on:
     branches: [ develop, main]
     paths:
     - 'server/**'
+    - '.github/workflows/python-app.yml'
 
 
 jobs:
