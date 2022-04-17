@@ -3,7 +3,6 @@ from typing import Optional, List
 from .models import ProcedureRead, ProcedureCreate, Procedure, ProcedureUpdate
 
 from baking.routers.ingredients.service import (
-    create as create_ingredient,
     get_or_create as get_or_create_ingidient,
 )
 

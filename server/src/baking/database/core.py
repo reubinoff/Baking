@@ -1,16 +1,11 @@
 import re
-import functools
 from typing import Any
 from functools import lru_cache
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
-from sqlalchemy.orm import sessionmaker, object_session
-from sqlalchemy.sql.expression import true
 from sqlalchemy_searchable import make_searchable
-
-
-from sqlalchemy_utils import get_mapper, get_class_by_table
+from sqlalchemy.orm import sessionmaker
 from starlette.requests import Request
 
 from baking.config import settings as app_settings

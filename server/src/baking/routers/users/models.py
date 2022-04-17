@@ -2,13 +2,8 @@ from typing import List, Optional
 
 from sqlalchemy import (
     Column,
-    ForeignKey,
     Integer,
-    PrimaryKeyConstraint,
     String,
-    Table,
-    Boolean,
-    DateTime,
 )
 from sqlalchemy.orm import relationship
 from baking.database.core import Base

@@ -4,7 +4,6 @@ from baking.models import FileUploadData
 
 from .models import RecipeRead, Recipe, RecipeCreate, RecipeUpdate
 
-from baking.routers.procedure.service import create as create_procedure
 from baking.routers.procedure.service import get_or_create as get_or_create_procedure
 
 

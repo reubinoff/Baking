@@ -1,26 +1,20 @@
 import json
-from logging import Logger
 import logging
 
-from typing import List, Type
-from baking.database.filters.filters import Filter
+from typing import List
 from baking.models import FilterObject
-from pyparsing import Regex
-from sortedcontainers import SortedSet
 
 from fastapi import Depends, Query
 from fastapi.logger import logger
 import sqlalchemy
-from itertools import chain
 
-from sqlalchemy import or_, orm, func, desc
-from sqlalchemy import and_, not_, or_, orm, func, desc
+from sqlalchemy import  orm, func, desc
 
 from baking.database.filters import apply_pagination, apply_sort, apply_filters
 # from sqlalchemy_filters.models import Field, get_model_from_spec
 
 from pydantic.error_wrappers import ErrorWrapper, ValidationError
-from pydantic import BaseModel, ConstrainedStr
+from pydantic import BaseModel
 from pydantic.types import Json, constr
 
 from baking.exceptions import (

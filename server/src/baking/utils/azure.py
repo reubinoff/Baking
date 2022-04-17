@@ -1,6 +1,5 @@
 from functools import lru_cache
 import os
-from re import I
 import uuid
 from azure.storage.blob import BlobServiceClient
 from baking.config import settings

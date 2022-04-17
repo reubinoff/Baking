@@ -1,9 +1,7 @@
-from xml.dom.minidom import Identified
 from baking.utils.azure import delete_image_from_blob, upload_image_to_blob
 from baking.utils.general import is_image
-import filetype
 
-from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.logger import logger
 from fastapi import status
 
