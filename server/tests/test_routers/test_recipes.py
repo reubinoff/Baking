@@ -10,6 +10,7 @@ def test_search_filter_sort_paginate_query(session, cleaner, recipe):
     from baking.database.services import search_filter_sort_paginate, common_parameters
 
     results = search_filter_sort_paginate(db_session=session, model="Recipe", query_str=name)
+    
     assert results
     assert results["items"]
     assert len(results["items"]) > 0
