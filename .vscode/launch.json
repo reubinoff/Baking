@@ -37,7 +37,7 @@
         "DB_USER": "postgres",
         "DB_DEBUG_DROP_IN_STARTUP": "False",
         "PORT": "8888",
-        "azure_storage_connection_string": "DefaultEndpointsProtocol=https;AccountName=reubinoffbaking;AccountKey=iPjjPSOcyY2UPINYUuGmF6F+BtkOrgWg0Q8IkpW6Unmvk2kvycqTV9FrDfQjoM5hprM6MSyCsywsM/8l7S5GMw==;EndpointSuffix=core.windows.net"
+        "azure_storage_connection_string": ""
 
       }
     },

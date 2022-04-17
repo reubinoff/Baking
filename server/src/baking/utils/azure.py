@@ -14,6 +14,8 @@ IMAGES_CONTAINER = "images"
 
 @lru_cache
 def _get_blob_client():
+    if settings.azure_storage_connection_string is None or settings.azure_storage_connection_string == "":
+        return FakeAzureStorageClient()
     blob_service_client: BlobServiceClient = BlobServiceClient.from_connection_string(settings.azure_storage_connection_string)
     return blob_service_client
 
@@ -43,3 +45,15 @@ def delete_image_from_blob(identidier: str):
     except Exception as e:
         logger.error(e)
         raise 
+
+
+class FakeAzureBlobClient:
+    def upload_blob(self, file_content):
+        pass
+
+    def delete_blob(self):
+        pass
+class FakeAzureStorageClient:
+    def get_blob_client(self, container, blob):
+        return FakeAzureBlobClient()
+
