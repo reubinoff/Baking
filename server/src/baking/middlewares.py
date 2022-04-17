@@ -70,7 +70,6 @@ async def exceptions(request: Request, call_next) -> Response:
     try:
         response = await call_next(request)
     except ValidationError as e:
-        print("asdasdsdfasdas")
         log.exception(e)
         print(e.errors())
         response = JSONResponse(

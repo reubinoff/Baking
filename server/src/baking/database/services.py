@@ -1,13 +1,19 @@
 import json
 
-from typing import List
+from typing import List, Type
+from sortedcontainers import SortedSet
 
 from fastapi import Depends, Query
 from fastapi.logger import logger
 import sqlalchemy
+from itertools import chain
 
 from sqlalchemy import or_, orm, func, desc
-from sqlalchemy_filters import apply_pagination, apply_sort, apply_filters
+from sqlalchemy import and_, not_, or_, orm, func, desc
+
+from baking.database.filters import apply_pagination, apply_sort, apply_filters
+# from sqlalchemy_filters.models import Field, get_model_from_spec
+
 from pydantic.error_wrappers import ErrorWrapper, ValidationError
 from pydantic import BaseModel
 from pydantic.types import Json, constr
@@ -26,7 +32,8 @@ from .core import (
     get_db,
 )
 
-QueryStr = constr(regex=r"^[ -~\u0590-\u05FF\u200f\u200e ]+$", min_length=1)
+QueryStr = constr(
+    regex=r"^[ -~\u0590-\u05FF\u200f\u200e ]+$", min_length=1)
 
 
 def common_parameters(
@@ -36,6 +43,7 @@ def common_parameters(
     sort_by: List[str] = Query([], alias="sortBy[]"),
     descending: List[bool] = Query([], alias="descending[]"),
     query_str: QueryStr = Query(None, alias="q"),
+    filter_spec: Json = Query([], alias="filter"),
 
 ):
 
@@ -45,7 +53,8 @@ def common_parameters(
         "items_per_page": items_per_page,
         "sort_by": sort_by,
         "descending": descending,
-        "query_str": query_str
+        "query_str": query_str,
+        "filter_spec": filter_spec,
     }
 
 
@@ -91,10 +100,13 @@ def create_sort_spec(model, sort_by, descending):
     return sort_spec
 
 
+
 def search_filter_sort_paginate(
     db_session,
     model,
+    *,
     query_str: str = None,
+    filter_spec: List[dict] = None,
     page: int = 1,
     items_per_page: int = 5,
     sort_by: List[str] = None,
@@ -115,6 +127,11 @@ def search_filter_sort_paginate(
             query = search(query_str=query_str, query=query,
                     model=model, sort=sort)
 
+
+        if filter_spec:
+            # query = apply_filter_specific_joins(model_cls, filter_spec, query)
+            query = apply_filters(query, filter_spec)
+    
         if sort_by is not None and isinstance(sort_by, List) and len(sort_by) > 0:
             # print(sort_by)
             sort_spec = create_sort_spec(model, sort_by, descending)

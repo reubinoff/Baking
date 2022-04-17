@@ -37,22 +37,23 @@ class Recipe(Base, TimeStampMixin):
     description = Column(String)
     image_url = Column(String)
     image_identidier = Column(String)
+
     # auther of the recipe ###############################################################
     # public = Column(Boolean)
     # user_id = Column(Integer, ForeignKey("user.id"), index=True, nullable=False)
     ###########################################################################################
-
-    search_vector = Column(
-          TSVectorType(
-              "description", "name"
-          )
-    )
 
     procedures = relationship(
         "Procedure",
         order_by="asc(Procedure.order)",
         cascade="all, delete-orphan",
         back_populates="recipe",
+    )
+
+    search_vector = Column(
+        TSVectorType(
+            "description", "name"
+        )
     )
 
     @hybrid_property
