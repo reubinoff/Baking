@@ -1,5 +1,4 @@
 from datetime import datetime
-from attr import attr
 
 from pydantic import BaseModel, HttpUrl
 from pydantic.types import conint, constr
