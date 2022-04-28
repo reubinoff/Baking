@@ -1,10 +1,10 @@
 from functools import lru_cache
 import os
 import uuid
-from azure.storage.blob import BlobServiceClient
 from baking.config import settings
 from baking.models import FileUploadData
 from fastapi.logger import logger
+from azure.storage.blob import BlobServiceClient
 
 
 
@@ -45,6 +45,7 @@ def delete_image_from_blob(identidier: str):
         logger.error(e)
         raise 
 
+###################################################################################################
 
 class FakeAzureBlobClient:
     def upload_blob(self, file_content):
@@ -55,4 +56,11 @@ class FakeAzureBlobClient:
 class FakeAzureStorageClient:
     def get_blob_client(self, container, blob):
         return FakeAzureBlobClient()
+
+###################################################################################################
+
+if __name__ == "__main__":
+    with open("/tmp/t.jpeg", "rb") as f:
+        a = upload_image_to_blob("test.jpeg", f.read())
+        print(a)
 

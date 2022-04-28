@@ -22,6 +22,7 @@ void main() {
       name: 'name',
       hydration: 20,
       imageUrl: '',
+      cdnUrl: '',
     );
     debugPrint(r.toString());
     // // Verify that our counter starts at 0.

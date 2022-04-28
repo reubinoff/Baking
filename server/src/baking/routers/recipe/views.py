@@ -1,4 +1,4 @@
-from baking.utils.azure import delete_image_from_blob, upload_image_to_blob
+from baking.utils.azure_storage import delete_image_from_blob, upload_image_to_blob
 from baking.utils.general import is_image
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile

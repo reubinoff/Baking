@@ -16,7 +16,7 @@ from baking.database.core import Base
 from baking.models import OurBase, PrimaryKey, TimeStampMixin, NameStr
 from baking.routers.ingredients.enums import IngrediantType
 from baking.routers.ingredients.models import Ingredient
-
+from baking.config import settings
 
 from baking.routers.procedure.models import Procedure, ProcedureCreate, ProcedureRead
 
@@ -50,6 +50,10 @@ class Recipe(Base, TimeStampMixin):
             "description", "name"
         )
     )
+
+    @hybrid_property
+    def cdn_url(self):
+        return f"{settings.azure_cdn_storage_base_url}/{self.image_identidier}"
 
     @hybrid_property
     def hydration(self) -> int:
@@ -87,6 +91,7 @@ class RecipeRead(RecipeBase):
     name: NameStr
     hydration: int
     image_url: Optional[str]
+    cdn_url: Optional[str]
 
 
 class RecipeCreate(RecipeBase):

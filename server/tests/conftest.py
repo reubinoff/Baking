@@ -11,6 +11,7 @@ environ["DB_PASS"] = "rootsql"
 environ["DB_HOST"] = "127.0.0.1"
 environ["DB_NAME"] = "baking-db-test-" + str(random.random())
 environ["DB_USER"] = "postgres"
+environ["azure_storage_connection_string"] = ""
 
 from baking import config
 from baking.database.core import engine, get_sql_url

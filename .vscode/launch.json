@@ -37,7 +37,6 @@
         "DB_USER": "postgres",
         "DB_DEBUG_DROP_IN_STARTUP": "False",
         "PORT": "8888",
-        "azure_storage_connection_string": ""
 
       }
     },

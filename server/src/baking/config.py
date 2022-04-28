@@ -18,7 +18,7 @@ class BakingConfig(BaseSettings):
 
     root_path:str = ""
 
-    azure_storage_connection_string: str = ""
-
+    azure_storage_connection_string: str
+    azure_cdn_storage_base_url: str = "https://images.baking.reubinoff.com"
 
 settings = BakingConfig()

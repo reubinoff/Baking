@@ -18,7 +18,7 @@ class RecipeCard extends StatelessWidget {
   }
 
   _getImage(BuildContext context) {
-    if (recipe.imageUrl == null || recipe.imageUrl!.isEmpty) {
+    if (recipe.cdnUrl == null || recipe.cdnUrl!.isEmpty) {
       return Stack(children: <Widget>[
         Center(
             child: Ink.image(
@@ -29,7 +29,7 @@ class RecipeCard extends StatelessWidget {
     } else {
       final FadeInImage breadImage = FadeInImage.memoryNetwork(
         placeholder: kTransparentImage,
-        image: recipe.imageUrl ?? '',
+        image: recipe.cdnUrl ?? '',
         fit: BoxFit.cover,
       );
 
