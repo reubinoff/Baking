@@ -11,6 +11,7 @@ environ["DB_PASS"] = "rootsql"
 environ["DB_HOST"] = "127.0.0.1"
 environ["DB_NAME"] = "baking-db-test-" + str(random.random())
 environ["DB_USER"] = "postgres"
+environ["azure_storage_connection_string"] = ""
 
 word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 
@@ -19,8 +20,8 @@ WORDS = response.content.splitlines()
 
 TOTAL_RECIPES = 15
 
-URL = "http://localhost:8888"
-# URL = "https://service.baking.reubinoff.com"
+# URL = "http://localhost:8888"
+URL = "https://service.baking.reubinoff.com"
 
 def get_types():
     from baking.routers.ingredients.enums import IngrediantType

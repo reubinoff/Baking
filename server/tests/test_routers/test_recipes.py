@@ -3,6 +3,7 @@ def test_get(session, cleaner, recipe):
 
     t_recipe = get(db_session=session, recipe_id=recipe.id)
     assert t_recipe.id == recipe.id
+    assert t_recipe.cdn_url 
 
 
 def test_search_filter_sort_paginate_query(session, cleaner, recipe):
