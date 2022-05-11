@@ -1,10 +1,10 @@
 import os
 from pydantic import BaseSettings
 class BakingConfig(BaseSettings):
-    is_debug: bool = True
+    is_debug: bool = False
     service_name: str = "testing-service"  # will be replaced in env var
 
-    log_level: str = "INFO"
+    log_level: str = "DEBUG"
 
     db_host: str
     db_pass: str
@@ -20,5 +20,7 @@ class BakingConfig(BaseSettings):
 
     azure_storage_connection_string: str
     azure_cdn_storage_base_url: str = "https://images.baking.reubinoff.com"
+
+    logzio_token: str = ""
 
 settings = BakingConfig()

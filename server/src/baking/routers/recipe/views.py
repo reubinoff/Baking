@@ -1,10 +1,9 @@
+import logging
 from baking.utils.azure_storage import delete_image_from_blob, upload_image_to_blob
 from baking.utils.general import is_image
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
-from fastapi.logger import logger
 from fastapi import status
-
 
 from sqlalchemy.orm import Session
 
@@ -21,6 +20,8 @@ from baking.routers.recipe.models import (
 )
 from baking.routers.recipe.service import create, get, delete, update, update_image
 
+LOGGER = logging.getLogger(__name__)
+
 router = APIRouter()
 
 
@@ -29,6 +30,8 @@ def get_recipes(*, common: dict = Depends(common_parameters)):
     """
     Get all recipes.
     """
+    LOGGER.info("Get Recipes filter={0}".format(common["filter_spec"]))
+
     pagination = search_filter_sort_paginate(model="Recipe", **common)
     return RecipePagination(**pagination).dict()
 

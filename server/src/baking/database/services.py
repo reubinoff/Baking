@@ -5,7 +5,6 @@ from typing import List
 from baking.models import FilterObject
 
 from fastapi import Depends, Query
-from fastapi.logger import logger
 import sqlalchemy
 
 from sqlalchemy import  orm, func, desc
@@ -99,7 +98,7 @@ def create_sort_spec(model, sort_by, descending):
                 sort_spec.append(
                     {"model": model, "field": field, "direction": direction}
                 )
-    logger.debug(f"Sort Spec: {json.dumps(sort_spec, indent=2)}")
+    LOGGER.debug(f"Sort Spec: {json.dumps(sort_spec, indent=2)}")
     return sort_spec
 
 
@@ -174,7 +173,7 @@ def search_filter_sort_paginate(
             query, page_number=page, page_size=items_per_page
         )
     except sqlalchemy.exc.ProgrammingError as e:
-        logger.debug(e)
+        LOGGER.debug(e)
         return {
             "items": [],
             "itemsPerPage": items_per_page,

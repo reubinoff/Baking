@@ -1,6 +1,5 @@
 from baking.routers.ingredients.service import delete
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.logger import logger
 
 
 from sqlalchemy.orm import Session

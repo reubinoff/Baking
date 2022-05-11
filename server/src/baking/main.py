@@ -10,16 +10,13 @@ from baking.exceptions import base_error_handler
 from baking.middlewares import get_middlewares
 from baking.database.manage import init_database
 from baking.database.core import engine
-from fastapi.logger import logger
 
 
 init_logger()
-# logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 init_database(engine=engine)
 
-
-logger.info(f"running with root path = {settings.root_path}")
 
 # base_path = f"/{settings.root_path}" if settings.root_path else ""
 app = FastAPI(
