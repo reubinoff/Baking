@@ -38,4 +38,4 @@ def init_logger():
         logging.config.dictConfig(LOGGING)
 
     logger = logging.getLogger()
-    logger.info('Logger initated')
+    logger.info('Logger initated!')
