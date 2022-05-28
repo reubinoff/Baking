@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Increase volume by 10',
+            tooltip: 'Add new Recipe',
             onPressed: () {},
           ),
         ],
