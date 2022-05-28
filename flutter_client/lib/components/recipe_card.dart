@@ -6,9 +6,11 @@ class RecipeCard extends StatelessWidget {
   const RecipeCard({
     Key? key,
     required this.recipe,
+    required this.showImage,
   }) : super(key: key);
 
   final Recipe recipe;
+  final bool showImage;
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +72,9 @@ class RecipeCard extends StatelessWidget {
                     label: Text(recipe.hydration.toString() + "%"),
                   ),
                 )),
-            SizedBox(
-              height: 200.0,
-              child: _getImage(context),
-            ),
+            showImage
+                ? SizedBox(height: 200.0, child: _getImage(context))
+                : Container(),
             Container(
               padding: const EdgeInsets.all(16.0),
               alignment: Alignment.centerLeft,

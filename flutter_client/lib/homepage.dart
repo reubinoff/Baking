@@ -36,7 +36,9 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       drawer: const HomePageDrawer(),
-      body: const RecipeView(),
+      body: const RecipeView(
+        showImage: true,
+      ),
     );
   }
 }

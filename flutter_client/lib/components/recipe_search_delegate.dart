@@ -1,3 +1,4 @@
+import 'package:baking_client/recipe_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,7 +33,9 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
   Widget buildResults(BuildContext context) {
     debugPrint("buildResults for $query");
     saveQuery(query);
-    return Container();
+    return const RecipeView(
+      showImage: false,
+    );
   }
 
   @override

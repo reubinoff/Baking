@@ -8,7 +8,10 @@ import 'components/recipe_card.dart';
 class RecipeView extends StatefulWidget {
   const RecipeView({
     Key? key,
+    required this.showImage,
   }) : super(key: key);
+
+  final bool showImage;
 
   @override
   _RecipeViewState createState() => _RecipeViewState();
@@ -48,7 +51,8 @@ class _RecipeViewState extends State<RecipeView> {
                         }
                         return false;
                       },
-                      child: RecipeList(recipes: value)),
+                      child: RecipeList(
+                          recipes: value, showImage: widget.showImage)),
                 )
               : const Center(child: CircularProgressIndicator());
         });
@@ -56,24 +60,20 @@ class _RecipeViewState extends State<RecipeView> {
 }
 
 class RecipeList extends StatelessWidget {
-  const RecipeList({Key? key, required this.recipes}) : super(key: key);
+  const RecipeList({Key? key, required this.recipes, required this.showImage})
+      : super(key: key);
 
   final List<Recipe> recipes;
-
+  final bool showImage;
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-      ),
-      padding: const EdgeInsets.all(16),
+    return ListView.separated(
+      padding: const EdgeInsets.all(10),
       itemCount: recipes.length,
+      separatorBuilder: (BuildContext context, int index) => const Divider(),
       itemBuilder: (BuildContext context, int index) {
-        return Center(
-          child: RecipeCard(recipe: recipes[index]),
-        );
+        final Recipe recipe = recipes[index];
+        return RecipeCard(recipe: recipe, showImage: showImage);
       },
     );
   }
