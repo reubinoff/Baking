@@ -1,6 +1,7 @@
 import 'package:baking_client/recipe_view.dart';
 import 'package:flutter/material.dart';
 import 'components/home_page_drawer.dart';
+import 'components/recipe_search_delegate.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -23,7 +24,9 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.search),
             tooltip: 'Search for recipe',
-            onPressed: () {},
+            onPressed: () {
+              showSearch(context: context, delegate: RecipeSearchDelegate());
+            },
           ),
           IconButton(
             icon: const Icon(Icons.add),
