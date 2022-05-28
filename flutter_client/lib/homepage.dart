@@ -1,17 +1,24 @@
 import 'package:baking_client/recipe_view.dart';
 import 'package:flutter/material.dart';
+import 'components/home_page_drawer.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({
     required this.title,
     Key? key,
   }) : super(key: key);
   final String title;
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -25,6 +32,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      drawer: const HomePageDrawer(),
       body: const RecipeView(),
     );
   }
