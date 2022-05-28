@@ -85,7 +85,9 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
       searchItems.removeWhere((element) => element == queryStr);
     }
     searchItems.insert(0, queryStr);
-    searchItems.length = totalInRecentSearch;
+    searchItems.length = searchItems.length > totalInRecentSearch
+        ? totalInRecentSearch
+        : searchItems.length;
     prefs.setStringList('search_items', searchItems);
   }
 }
