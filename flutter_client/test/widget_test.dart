@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Baking app test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
     const Recipe r = Recipe(
       id: 1,
       description: 'test',
