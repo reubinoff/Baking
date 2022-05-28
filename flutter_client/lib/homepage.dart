@@ -12,6 +12,18 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Search for recipe',
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Increase volume by 10',
+            onPressed: () {},
+          ),
+        ],
       ),
       body: const RecipeView(),
     );

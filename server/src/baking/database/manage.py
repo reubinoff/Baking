@@ -33,7 +33,7 @@ def get_tables():
 
 def init_database(engine):
     """Initializes a the database."""
-    LOGGER.info(f"conn str: {get_sql_url()}")
+    # LOGGER.debug(f"conn str: {get_sql_url()}")
     required_tables_creation = False
     if database_exists(get_sql_url()) is False:
         raise Exception("No database exists")
