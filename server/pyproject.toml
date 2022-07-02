@@ -6,21 +6,20 @@ authors = ["Moshe Reubinoff <reubinoff@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-uvicorn = "^0.17.6"
-fastapi = "^0.75.1"
+uvicorn = "^0.18.2"
+fastapi = "^0.78.0"
 
 pydantic = {extras = ["dotenv"], version = "^1.8.2"}
 alembic = "^1.7.3"
-PyMySQL = "^1.0.2"
 cryptography = "^3.4.8"
 colorlog = "^6.4.1"
 SQLAlchemy-Utils = "^0.37.*"
-psycopg2-binary = "^2.9.*"
+psycopg2-binary = "^2.9.3"
 python-multipart = "^0.0.5"
 filetype = "^1.0.10"
 azure-storage-blob = "^12.11.0"
 SQLAlchemy-Searchable = "^1.4.1"
-SQLAlchemy = "^1.4.35"
+SQLAlchemy = "^1.4.39"
 logzio-python-handler = "^3.1.1"
 
 
