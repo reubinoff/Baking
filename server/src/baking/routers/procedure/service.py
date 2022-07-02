@@ -5,7 +5,9 @@ from .models import ProcedureRead, ProcedureCreate, Procedure, ProcedureUpdate
 from baking.routers.ingredients.service import (
     get_or_create as get_or_create_ingidient,
 )
-
+from baking.routers.steps.service import (
+    get_or_create as get_or_create_step,
+)
 
 def get(*, db_session, procedure_id: int) -> Optional[Procedure]:
     """Returns a item based on the given Procedure id."""
@@ -29,9 +31,16 @@ def create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
             get_or_create_ingidient(db_session=db_session, ingredient_in=ingredient_in)
             for ingredient_in in procedure_in.ingredients
         ]
-
+    steps = []
+    if procedure_in.steps is not None and isinstance(
+        procedure_in.steps, List
+    ):
+        steps = [
+            get_or_create_step(db_session=db_session, step_in=step_in)
+            for step_in in procedure_in.steps
+        ]
     procedure = Procedure(
-        **procedure_in.dict(exclude={"ingredients"}), ingredients=ingredients
+        **procedure_in.dict(exclude={"ingredients", "steps"}), ingredients=ingredients
     )
 
     db_session.add(procedure)
@@ -63,18 +72,24 @@ def update(
     recipe_data = procedure.dict()
 
     ingredients = []
-    print(procedure_in.ingredients)
+    # print(procedure_in.ingredients)
     for i in procedure_in.ingredients:
         ingredients.append(
             get_or_create_ingidient(db_session=db_session, ingredient_in=i)
         )
+    steps = []
+    for i in procedure_in.steps:
+        steps.append(
+            get_or_create_step(db_session=db_session, step_in=i)
+        )
 
-    update_data = procedure_in.dict(exclude_unset=True, exclude={"ingredients"})
+    update_data = procedure_in.dict(exclude_unset=True, exclude={"ingredients", "steps"})
 
     for field in recipe_data:
         if field in update_data:
             setattr(procedure, field, update_data[field])
     procedure.ingredients = ingredients
+    procedure.steps = steps
     db_session.commit()
     return procedure
 

@@ -8,7 +8,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from baking.database.core import Base
 from baking.models import NameStr, OurBase, PrimaryKey
-from baking.models import RecipeMixin
+from baking.models import ProcedureMixin
 from sqlalchemy.sql.schema import ForeignKey
 from pydantic import Field
 from .enums import IngrediantUnits, IngrediantType
@@ -18,7 +18,7 @@ from .enums import IngrediantUnits, IngrediantType
 ############################################################
 
 
-class Ingredient(Base):
+class Ingredient(Base, ProcedureMixin):
     """
     for example: water, 30, grams, flour
     """
@@ -29,8 +29,6 @@ class Ingredient(Base):
     units = Column(String, default=IngrediantUnits.grams)
     type = Column(String, default=IngrediantType.Other)
 
-    procedure_id = Column(Integer, ForeignKey("procedure.id", ondelete="CASCADE"))
-    procedure = relationship("Procedure")
 
 
 ############################################################

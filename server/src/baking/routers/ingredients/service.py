@@ -12,9 +12,9 @@ def get(*, db_session, ingredient_id: int) -> Optional[Ingredient]:
     )
 
 
-def get_all(*, db_session) -> List[Optional[Ingredient]]:
+def get_all(*, db_session,  procedure_id: int) -> List[Optional[Ingredient]]:
     """Returns all ingredients."""
-    return db_session.query(Ingredient)
+    return db_session.query(Ingredient).filter(Ingredient.procedure_id == procedure_id).all()
 
 
 def create(*, db_session, ingredient_in: IngredientCreate) -> Ingredient:

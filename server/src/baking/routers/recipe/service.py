@@ -40,7 +40,7 @@ def update(*, db_session, recipe: Recipe, recipe_in: RecipeUpdate) -> Recipe:
     recipe_data = recipe.dict()
 
     procedures = []
-    print(recipe_in.procedures)
+    # print(recipe_in.procedures)
     for p in recipe_in.procedures:
         procedures.append(
             get_or_create_procedure(db_session=db_session, procedure_in=p)

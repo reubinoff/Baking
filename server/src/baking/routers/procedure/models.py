@@ -13,6 +13,11 @@ from baking.routers.ingredients.models import (
     IngredientCreate,
     IngredientRead,
 )
+from baking.routers.steps.models import (
+    Step,
+    StepCreate,
+    StepRead,
+)
 from baking.routers.ingredients.enums import IngrediantType, is_liquid
 
 ############################################################
@@ -30,6 +35,13 @@ class Procedure(Base, RecipeMixin):
 
     ingredients = relationship(
         "Ingredient",
+        lazy="subquery",
+        cascade="all, delete-orphan",
+        back_populates="procedure",
+    )
+
+    steps = relationship(
+        "Step",
         lazy="subquery",
         cascade="all, delete-orphan",
         back_populates="procedure",
@@ -73,6 +85,7 @@ class ProcedureBase(OurBase):
     order: Optional[int] = Field(1, gt=0, lt=100)
 
     ingredients: Optional[List[IngredientRead]]
+    steps: Optional[List[StepRead]]
 
 
 class ProcedureRead(ProcedureBase):
@@ -83,11 +96,13 @@ class ProcedureRead(ProcedureBase):
 class ProcedureCreate(ProcedureBase):
     id: Optional[PrimaryKey]
     ingredients: Optional[List[IngredientCreate]] = []
+    steps: Optional[List[StepCreate]] = []
 
 
 class ProcedureUpdate(ProcedureBase):
     name: Optional[NameStr]
     ingredients: Optional[List[IngredientCreate]] = []
+    steps: Optional[List[StepCreate]] = []
 
 
 class ProcedurePagination(OurBase):

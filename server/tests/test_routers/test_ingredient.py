@@ -3,19 +3,20 @@ def test_get(session, cleaner, ingredient):
     from baking.routers.ingredients.service import get
 
     t_ingredient = get(db_session=session, ingredient_id=ingredient.id)
-    import time
-
     assert t_ingredient.id == ingredient.id
 
 
 def test_get_all(session, ingredients):
     from baking.routers.ingredients.service import get_all
-
-    t_ingredients = get_all(db_session=session).all()
+    procedure_id = ingredients[0].procedure.id
+    t_ingredients = get_all(
+        db_session=session, procedure_id=procedure_id)
     assert t_ingredients
+    assert len(t_ingredients) == len(
+        [i for i in ingredients if i.procedure.id == procedure_id])
 
 
-def test_create(session, ingredient):
+def test_create(session):
     from baking.routers.ingredients.service import create
     from baking.routers.ingredients.models import IngredientCreate
     from baking.routers.ingredients.enums import IngrediantType, IngrediantUnits

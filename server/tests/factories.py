@@ -1,13 +1,14 @@
 from baking.routers.procedure.models import Procedure
 from faker import Faker
 
-from factory import Sequence, post_generation, SubFactory, LazyAttribute
+from factory import Sequence, post_generation, SubFactory, LazyAttribute, List, RelatedFactory, RelatedFactoryList
 from factory.alchemy import SQLAlchemyModelFactory
 from factory.fuzzy import FuzzyChoice, FuzzyText, FuzzyDateTime, FuzzyInteger
 
 
 from baking.routers.recipe.models import Recipe
 from baking.routers.ingredients.models import Ingredient
+from baking.routers.steps.models import Step
 from baking.routers.ingredients.enums import IngrediantType, IngrediantUnits
 
 
@@ -36,24 +37,6 @@ class RecipeFactory(BaseFactory):
 
         model = Recipe
 
-    # @post_generation
-    # def ingredients(self, create, extracted, **kwargs):
-    #     if not create:
-    #         return
-
-    #     if extracted:
-    #         for ingredients in extracted:
-    #             self.ingredients.append(ingredients)
-
-    # @post_generation
-    # def procedures(self, create, extracted, **kwargs):
-    #     if not create:
-    #         return
-
-    #     if extracted:
-    #         for procedures in extracted:
-    #             self.procedures.append(procedures)
-
 
 class IngredientFactory(BaseFactory):
     """Ingredient Factory."""
@@ -63,11 +46,29 @@ class IngredientFactory(BaseFactory):
     units = FuzzyChoice(list(map(str, IngrediantUnits)))
     type = FuzzyChoice(list(map(str, IngrediantType)))
 
+    procedure = SubFactory(
+        'tests.factories.ProcedureFactory', ingredients=None)
+
     class Meta:
         """Factory Configuration."""
 
         model = Ingredient
 
+
+class StepFactory(BaseFactory):
+    """Ingredient Factory."""
+
+    name = Sequence(lambda n: f"step_{n}")
+    description = Sequence(lambda n: f"step_{n}")
+    duration_in_seconds = FuzzyInteger(1, 10000)
+
+    procedure = SubFactory(
+        'tests.factories.ProcedureFactory', steps=None)
+
+    class Meta:
+        """Factory Configuration."""
+
+        model = Step
 
 class ProcedureFactory(BaseFactory):
     """Ingredient Factory."""
@@ -76,7 +77,13 @@ class ProcedureFactory(BaseFactory):
     description = Sequence(lambda n: f"blaBla_{n}")
     order = FuzzyInteger(1, 10)
 
+    ingredients = RelatedFactoryList(
+        IngredientFactory, size=3, factory_related_name="procedure")
+    steps = RelatedFactoryList(
+        StepFactory, size=3, factory_related_name="procedure")
+
     class Meta:
         """Factory Configuration."""
 
         model = Procedure
+        

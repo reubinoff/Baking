@@ -23,6 +23,17 @@ class RecipeMixin(object):
         return relationship("Recipe")
 
 
+class ProcedureMixin(object):
+    """Procedure mixin"""
+
+    @declared_attr
+    def procedure_id(cls):  # noqa
+        return Column(Integer, ForeignKey("procedure.id", ondelete="CASCADE"))
+
+    @declared_attr
+    def procedure(cls):  # noqa
+        return relationship("Procedure")
+
 class TimeStampMixin(object):
     """Timestamping mixin"""
 
