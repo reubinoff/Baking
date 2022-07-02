@@ -1,3 +1,4 @@
+import 'package:baking_client/components/new_recipe/new_recipe_home.dart';
 import 'package:baking_client/recipe_view.dart';
 import 'package:flutter/material.dart';
 import 'components/home_page_drawer.dart';
@@ -31,7 +32,12 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: 'Add new Recipe',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NewRecipeRoute()),
+              );
+            },
           ),
         ],
       ),
