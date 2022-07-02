@@ -9,20 +9,24 @@ class RecipeView extends StatefulWidget {
   const RecipeView({
     Key? key,
     required this.showImage,
+    required this.query,
   }) : super(key: key);
 
   final bool showImage;
+  final String query;
 
   @override
   _RecipeViewState createState() => _RecipeViewState();
 }
 
 class _RecipeViewState extends State<RecipeView> {
-  RecipeNotifier notifier = RecipeNotifier();
+  late RecipeNotifier notifier;
 
   @override
   void initState() {
     super.initState();
+    // debugPrint("MOSHE >>>>>" + widget.query);
+    notifier = RecipeNotifier(query: widget.query);
     notifier.getMore();
   }
 
@@ -37,6 +41,8 @@ class _RecipeViewState extends State<RecipeView> {
     return ValueListenableBuilder<List<Recipe>>(
         valueListenable: notifier,
         builder: (BuildContext context, List<Recipe> value, Widget? child) {
+          debugPrint("test" + value.toString());
+
           return value.isNotEmpty
               ? RefreshIndicator(
                   onRefresh: () async {
@@ -54,7 +60,9 @@ class _RecipeViewState extends State<RecipeView> {
                       child: RecipeList(
                           recipes: value, showImage: widget.showImage)),
                 )
-              : const Center(child: CircularProgressIndicator());
+              : notifier.loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : const Center(child: Text("No recipes found"));
         });
   }
 }

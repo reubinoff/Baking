@@ -33,8 +33,9 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
   Widget buildResults(BuildContext context) {
     debugPrint("buildResults for $query");
     saveQuery(query);
-    return const RecipeView(
+    return RecipeView(
       showImage: false,
+      query: query,
     );
   }
 
@@ -50,7 +51,7 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
       future: SharedPreferences.getInstance()
           .then((prefs) => prefs.getStringList('search_items')),
       builder: (context, snapshot) {
-        debugPrint(snapshot.data.toString());
+        // debugPrint(snapshot.data.toString());
         if (snapshot.hasData) {
           return ListView.builder(
             itemCount: snapshot.data?.length,
@@ -70,9 +71,7 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
           );
         } else {
           debugPrint('No data');
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center();
         }
       },
     );
