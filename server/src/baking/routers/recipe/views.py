@@ -45,7 +45,7 @@ def get_recipe(*, db_session: Session = Depends(get_db), recipe_id: int):
     return recipe
 
 
-@router.post("", response_model=RecipeRead)
+@router.post("")
 def create_recipe(*, db_session: Session = Depends(get_db), recipe_in: RecipeCreate):
     """
     Create a new recipes.

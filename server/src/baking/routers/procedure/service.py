@@ -40,10 +40,12 @@ def create(*, db_session, procedure_in: ProcedureCreate) -> Procedure:
             for step_in in procedure_in.steps
         ]
     procedure = Procedure(
-        **procedure_in.dict(exclude={"ingredients", "steps"}), ingredients=ingredients
+        **procedure_in.dict(exclude={"ingredients", "steps"})
     )
 
     db_session.add(procedure)
+    procedure.steps = steps
+    procedure.ingredients = ingredients
     db_session.commit()
     return procedure
 

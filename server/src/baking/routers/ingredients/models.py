@@ -43,6 +43,8 @@ class IngredientBase(OurBase):
 
 class IngredientRead(IngredientBase):
     id: PrimaryKey
+    procedure_id: PrimaryKey
+
 
 
 class IngredientCreate(IngredientBase):

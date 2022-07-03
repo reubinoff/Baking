@@ -46,7 +46,7 @@ class StepCreate(StepBase):
     name: NameStr
     description: Optional[str] = Field(None, nullable=True)
     duration_in_seconds: Optional[int] = Field(1, gt=0, lt=MAX_DURATION)
-    procedure_id: PrimaryKey
+    # procedure_id: PrimaryKey
 
 
 
