@@ -21,7 +21,19 @@ class RecipeNotifier extends ValueNotifier<List<Recipe>> {
 
   bool get loading => _loading;
 
+  @override
+  List<Recipe> get value => _value;
+  List<Recipe> _value = [];
+
+  @override
+  set value(List<Recipe> newValue) {
+    _value = newValue;
+    notifyListeners();
+  }
+
   Future<void> reload() async {
+    _value = [];
+
     _listRecipes = <Recipe>[];
     _hasMoreRecipe = true;
     _page = 1;

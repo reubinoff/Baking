@@ -1,3 +1,4 @@
+import 'package:baking_client/components/recipe_view/recipe_view_main.dart';
 import 'package:baking_client/models/recipe.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -84,7 +85,13 @@ class RecipeCard extends StatelessWidget {
               children: [
                 TextButton(
                   child: const Text('BAKE'),
-                  onPressed: () {/* ... */},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RecipeViewFull(recipe: recipe)),
+                    );
+                  },
                 ),
               ],
             )
