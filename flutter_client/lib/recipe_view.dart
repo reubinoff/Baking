@@ -50,8 +50,10 @@ class _RecipeViewState extends State<RecipeView> {
                   },
                   child: NotificationListener<ScrollNotification>(
                       onNotification: (ScrollNotification scrollInfo) {
+                        debugPrint("AA");
                         if (scrollInfo is ScrollEndNotification &&
                             scrollInfo.metrics.extentAfter == 0) {
+                          debugPrint("BB");
                           notifier.getMore();
                           return true;
                         }
