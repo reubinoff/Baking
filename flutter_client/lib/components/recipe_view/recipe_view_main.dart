@@ -51,12 +51,3 @@ class RecipeViewFull extends StatelessWidget {
     );
   }
 }
-
-
-//  Column(
-//         children: <Widget>[
-//           SizedBox(
-//               height: 200.0,
-//               child: Expanded(child: RecipeImage(cdnUrl: recipe.cdnUrl ?? ''))),
-//         ],
-//       ),
