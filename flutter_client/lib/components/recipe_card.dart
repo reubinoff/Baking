@@ -20,54 +20,52 @@ class RecipeCard extends StatelessWidget {
     );
   }
 
-  Card getCard(BuildContext context) {
-    return Card(
-        elevation: 15.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          children: [
-            ListTile(
-                title: Text(recipe.name),
-                // subtitle: Text(recipe.description),
-                trailing: SizedBox(
-                  child: Chip(
-                    backgroundColor: Colors.transparent,
-                    avatar: const CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      child: IconTheme(
-                        data: IconThemeData(color: Colors.blue),
-                        child: Icon(Icons.water),
-                      ),
-                    ),
-                    label: Text(recipe.hydration.toString() + "%"),
-                  ),
-                )),
-            showImage
-                ? SizedBox(
-                    height: 200.0, child: RecipeImage(cdnUrl: recipe.cdnUrl))
-                : Container(),
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              alignment: Alignment.centerLeft,
-              child: Text(recipe.description),
+  InkWell getCard(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RecipeViewFull(
+              recipe: recipe,
             ),
-            ButtonBar(
-              children: [
-                TextButton(
-                  child: const Text('BAKE'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RecipeViewFull(recipe: recipe)),
-                    );
-                  },
-                ),
-              ],
-            )
-          ],
-        ));
+          ),
+        );
+      },
+      child: Card(
+          elevation: 15.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            children: [
+              ListTile(
+                  title: Text(recipe.name),
+                  // subtitle: Text(recipe.description),
+                  trailing: SizedBox(
+                    child: Chip(
+                      backgroundColor: Colors.transparent,
+                      avatar: const CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        child: IconTheme(
+                          data: IconThemeData(color: Colors.blue),
+                          child: Icon(Icons.water),
+                        ),
+                      ),
+                      label: Text(recipe.hydration.toString() + "%"),
+                    ),
+                  )),
+              showImage
+                  ? SizedBox(
+                      height: 200.0, child: RecipeImage(cdnUrl: recipe.cdnUrl))
+                  : Container(),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                alignment: Alignment.centerLeft,
+                child: Text(recipe.description),
+              ),
+            ],
+          )),
+    );
   }
 }

@@ -11,6 +11,7 @@ void main() {
       hydration: 20,
       imageUrl: '',
       cdnUrl: '',
+      procedures: [],
     );
     debugPrint(r.toString());
   });
