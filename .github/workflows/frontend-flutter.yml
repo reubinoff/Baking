@@ -5,23 +5,22 @@ on:
     branches: [ develop, main]
     paths:
     - 'flutter_client/**'
-    - 'react-client/**'
 
 jobs:
-  # test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: subosito/flutter-action@v2
-  #       with:
-  #         channel: 'stable'
-  #     - name: test
-  #       run: |
-  #         cd flutter_client
-  #         flutter --version
-  #         flutter pub get
-  #         flutter format --set-exit-if-changed .
-  #         flutter analyze .
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: test
+        run: |
+          cd flutter_client
+          flutter --version
+          flutter pub get
+          flutter format --set-exit-if-changed .
+          flutter analyze .
           
 
   build-web:
@@ -29,21 +28,17 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v2
-      # - uses: subosito/flutter-action@v2
-      #   with:
-      #     channel: 'stable'
-      # - name: web build
-      #   run: |
-      #     cd flutter_client
-      #     flutter build web
-      - name: 'Build react App'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: web build
         run: |
-          npm install
-          npm run build --output-path=build
+          cd flutter_client
+          flutter build web
       - uses: actions/upload-artifact@v1
         with:
           name: release-web
-          path: react_client/build/
+          path: flutter_client/build/web/
 
   upload-web-to-azure-website:
     runs-on: ubuntu-latest

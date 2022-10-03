@@ -1,0 +1,44 @@
+name: React App
+
+on:
+  push:
+    branches: [ develop, main]
+    paths:
+    - 'react-client/**'
+
+jobs:
+  build-web:
+    runs-on: ubuntu-latest
+    env:
+     ACCOUNT_NAME: reubinoffbakingweb
+     CDN_PROFILE: baking-web-cdb-profile
+     CDN_ENDPOINT: baking
+     RESOURCE_GROUP: baking-aks
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Build react App'
+        run: |
+          npm install
+          npm run build --output-path=build --configuration=production
+
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
+      
+      - name: Upload to blob storage
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+              az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --overwrite --auth-mode key -d '$web' -s ./build
+      - name: Purge CDN endpoint
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.CDN_PROFILE }} --name ${{ env.CDN_ENDPOINT }} --resource-group ${{ env.RESOURCE_GROUP }}
+
+    # Azure logout
+      - name: logout
+        run: |
+              az logout
+        if: always()
