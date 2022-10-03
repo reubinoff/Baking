@@ -20,6 +20,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: 'Build react App'
         run: |
+          cd react-client
           npm install
           npm run build --output-path=build --configuration=production
 

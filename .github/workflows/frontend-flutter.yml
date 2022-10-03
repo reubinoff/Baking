@@ -1,184 +1,184 @@
-name: flutter-ci
+# name: flutter-ci
 
-on:
-  push:
-    branches: [ develop, main]
-    paths:
-    - 'flutter_client/**'
+# on:
+#   push:
+#     branches: [ develop, main]
+#     paths:
+#     - 'flutter_client/**'
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - name: test
-        run: |
-          cd flutter_client
-          flutter --version
-          flutter pub get
-          flutter format --set-exit-if-changed .
-          flutter analyze .
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: subosito/flutter-action@v2
+#         with:
+#           channel: 'stable'
+#       - name: test
+#         run: |
+#           cd flutter_client
+#           flutter --version
+#           flutter pub get
+#           flutter format --set-exit-if-changed .
+#           flutter analyze .
           
 
-  build-web:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - name: web build
-        run: |
-          cd flutter_client
-          flutter build web
-      - uses: actions/upload-artifact@v1
-        with:
-          name: release-web
-          path: flutter_client/build/web/
+#   build-web:
+#     runs-on: ubuntu-latest
+#     needs: test
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: subosito/flutter-action@v2
+#         with:
+#           channel: 'stable'
+#       - name: web build
+#         run: |
+#           cd flutter_client
+#           flutter build web
+#       - uses: actions/upload-artifact@v1
+#         with:
+#           name: release-web
+#           path: flutter_client/build/web/
 
-  upload-web-to-azure-website:
-    runs-on: ubuntu-latest
-    needs: build-web
-    env:
-     ACCOUNT_NAME: reubinoffbakingweb
-     CDN_PROFILE: baking-web-cdb-profile
-     CDN_ENDPOINT: baking
-     RESOURCE_GROUP: baking-aks
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@master
-        with:
-          name: release-web
-          path: web-server/public/
-      - name: 'Login via Azure CLI'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
+#   upload-web-to-azure-website:
+#     runs-on: ubuntu-latest
+#     needs: build-web
+#     env:
+#      ACCOUNT_NAME: reubinoffbakingweb
+#      CDN_PROFILE: baking-web-cdb-profile
+#      CDN_ENDPOINT: baking
+#      RESOURCE_GROUP: baking-aks
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: actions/download-artifact@master
+#         with:
+#           name: release-web
+#           path: web-server/public/
+#       - name: 'Login via Azure CLI'
+#         uses: azure/login@v1
+#         with:
+#           creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
       
-      - name: Upload to blob storage
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-              az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --overwrite --auth-mode key -d '$web' -s web-server/public
-      - name: Purge CDN endpoint
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.CDN_PROFILE }} --name ${{ env.CDN_ENDPOINT }} --resource-group ${{ env.RESOURCE_GROUP }}
+#       - name: Upload to blob storage
+#         uses: azure/CLI@v1
+#         with:
+#           inlineScript: |
+#               az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --overwrite --auth-mode key -d '$web' -s web-server/public
+#       - name: Purge CDN endpoint
+#         uses: azure/CLI@v1
+#         with:
+#           inlineScript: |
+#             az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.CDN_PROFILE }} --name ${{ env.CDN_ENDPOINT }} --resource-group ${{ env.RESOURCE_GROUP }}
 
-    # Azure logout
-      - name: logout
-        run: |
-              az logout
-        if: always()
+#     # Azure logout
+#       - name: logout
+#         run: |
+#               az logout
+#         if: always()
 
-  # bundle-nodejs-web:
-  #   runs-on: ubuntu-latest
-  #   needs: build-web
-  #   env:
-  #     BASE_REPO: reubinoff/web
-  #     REGISTRY: reubinoff.azurecr.io
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/download-artifact@master
-  #       with:
-  #         name: release-web
-  #         path: web-server/public/
+#   # bundle-nodejs-web:
+#   #   runs-on: ubuntu-latest
+#   #   needs: build-web
+#   #   env:
+#   #     BASE_REPO: reubinoff/web
+#   #     REGISTRY: reubinoff.azurecr.io
+#   #   steps:
+#   #     - uses: actions/checkout@v2
+#   #     - uses: actions/download-artifact@master
+#   #       with:
+#   #         name: release-web
+#   #         path: web-server/public/
 
-  #     - name: 'Log in to the Container registry'
-  #       uses: azure/docker-login@v1
-  #       with:
-  #         login-server: ${{ env.REGISTRY }}
-  #         username: ${{ secrets.REGISTRY_USERNAME }}
-  #         password: ${{ secrets.REGISTRY_PASSWORD }}
+#   #     - name: 'Log in to the Container registry'
+#   #       uses: azure/docker-login@v1
+#   #       with:
+#   #         login-server: ${{ env.REGISTRY }}
+#   #         username: ${{ secrets.REGISTRY_USERNAME }}
+#   #         password: ${{ secrets.REGISTRY_PASSWORD }}
 
-  #     - name: Build And Publish Docker
-  #       run: |
-  #         cd web-server
-  #         docker-compose build
-  #         docker tag ${{ env.BASE_REPO }}:latest ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
-  #         docker tag ${{ env.BASE_REPO }}:latest ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:latest
-  #         docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
-  #         docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:latest
+#   #     - name: Build And Publish Docker
+#   #       run: |
+#   #         cd web-server
+#   #         docker-compose build
+#   #         docker tag ${{ env.BASE_REPO }}:latest ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
+#   #         docker tag ${{ env.BASE_REPO }}:latest ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:latest
+#   #         docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
+#   #         docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:latest
 
-  # deploy-web:
-  #     runs-on: ubuntu-latest
-  #     needs: bundle-nodejs-web
-  #     env:
-  #       BASE_REPO: reubinoff/web
-  #       REGISTRY: reubinoff.azurecr.io
-  #       CONTEXT: baking
-  #       NAMESPACE: baking-deploy
-  #       DEPLOYMENT_NAME: baking-web-service
-  #     steps:
+#   # deploy-web:
+#   #     runs-on: ubuntu-latest
+#   #     needs: bundle-nodejs-web
+#   #     env:
+#   #       BASE_REPO: reubinoff/web
+#   #       REGISTRY: reubinoff.azurecr.io
+#   #       CONTEXT: baking
+#   #       NAMESPACE: baking-deploy
+#   #       DEPLOYMENT_NAME: baking-web-service
+#   #     steps:
 
-  #     - name: 'Checkout GitHub Action'
-  #       uses: actions/checkout@main
+#   #     - name: 'Checkout GitHub Action'
+#   #       uses: actions/checkout@main
 
-  #     - name: Install Helm
-  #       uses: azure/setup-helm@v1
-  #       with:
-  #         version: v3.7.2
+#   #     - name: Install Helm
+#   #       uses: azure/setup-helm@v1
+#   #       with:
+#   #         version: v3.7.2
 
-  #     - uses: azure/k8s-set-context@v2
-  #       with:
-  #         method: kubeconfig
-  #         kubeconfig: ${{ secrets.KUBECONFIG }}
-  #         context: ${{ env.CONTEXT }}
+#   #     - uses: azure/k8s-set-context@v2
+#   #       with:
+#   #         method: kubeconfig
+#   #         kubeconfig: ${{ secrets.KUBECONFIG }}
+#   #         context: ${{ env.CONTEXT }}
 
-  #     - name: helm install
-  #       run: |
-  #         cd deployment/charts/web-server
-  #         helm upgrade --install --create-namespace -n ${{ env.NAMESPACE }} \
-  #          --set baking.imageVersion=${{ github.sha }} \
-  #          ${{ env.DEPLOYMENT_NAME }} ./
+#   #     - name: helm install
+#   #       run: |
+#   #         cd deployment/charts/web-server
+#   #         helm upgrade --install --create-namespace -n ${{ env.NAMESPACE }} \
+#   #          --set baking.imageVersion=${{ github.sha }} \
+#   #          ${{ env.DEPLOYMENT_NAME }} ./
 
 
-  build-android:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '11'
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '2.5.3'
-      - name: android build
-        run: |
-          cd flutter_client
-          flutter build apk
-          flutter build appbundle
+#   build-android:
+#     runs-on: ubuntu-latest
+#     needs: test
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: actions/setup-java@v2
+#         with:
+#           distribution: 'zulu'
+#           java-version: '11'
+#       - uses: subosito/flutter-action@v2
+#         with:
+#           flutter-version: '2.5.3'
+#       - name: android build
+#         run: |
+#           cd flutter_client
+#           flutter build apk
+#           flutter build appbundle
 
-      - uses: actions/upload-artifact@v1
-        with:
-          name: release-apk
-          path: flutter_client/build/app/outputs/apk/release/app-release.apk
-      - uses: actions/upload-artifact@v1
-        with:
-          name: release-bundle
-          path: flutter_client/build/app/outputs/bundle/release/app-release.aab
+#       - uses: actions/upload-artifact@v1
+#         with:
+#           name: release-apk
+#           path: flutter_client/build/app/outputs/apk/release/app-release.apk
+#       - uses: actions/upload-artifact@v1
+#         with:
+#           name: release-bundle
+#           path: flutter_client/build/app/outputs/bundle/release/app-release.aab
 
-  build-ios:
-    runs-on: macos-latest
-    needs: test
-    steps:
-      - uses: actions/checkout@v2
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '2.5.3'
-      - name: ios build
-        run: |
-          cd flutter_client
-          flutter build ios --release --no-codesign
+#   build-ios:
+#     runs-on: macos-latest
+#     needs: test
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: subosito/flutter-action@v2
+#         with:
+#           flutter-version: '2.5.3'
+#       - name: ios build
+#         run: |
+#           cd flutter_client
+#           flutter build ios --release --no-codesign
 
-      - uses: actions/upload-artifact@v1
-        with:
-          name: release-apk
-          path: flutter_client/build/ios/iphoneos/Runner.app
+#       - uses: actions/upload-artifact@v1
+#         with:
+#           name: release-apk
+#           path: flutter_client/build/ios/iphoneos/Runner.app

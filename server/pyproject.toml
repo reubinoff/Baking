@@ -6,21 +6,21 @@ authors = ["Moshe Reubinoff <reubinoff@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-uvicorn = "^0.18.2"
-fastapi = "^0.78.0"
 
-pydantic = {extras = ["dotenv"], version = "^1.8.2"}
-alembic = "^1.7.3"
 cryptography = "^3.4.8"
 colorlog = "^6.4.1"
 SQLAlchemy-Utils = "^0.37.*"
 psycopg2-binary = "^2.9.3"
 python-multipart = "^0.0.5"
 filetype = "^1.0.10"
-azure-storage-blob = "^12.11.0"
-SQLAlchemy-Searchable = "^1.4.1"
-SQLAlchemy = "^1.4.39"
+SQLAlchemy-Searchable = "^1.4.*"
 logzio-python-handler = "^3.1.1"
+alembic = "^1.8.*"
+fastapi = "^0.85.0"
+SQLAlchemy = "^1.4.41"
+pydantic =  {extras = ["dotenv"], version = "^1.10.2"}
+uvicorn = "^0.18.3"
+azure-storage-blob = "^12.13.1"
 
 
 [tool.poetry.dev-dependencies]
@@ -39,5 +39,5 @@ flake8 = "^4.0.1"
 nox-poetry = "^0.8.6"
 
 [build-system]
-requires = ["poetry-core>=1.1.13"]
+requires = ["poetry-core>=1.2.*"]
 build-backend = "poetry.core.masonry.api"
