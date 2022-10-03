@@ -1,3 +1,4 @@
+from http.client import HTTPException
 import json
 import logging
 
@@ -174,6 +175,14 @@ def search_filter_sort_paginate(
         )
     except sqlalchemy.exc.ProgrammingError as e:
         LOGGER.debug(e)
+        return {
+            "items": [],
+            "itemsPerPage": items_per_page,
+            "page": page,
+            "total": 0,
+        }
+    except Exception as e:
+        LOGGER.exception("Error applying pagination.", e)
         return {
             "items": [],
             "itemsPerPage": items_per_page,
