@@ -5,6 +5,8 @@ on:
     branches: [ develop, main]
     paths:
     - 'react-client/**'
+    - '.github/workflows/frontend-react.yml'
+
 
 jobs:
   build-web:
