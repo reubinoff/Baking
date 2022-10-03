@@ -41,8 +41,6 @@ class _RecipeViewState extends State<RecipeView> {
     return ValueListenableBuilder<List<Recipe>>(
         valueListenable: notifier,
         builder: (BuildContext context, List<Recipe> value, Widget? child) {
-          debugPrint("test" + value.toString());
-
           return value.isNotEmpty
               ? RefreshIndicator(
                   onRefresh: () async {

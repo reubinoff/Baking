@@ -83,7 +83,6 @@ class RecipeSearchDelegate extends SearchDelegate<String> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> searchItems = prefs.getStringList('search_items') ?? [];
     if (searchItems.contains(queryStr)) {
-      debugPrint('Already in list $queryStr');
       searchItems.removeWhere((element) => element == queryStr);
     }
     searchItems.insert(0, queryStr);

@@ -1,3 +1,4 @@
+import 'package:baking_client/components/new_recipe/new_procedure.dart';
 import 'package:flutter/material.dart';
 
 class RecipeMainForm extends StatefulWidget {
@@ -16,6 +17,12 @@ class RecipeMainFormState extends State<RecipeMainForm> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('New Recipe'),
+      ),
+      body: _buildForm(),
+    );
     return Form(
       key: _formKey,
       child: Column(
@@ -55,11 +62,11 @@ class RecipeMainFormState extends State<RecipeMainForm> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16.0),
             child: ElevatedButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
-                }
+                // Open NewProcedure Form
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NewProcedure()),
+                );
               },
               child: const Text('Submit'),
             ),
