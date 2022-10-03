@@ -9,7 +9,6 @@ python = "^3.9"
 
 cryptography = "^3.4.8"
 colorlog = "^6.4.1"
-SQLAlchemy-Utils = "^0.37.*"
 psycopg2-binary = "^2.9.3"
 python-multipart = "^0.0.5"
 filetype = "^1.0.10"
@@ -21,6 +20,7 @@ SQLAlchemy = "^1.4.41"
 pydantic =  {extras = ["dotenv"], version = "^1.10.2"}
 uvicorn = "^0.18.3"
 azure-storage-blob = "^12.13.1"
+SQLAlchemy-Utils = "^0.38.3"
 
 
 [tool.poetry.dev-dependencies]
