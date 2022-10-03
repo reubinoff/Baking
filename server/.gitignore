@@ -140,3 +140,5 @@ cython_debug/
 
 # Visual Studio config
 .idea/
+
+.hypothesis

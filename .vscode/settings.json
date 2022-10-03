@@ -4,25 +4,16 @@
   "python.defaultInterpreterPath": "/Users/moshereubinoff/Library/Caches/pypoetry/virtualenvs/baking-e6zpwP2E-py3.9",
   "python.linting.mypyEnabled": true,
   "python.formatting.provider": "autopep8",
-  "sqltools.connections": [
-    {
-      "mysqlOptions": {
-        "authProtocol": "default"
-      },
-      "previewLimit": 50,
-      "server": "localhost",
-      "port": 3306,
-      "driver": "MySQL",
-      "name": "local docker",
-      "database": "moshereubinoff",
-      "username": "root",
-      "password": "sql"
-    }
-  ],
+  
   "python.linting.flake8Enabled": false,
-  "python.testing.pytestArgs": [
-    "."
-  ],
-  "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true
+
+  "python.testing.unittestEnabled": true,
+  "python.testing.pytestEnabled": true,
+      "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./server/tests",
+        "-p",
+        "test_*.py"
+      ],
 }
