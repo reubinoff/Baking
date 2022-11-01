@@ -10,6 +10,8 @@ function App() {
       id: index,
       name: "Bread",
       description: "A delicious loaf of bread",
+      hydration: index,
+      cdn_url: "https://images.baking.reubinoff.com/0619d8f4-a288-47b9-b892-995e726c7b2c.jpeg"
     });
   }
   return <RecipeGrid recipes={recipes} />;
