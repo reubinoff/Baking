@@ -1,25 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React from "react";
+import RecipeGrid from "./components/RecipeGrid";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  let recipes = [];
+  for (let index = 0; index < 10; index++) {
+    recipes.push({
+      id: index,
+      name: "Bread",
+      description: "A delicious loaf of bread",
+    });
+  }
+  return <RecipeGrid recipes={recipes} />;
 }
 
 export default App;

@@ -2,6 +2,15 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "react",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/react-client",
+      // "preLaunchTask": "npm: start - client"
+    },
+
+    {
       "name": "Python: Current File",
       "type": "python",
       "request": "launch",
@@ -56,6 +65,7 @@
         "DB_NAME": "baking-prod",
         "DB_USER": "postgres"
       }
-    }
+    },
+    
   ]
 }
