@@ -17,7 +17,7 @@ class RecipeGrid extends React.Component {
   // featch data
   componentDidMount() {
     this.setState({ loading: true });
-    fetch("https://service.baking.reubinoff.com/recipe?page=2&itemsPerPage=5")
+    fetch("http://localhost:8888/recipe?page=1&itemsPerPage=10")
       .then((response) => response.json())
       .then((data) => this.setState({ recipes: data.items, loading: false }));
   }
@@ -35,7 +35,7 @@ class RecipeGrid extends React.Component {
       );
     } else {
       return (
-        <Row xs={1} md={4} className="g-4">
+        <Row xs={1} md={2} lg={4} className="g-4">
           {recipes.map((recipe) => (
             <Col key={recipe.id}>
               <RecipeCard recipe={recipe} />

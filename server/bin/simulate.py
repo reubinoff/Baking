@@ -18,7 +18,7 @@ word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 response = requests.get(word_site)
 WORDS = response.content.splitlines()
 
-TOTAL_RECIPES = 15
+TOTAL_RECIPES = 25
 
 URL = "http://localhost:8888"
 # URL = "https://service.baking.reubinoff.com"

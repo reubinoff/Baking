@@ -11,12 +11,14 @@ import {
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Badge from "react-bootstrap/Badge";
+import Spinner from "react-bootstrap/esm/Spinner";
 
 class RecipeCard extends Component {
   constructor(recipe) {
     super(recipe);
     this.state = {
-      recipe: this.props.recipe
+      recipe: this.props.recipe,
+      imageLoading: true,
     };
   }
 
@@ -25,21 +27,32 @@ class RecipeCard extends Component {
     this.setState({
       recipe: {
         ...this.state.recipe,
-        favorite: !this.state.recipe.favorite
-      }
+        favorite: !this.state.recipe.favorite,
+      },
     });
   }
 
+  handleImageLoaded() {
+    console.log("handleImageLoaded");
+    this.setState({ imageLoading: false });
+  }
+
   render() {
-    const {recipe} = this.state;
+    const { recipe, imageLoading } = this.state;
     return (
       <Card>
-        {/* <Card.Img variant="top" src="images/bread_placeholder.jpeg" /> */}
-        <Card.Img variant="top" src={recipe.cdn_url} />
+        <Card.Header>{recipe.name}</Card.Header>
+        <Card.Img
+          
+          variant="top"
+          src={recipe.cdn_url}
+          onLoad={this.handleImageLoaded.bind(this)}
+        />
+        {imageLoading && <Spinner animation="border" role="status" />}
+
         <Card.Body>
           <Row>
-            <Col>
-              <Card.Title>{recipe.name}</Card.Title>
+            <Col xs={7} sm={8}>
               <Card.Text>{recipe.description}</Card.Text>
             </Col>
             <Col>
@@ -72,7 +85,6 @@ class RecipeCard extends Component {
         </Button>
       </Card.Footer>
     );
-
   }
 }
 
@@ -81,7 +93,6 @@ RecipeCard.propTypes = {
 }
 export default RecipeCard;
 
-  {/* final String name;
-  final String? imageUrl;
-  final String? cdnUrl;
+  {/*
+
   final List<Procedure> procedures; */}
