@@ -4,6 +4,7 @@ import Row from "react-bootstrap/Row";
 import RecipeCard from "./RecipeCard";
 import PropTypes from "prop-types";
 import Spinner from "react-bootstrap/Spinner";
+import { getRecipes } from "../services/recipes";
 
 class RecipeGrid extends React.Component {
   constructor(props) {
@@ -17,9 +18,8 @@ class RecipeGrid extends React.Component {
   // featch data
   componentDidMount() {
     this.setState({ loading: true });
-    fetch("http://localhost:8888/recipe?page=1&itemsPerPage=10")
-      .then((response) => response.json())
-      .then((data) => this.setState({ recipes: data.items, loading: false }));
+    getRecipes(1, 10)
+      .then( (data) => this.setState({ recipes: data.items, loading: false }));
   }
 
   render() {
