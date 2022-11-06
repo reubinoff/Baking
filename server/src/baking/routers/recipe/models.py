@@ -14,8 +14,6 @@ from sqlalchemy_utils import TSVectorType
 
 from baking.database.core import Base
 from baking.models import OurBase, PrimaryKey, TimeStampMixin, NameStr
-from baking.routers.ingredients.enums import IngrediantType
-from baking.routers.ingredients.models import Ingredient
 from baking.config import settings
 
 from baking.routers.procedure.models import Procedure, ProcedureCreate, ProcedureRead
