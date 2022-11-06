@@ -20,11 +20,7 @@ LOGGER = logging.getLogger(__name__)
 @functools.lru_cache()
 def get_middlewares() -> Optional[Sequence[Middleware]]:
     origins = [
-        "https://app.baking.reubinoff.com",
-        # "https://domainname.com",
-        "http://localhost:5*",
         "*",
-        # "http://localhost:8080",
     ]
 
     middlewares = [
