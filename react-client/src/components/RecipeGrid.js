@@ -2,7 +2,6 @@ import React from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import RecipeCard from "./RecipeCard";
-import PropTypes from "prop-types";
 import Spinner from "react-bootstrap/Spinner";
 import { getRecipes } from "../services/recipes";
 
@@ -10,7 +9,7 @@ class RecipeGrid extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      recipes: this.props.recipes,
+      recipes: [],
       loading: true,
     };
   }
@@ -47,8 +46,5 @@ class RecipeGrid extends React.Component {
   }
 }
 
-RecipeGrid.propTypes = {
-  recipes: PropTypes.array.isRequired,
-};
 
 export default RecipeGrid;

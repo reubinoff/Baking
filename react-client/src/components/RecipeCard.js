@@ -11,7 +11,9 @@ import {
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Badge from "react-bootstrap/Badge";
-import Spinner from "react-bootstrap/esm/Spinner";
+// import Spinner from "react-bootstrap/esm/Spinner";
+import Placeholder from "react-bootstrap/Placeholder";
+
 
 class RecipeCard extends Component {
   constructor(recipe) {
@@ -43,12 +45,16 @@ class RecipeCard extends Component {
       <Card>
         <Card.Header>{recipe.name}</Card.Header>
         <Card.Img
-          
           variant="top"
           src={recipe.cdn_url}
           onLoad={this.handleImageLoaded.bind(this)}
         />
-        {imageLoading && <Spinner animation="border" role="status" />}
+        {/* {imageLoading && <Spinner animation="border" role="status" />} */}
+        {imageLoading && (
+          <Placeholder as="Card" animation="glow">
+            <Placeholder xs={8} />
+          </Placeholder>
+        )}
 
         <Card.Body>
           <Row>
