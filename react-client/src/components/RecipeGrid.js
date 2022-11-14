@@ -2,8 +2,9 @@ import React from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import RecipeCard from "./RecipeCard";
-import Spinner from "react-bootstrap/Spinner";
+import Placeholder from "react-bootstrap/Placeholder";
 import { getRecipes } from "../services/recipes";
+import Card from "react-bootstrap/Card";
 
 class RecipeGrid extends React.Component {
   constructor(props) {
@@ -26,11 +27,25 @@ class RecipeGrid extends React.Component {
 
     if (loading) {
       return (
-        <div className="d-flex align-items-center">
-          <Spinner animation="border" role="status" size="xxl" className="mr-2">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </div>
+        <Row xs={1} md={2} lg={4} className="g-4">
+          {[...Array(10).keys()].map((i) => (
+            <Col key={i}>
+              <Card >
+                <Card.Img variant="top" src="images/placeholder.png" />
+                <Card.Body>
+                  <Placeholder as={Card.Title} animation="glow">
+                    <Placeholder xs={6} />
+                  </Placeholder>
+                  <Placeholder as={Card.Text} animation="glow">
+                    <Placeholder xs={7} /> <Placeholder xs={4} />{" "}
+                    <Placeholder xs={4} /> <Placeholder xs={6} />{" "}
+                    <Placeholder xs={8} />
+                  </Placeholder>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
       );
     } else {
       return (
