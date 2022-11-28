@@ -15,7 +15,8 @@ IMAGES_CONTAINER = "images"
 def _get_blob_client():
     if settings.azure_storage_connection_string is None or settings.azure_storage_connection_string == "":
         return FakeAzureStorageClient()
-    blob_service_client: BlobServiceClient = BlobServiceClient.from_connection_string(settings.azure_storage_connection_string)
+    blob_service_client: BlobServiceClient = BlobServiceClient.from_connection_string(
+        settings.azure_storage_connection_string)
     return blob_service_client
 
 
@@ -45,6 +46,16 @@ def delete_image_from_blob(identidier: str):
         logger.error(e)
         raise 
 
+def delete_all_images_from_blob():
+    try:
+        blob_client = _get_blob_client()
+        container_client = blob_client.get_container_client(IMAGES_CONTAINER)
+        blobs = container_client.list_blobs()
+        for blob in blobs:
+            container_client.delete_blob(blob.name)
+    except Exception as e:
+        logger.error(e)
+        raise
 ###################################################################################################
 
 class FakeAzureBlobClient:
@@ -60,6 +71,7 @@ class FakeAzureStorageClient:
 ###################################################################################################
 
 if __name__ == "__main__":
+    delete_all_images_from_blob()
     with open("/tmp/t.jpeg", "rb") as f:
         a = upload_image_to_blob("test.jpeg", f.read())
         print(a)
