@@ -16,7 +16,18 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "justMyCode": true
+      "justMyCode": true,
+        "env": {
+          "SERVICE_NAME": "baking-service",
+          "DB_PASS": "rootsql",
+          "DB_HOST": "127.0.0.1",
+          "DB_NAME": "baking-dev",
+          "DB_USER": "postgres",
+          "DB_DEBUG_DROP_IN_STARTUP": "False",
+          "PORT": "8888",
+          "IS_DEBUG": "True",
+          "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=reubinoffbakingweb;AccountKey=1Owak/QbkucpSIqLYT9P6kY+IQEdENhlGlU3sgkBANnm39fd8AiOdgY1PP1Eh5FqIvPhQlnHlFdANsWVSEMcmA==;EndpointSuffix=core.windows.net"
+        }
     },
     {
       "name": "Flutter",
