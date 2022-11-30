@@ -3,25 +3,29 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import RecipeCard from "./RecipeCard";
 import RecipeCardPlaceholder from "./RecipeCardPlaceholder";
-import { getRecipes } from "../services/recipes";
+import { useRecipes } from "../data/recipes";
 
 export default function RecipeGrid() {
-  
   const [page, setPage] = React.useState(1);
   const loader = React.useRef(null);
 
-  const { loading, error, recipes } = getRecipes(page, 10);
-  
-  const handleObserver = React.useCallback(
-    (entities) => {
-      const target = entities[0];
-      if (target.isIntersecting) {
-        setPage((prev) => prev + 1);
-       
-      }
-    },
-    []);
+  const {
+    status,
+    data,
+    isError,
+    isFetching,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useRecipes(page);
 
+  const handleObserver = React.useCallback((entities) => {
+    const target = entities[0];
+    if (target.isIntersecting) {
+      // setPage((prev) => prev + 1);
+      fetchNextPage();
+    }
+  }, []);
 
   useEffect(() => {
     const option = {
@@ -33,22 +37,25 @@ export default function RecipeGrid() {
     if (loader.current) observer.observe(loader.current);
   }, [handleObserver]);
 
-
   return (
     <div>
-      {error && <div>ERROR</div>}
+      {isError && <div>ERROR</div>}
       <Row xs={1} md={2} lg={3} className="g-4">
-        {loading &&
+        {isFetching &&
           [1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
             <Col key={i}>
               <RecipeCardPlaceholder />
             </Col>
           ))}
-        {!loading &&
-          recipes.map((recipe) => (
-            <Col key={recipe.id}>
-              <RecipeCard recipe={recipe} />
-            </Col>
+        {!isFetching &&
+          data.pages.map((group, i) => (
+            <React.Fragment key={i}>
+              {data.items.map((recipe) => (
+                <Col key={recipe.id}>
+                  <RecipeCard recipe={recipe} />
+                </Col>
+              ))}
+            </React.Fragment>
           ))}
       </Row>
       <div ref={loader} />
