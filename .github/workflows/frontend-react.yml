@@ -2,7 +2,7 @@ name: React App
 
 on:
   push:
-    branches: [ develop, main]
+    branches: [ main]
     paths:
     - 'react-client/**'
     - '.github/workflows/frontend-react.yml'
