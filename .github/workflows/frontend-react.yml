@@ -18,6 +18,17 @@ jobs:
      RESOURCE_GROUP: baking-aks
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: prepare cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
       - name: 'Build react App'
         run: |
           cd react-client
