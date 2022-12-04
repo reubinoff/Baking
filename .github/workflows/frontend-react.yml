@@ -26,8 +26,6 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            node_modules
-            */*/node_modules
             react-client/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
       - name: 'Build react App'
@@ -41,20 +39,20 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
       
-      # - name: Upload to blob storage
-      #   uses: azure/CLI@v1
-      #   with:
-      #     inlineScript: |
-      #         az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --overwrite --auth-mode key -d '$web' -s ./react-client/build
-      # - name: Purge CDN endpoint
-      #   uses: azure/CLI@v1
-      #   with:
-      #     inlineScript: |
-      #       az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.CDN_PROFILE }} --name ${{ env.CDN_ENDPOINT }} --resource-group ${{ env.RESOURCE_GROUP }}
+      - name: Upload to blob storage
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+              az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --overwrite --auth-mode key -d '$web' -s ./react-client/build
+      - name: Purge CDN endpoint
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.CDN_PROFILE }} --name ${{ env.CDN_ENDPOINT }} --resource-group ${{ env.RESOURCE_GROUP }}
 
     # Azure logout
       - name: logout
         run: |
               az logout
         if: always()
-        
+
