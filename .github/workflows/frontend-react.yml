@@ -36,10 +36,10 @@ jobs:
           npm install
           npm run build --output-path=build --configuration=production
 
-      # - name: 'Login via Azure CLI'
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
       
       # - name: Upload to blob storage
       #   uses: azure/CLI@v1
