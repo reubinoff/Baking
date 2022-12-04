@@ -13,21 +13,17 @@ export default function RecipeGrid() {
     data,
     isError,
     isFetching,
-    isFetchingNextPage,
     fetchNextPage,
-    hasNextPage,
   } = useRecipes();
 
   const handleObserver = React.useCallback(
     (entities) => {
       const target = entities[0];
       if (target.isIntersecting) {
-        if (hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
-        }
       }
     },
-    [hasNextPage, isFetchingNextPage, fetchNextPage]
+    [fetchNextPage]
   );
 
   useEffect(() => {
@@ -37,8 +33,10 @@ export default function RecipeGrid() {
       threshold: 0,
     };
     const observer = new IntersectionObserver(handleObserver, option);
-    if (loader.current && !isFetchingNextPage) observer.observe(loader.current);
-  }, [handleObserver, isFetchingNextPage]);
+    if (loader.current ) {
+      observer.observe(loader.current);
+    }
+  }, [handleObserver]);
 
   const recipes = useMemo(
     () =>
@@ -51,13 +49,17 @@ export default function RecipeGrid() {
     [data]
   );
 
+  const isRecipesReady = useMemo(() => {
+    return !isFetching && recipes?.items.length > 0;
+  }, [isFetching, recipes]);
+
+
   return (
     <div>
       {isError && <div>ERROR</div>}
       <PlaceholderItems
         placeholder={RecipeCardPlaceholder}
-        total={1}
-        ready={data!==undefined}
+        ready={isRecipesReady}
       ></PlaceholderItems>
       <Row xs={1} md={2} lg={3} className="g-4">
         {recipes?.items.map((recipe) => (
