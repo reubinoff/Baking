@@ -1,9 +1,15 @@
 import { UseInfinateScroll } from "./common";
+import handleError from "../utils/handleError";
 
-export function useRecipes(page, itemsPerPage=10) {
-  const a =  UseInfinateScroll(
-    ["Recipes"],
-    `/recipe?page=${page}&itemsPerPage=${itemsPerPage}`
-  );
-  return a;
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+export function useRecipes() {
+  const itemsPerPage = 2;
+  const queryMethod = async ({ pageParam = 1 }) => {
+    const path = `${BASE_URL}/recipe?page=${pageParam}&itemsPerPage=${itemsPerPage}`;
+
+    return await fetch(path).then(handleError);
+  };
+
+  return UseInfinateScroll(["Recipes"], queryMethod);
 }

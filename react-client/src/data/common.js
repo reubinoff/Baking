@@ -6,19 +6,17 @@ import {
 } from "react-query";
 import useAppContext from "../hooks/useAppContext";
 
-export function UseInfinateScroll(key, path, reactQueryOptions, defaultResponse) {
-  const { fetchWithContext } = useAppContext();
+export function UseInfinateScroll(key, queryFunc, reactQueryOptions) {
 
   return useInfiniteQuery({
-    queryKey: [path, ...key],
-    queryFn: () => {
-      if (path) {
-        return fetchWithContext(path);
-      } else {
-        return Promise.resolve(defaultResponse);
+    queryKey: [key],
+    queryFn: queryFunc,
+    getNextPageParam: (lastPage, pages) =>{
+      if (lastPage.page * lastPage.itemsPerPage >= lastPage.total) {
+        return undefined;
       }
+      return lastPage.page + 1;
     },
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
     ...reactQueryOptions,
   });
 }
