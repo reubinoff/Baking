@@ -1,22 +1,36 @@
+import React from "react";
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
+import Skeleton from '@mui/material/Skeleton';
 
-import Card from 'react-bootstrap/Card';
-
-import Placeholder from "react-bootstrap/Placeholder";
 
 
 export default function RecipeCardPlaceholder() {
   return (
-    <Card>
-      <Card.Img variant="top" src="images/placeholder.png" />
-      <Card.Body>
-        <Placeholder as={Card.Title} animation="glow">
-          <Placeholder xs={6} />
-        </Placeholder>
-        <Placeholder as={Card.Text} animation="glow">
-          <Placeholder xs={7} /> <Placeholder xs={4} /> <Placeholder xs={4} />{" "}
-          <Placeholder xs={6} /> <Placeholder xs={8} />
-        </Placeholder>
-      </Card.Body>
+
+     <Card sx={{ maxWidth: 345, m: 2 }}>
+      <CardHeader
+        title={
+            <Skeleton
+              animation="wave"
+              height={10}
+              width="80%"
+              style={{ marginBottom: 6 }}
+            />
+        }
+        subheader={
+            <Skeleton animation="wave" height={10} width="40%" />
+        }
+      />
+        <Skeleton sx={{ height: 190 }} animation="wave" variant="rectangular" />
+      <CardContent>
+          <React.Fragment>
+            <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+            <Skeleton animation="wave" height={10} width="80%" />
+          </React.Fragment>
+      </CardContent>
     </Card>
+
   );
 }

@@ -1,26 +1,22 @@
 import React, { useEffect, useMemo } from "react";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
+import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
+
 import RecipeCard from "./RecipeCard";
 import RecipeCardPlaceholder from "./RecipeCardPlaceholder";
 import { useRecipes } from "../data/recipes";
 import PlaceholderItems from "./PlaceholderItems";
+import Box from "@mui/material/Box";
 
 export default function RecipeGrid() {
   const loader = React.useRef(null);
 
-  const {
-    data,
-    isError,
-    isFetching,
-    fetchNextPage,
-  } = useRecipes();
+  const { data, isError, isFetching, fetchNextPage } = useRecipes();
 
   const handleObserver = React.useCallback(
     (entities) => {
       const target = entities[0];
       if (target.isIntersecting) {
-          fetchNextPage();
+        fetchNextPage();
       }
     },
     [fetchNextPage]
@@ -33,7 +29,7 @@ export default function RecipeGrid() {
       threshold: 0,
     };
     const observer = new IntersectionObserver(handleObserver, option);
-    if (loader.current ) {
+    if (loader.current) {
       observer.observe(loader.current);
     }
   }, [handleObserver]);
@@ -53,24 +49,22 @@ export default function RecipeGrid() {
     return !isFetching && recipes?.items.length > 0;
   }, [isFetching, recipes]);
 
-
   return (
-    <div>
+    <Box sx={{ flexGrow: 1 }}>
       {isError && <div>ERROR</div>}
       <PlaceholderItems
         placeholder={RecipeCardPlaceholder}
         ready={isRecipesReady}
       ></PlaceholderItems>
-      <Row xs={1} md={2} lg={3} className="g-4">
+      <Grid container spacing={2}>
         {recipes?.items.map((recipe) => (
-          <Col key={recipe.id}>
+          <Grid xs={12} md={4} key={recipe.id}>
             <RecipeCard recipe={recipe} />
-          </Col>
+          </Grid>
         ))}
-      </Row>
+      </Grid>
       <div ref={loader} />
       <div>{isFetching ? "Fetching..." : null}</div>
-    </div>
+    </Box>
   );
 }
-

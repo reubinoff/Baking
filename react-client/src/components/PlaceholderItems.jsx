@@ -1,21 +1,23 @@
-import Col from "react-bootstrap/Col";
 import PropTypes from "prop-types";
 import React from "react";
-import Row from "react-bootstrap/esm/Row";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 
 export default function PlaceholderItems(props) {
   const { placeholder, total, ready } = props;
 
   return (
-    <div>
+    <Box sx={{ flexGrow: 1 }}>
       {!ready && (
-        <Row xs={1} md={2} lg={3} className="g-4">
+        <Grid spacing={2}>
           {[...new Array(total).keys()].map((i) => (
-            <Col key={i}>{React.createElement(placeholder, { key: i })}</Col>
+            <Grid xs={12} md={3} key={i}>
+              {React.createElement(placeholder, { key: i })}
+            </Grid>
           ))}
-        </Row>
+        </Grid>
       )}
-    </div>
+    </Box>
   );
 }
 

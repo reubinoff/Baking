@@ -1,18 +1,18 @@
 import { useCallback, useState } from "react";
-import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import {
-  IoWaterSharp,
-  IoHeart,
-  IoHeartOutline,
-  IoShareSocialSharp,
-} from "react-icons/io5";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import Badge from "react-bootstrap/Badge";
-import Placeholder from "react-bootstrap/Placeholder";
-
+import WaterIcon from "@mui/icons-material/Water";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ShareIcon from "@mui/icons-material/Share";
+import Skeleton from "@mui/material/Skeleton";
 export default function RecipeCard(props) {
   const [recipe] = useState(props.recipe);
   const [loading, setLoading] = useState(true);
@@ -28,36 +28,43 @@ export default function RecipeCard(props) {
 
   return (
     <Card>
-      <Card.Header>{recipe.name}</Card.Header>
-      <Card.Img variant="top" src={recipe.cdn_url} onLoad={handleImageLoaded} />
-      {loading && <Card.Img variant="top" src="images/placeholder.png" />}
-      {loading && (<Placeholder as={Card.Title} animation="glow">
-          <Placeholder xs={6} />
-        </Placeholder>)}
+      <CardHeader
+        title={recipe.name}
+        action={
+          <Box display="flex" alignItems="center">
+            <WaterIcon color="primary" />
+            <Typography variant="body2" color="text.secondary">
+              {recipe.hydration}%
+            </Typography>
+          </Box>
+        }
+      ></CardHeader>
+      <CardMedia
+        component="img"
+        alt={recipe.name}
+        image={recipe.cdn_url}
+        onLoad={handleImageLoaded}
+      />
+      {loading && <CardMedia variant="top" src="images/placeholder.png" />}
+      {loading && <Skeleton animation="wave" variant="rectangular" />}
 
-      <Card.Body>
-        <Row>
-          <Col xs={7} sm={8}>
-            <Card.Text>{recipe.description}</Card.Text>
-          </Col>
-          <Col>
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <IoWaterSharp color="blue" />
-              <Badge pill bg="light" text="dark">
-                {recipe.hydration}%
-              </Badge>
-            </div>
-          </Col>
-        </Row>
-      </Card.Body>
-      <Card.Footer>
-        <Button variant="" onClick={changeFavorite}>
-          {favorite ? <IoHeartOutline color="red" /> : <IoHeart color="red" />}
-        </Button>
-        <Button variant="">
-          <IoShareSocialSharp />
-        </Button>
-      </Card.Footer>
+      <CardContent>
+        <Typography variant="body2" color="text.secondary">
+          {recipe.description}
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <IconButton aria-label="add to favorites" onClick={changeFavorite}>
+          {favorite ? (
+            <FavoriteBorderIcon color="error" />
+          ) : (
+            <FavoriteIcon color="error" />
+          )}
+        </IconButton>
+        <IconButton aria-label="share" onClick={changeFavorite}>
+          <ShareIcon />
+        </IconButton>
+      </CardActions>
     </Card>
   );
 }
