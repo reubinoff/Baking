@@ -4,7 +4,6 @@ import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import RecipeCard from "./RecipeCard";
 import RecipeCardPlaceholder from "./RecipeCardPlaceholder";
 import { useRecipes } from "../data/recipes";
-import PlaceholderItems from "./PlaceholderItems";
 import Box from "@mui/material/Box";
 
 export default function RecipeGrid() {
@@ -46,23 +45,30 @@ export default function RecipeGrid() {
   );
 
   const isRecipesReady = useMemo(() => {
-    return !isFetching && recipes?.items.length > 0;
+    if (recipes?.items.length > 0) {
+      return true;
+    }
+    return !isFetching;
   }, [isFetching, recipes]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       {isError && <div>ERROR</div>}
-      <PlaceholderItems
-        placeholder={RecipeCardPlaceholder}
-        ready={isRecipesReady}
-      ></PlaceholderItems>
-      <Grid container spacing={2}>
-        {recipes?.items.map((recipe) => (
-          <Grid xs={12} md={4} key={recipe.id}>
-            <RecipeCard recipe={recipe} />
-          </Grid>
-        ))}
+      <Grid container spacing={2} >
+        {!isRecipesReady &&
+          Array.from(Array(6)).map((_, index) => (
+            <Grid xs={12} md={4} key={index}>
+              <RecipeCardPlaceholder />
+            </Grid>
+          ))}
+        {isRecipesReady &&
+          recipes?.items.map((recipe) => (
+            <Grid xs={12} md={4} key={recipe.id}>
+              <RecipeCard recipe={recipe} />
+            </Grid>
+          ))}
       </Grid>
+
       <div ref={loader} />
       <div>{isFetching ? "Fetching..." : null}</div>
     </Box>
