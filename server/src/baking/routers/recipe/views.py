@@ -31,8 +31,6 @@ def get_recipes(*, common: dict = Depends(common_parameters)):
     Get all recipes.
     """
     LOGGER.info("Get Recipes filter={0}".format(common["filter_spec"]))
-    import time
-    time.sleep(3)
     pagination = search_filter_sort_paginate(model="Recipe", **common)
     return RecipePagination(**pagination).dict()
 
