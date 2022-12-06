@@ -61,7 +61,7 @@ export default function RecipeCard(props) {
             <FavoriteIcon color="error" />
           )}
         </IconButton>
-        <IconButton aria-label="share" onClick={changeFavorite}>
+        <IconButton aria-label="share" >
           <ShareIcon />
         </IconButton>
       </CardActions>
