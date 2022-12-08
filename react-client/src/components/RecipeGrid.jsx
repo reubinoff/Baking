@@ -6,7 +6,12 @@ import RecipeCardPlaceholder from "./RecipeCardPlaceholder";
 import { useRecipes } from "../data/recipes";
 import Box from "@mui/material/Box";
 
-export default function RecipeGrid() {
+import Fab from "@mui/material/Fab";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import ScrollTop from "./ScrollTop";
+
+
+export default function RecipeGrid(props) {
   const loader = React.useRef(null);
   const itemsPerPage = 10;
 
@@ -54,6 +59,7 @@ export default function RecipeGrid() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
+      <div  id="back-to-top-anchor" />
       {isError && <div>ERROR</div>}
       <Grid container spacing={2}>
         {!isRecipesReady &&
@@ -69,7 +75,11 @@ export default function RecipeGrid() {
             </Grid>
           ))}
       </Grid>
-
+      <ScrollTop {...props}>
+        <Fab size="small" aria-label="scroll back to top">
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
       <div ref={loader} />
       <div>{isFetching ? "Fetching..." : null}</div>
     </Box>

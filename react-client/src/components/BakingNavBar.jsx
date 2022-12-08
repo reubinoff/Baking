@@ -13,6 +13,9 @@ import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
+import BakingDrawer from "./BakingDrawer";
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+
 function HideOnScroll(props) {
   const { children, window } = props;
 
@@ -75,14 +78,27 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchAppBar(props) {
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [, setAnchorElUser] = React.useState(null);
+    const [open, setOpen] = React.useState(false);
+
+     const toggleDrawer = (open) => (event) => {
+       if (
+         event &&
+         event.type === "keydown" &&
+         (event.key === "Tab" || event.key === "Shift")
+       ) {
+         return;
+       }
+
+       setOpen(open);
+     };
 
     const handleOpenUserMenu = (event) => {
       setAnchorElUser(event.currentTarget);
     };
-    const handleCloseUserMenu = () => {
-      setAnchorElUser(null);
-    };
+    // const handleCloseUserMenu = () => {
+    //   setAnchorElUser(null);
+    // };
   return (
     <HideOnScroll {...props}>
       <AppBar component="nav" enableColorOnDark>
@@ -92,6 +108,8 @@ export default function SearchAppBar(props) {
             edge="start"
             color="inherit"
             aria-label="open drawer"
+            onClick={toggleDrawer(true)}
+            onKeyDown={toggleDrawer(false)}
             sx={{ mr: 2 }}
           >
             <MenuIcon />
@@ -113,17 +131,17 @@ export default function SearchAppBar(props) {
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
-          <Box sx={{ flexGrow: 0 , ml: 2}}>
+          <Box sx={{ flexGrow: 0, ml: 2 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-                  alt="Moshe Reubinoff"
-                  src="https://i.pravatar.cc/300"
-                />
+                <Avatar alt="Moshe Reubinoff" src="https://i.pravatar.cc/300" />
               </IconButton>
             </Tooltip>
           </Box>
         </Toolbar>
+        <SwipeableDrawer anchor="left" open={open} onClose={toggleDrawer(false)}>
+          <BakingDrawer setOpen={toggleDrawer(false)}></BakingDrawer>
+        </SwipeableDrawer>
       </AppBar>
     </HideOnScroll>
   );

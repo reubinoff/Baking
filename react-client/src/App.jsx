@@ -2,8 +2,6 @@ import "./App.css";
 import RecipeGrid from "./components/RecipeGrid";
 import { Box } from "@mui/material";
 import BakingNavBar from "./components/BakingNavBar";
-import Toolbar from "@mui/material/Toolbar";
-
 
 function App() {
 
