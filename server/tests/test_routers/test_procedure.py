@@ -2,8 +2,6 @@ def test_get(session, cleaner, procedure):
     from baking.routers.procedure.service import get
 
     t_procedure = get(db_session=session, procedure_id=procedure.id)
-    import time
-
     assert t_procedure.id == procedure.id
 
 
