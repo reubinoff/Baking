@@ -59,15 +59,10 @@ export default function RecipeGrid(props) {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <div  id="back-to-top-anchor" />
+      <div id="back-to-top-anchor" />
       {isError && <div>ERROR</div>}
       <Grid container spacing={2}>
-        {!isRecipesReady &&
-          Array.from(Array(itemsPerPage)).map((_, index) => (
-            <Grid xs={12} sm={6} md={3} key={index}>
-              <RecipeCardPlaceholder />
-            </Grid>
-          ))}
+        { GetSkelaton(itemsPerPage, isRecipesReady)}
         {isRecipesReady &&
           recipes?.items.map((recipe) => (
             <Grid xs={12} sm={6} md={3} key={recipe.id}>
@@ -85,3 +80,17 @@ export default function RecipeGrid(props) {
     </Box>
   );
 }
+
+function GetSkelaton(itemsPerPage, toShow) {
+  return (
+    <React.Fragment>
+      {!toShow &&
+        Array.from(Array(itemsPerPage)).map((_, index) => (
+          <Grid xs={12} sm={6} md={3} key={index}>
+            <RecipeCardPlaceholder />
+          </Grid>
+        ))}
+    </React.Fragment>
+  );
+}
+
