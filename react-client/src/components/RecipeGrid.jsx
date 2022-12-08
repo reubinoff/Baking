@@ -8,8 +8,9 @@ import Box from "@mui/material/Box";
 
 export default function RecipeGrid() {
   const loader = React.useRef(null);
+  const itemsPerPage = 10;
 
-  const { data, isError, isFetching, fetchNextPage } = useRecipes();
+  const { data, isError, isFetching, fetchNextPage } = useRecipes(itemsPerPage);
 
   const handleObserver = React.useCallback(
     (entities) => {
@@ -54,16 +55,16 @@ export default function RecipeGrid() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       {isError && <div>ERROR</div>}
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         {!isRecipesReady &&
-          Array.from(Array(6)).map((_, index) => (
-            <Grid xs={12} md={4} key={index}>
+          Array.from(Array(itemsPerPage)).map((_, index) => (
+            <Grid xs={12} sm={6} md={3} key={index}>
               <RecipeCardPlaceholder />
             </Grid>
           ))}
         {isRecipesReady &&
           recipes?.items.map((recipe) => (
-            <Grid xs={12} md={4} key={recipe.id}>
+            <Grid xs={12} sm={6} md={3} key={recipe.id}>
               <RecipeCard recipe={recipe} />
             </Grid>
           ))}

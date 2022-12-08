@@ -8,7 +8,9 @@ function App() {
   return (
     <Box sx={{ display: "flex" }}>
       <BakingNavBar></BakingNavBar>
-      <RecipeGrid />
+      <Box component="main" sx={{ pt: 9, pr: 2, pl: 2, width: 1}}>
+        <RecipeGrid />
+      </Box>
     </Box>
   );
 }
