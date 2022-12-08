@@ -12,30 +12,30 @@ import BakingDrawer from "./BakingDrawer";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import BakingSearchBar from "./BakingSearchBar";
 import HideOnScroll from "./HideOnScroll";
+import PropTypes from "prop-types";
 
+export default function BakingNavBar(props) {
+  const [, setAnchorElUser] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
 
-export default function SearchAppBar(props) {
-    const [, setAnchorElUser] = React.useState(null);
-    const [open, setOpen] = React.useState(false);
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
 
-     const toggleDrawer = (open) => (event) => {
-       if (
-         event &&
-         event.type === "keydown" &&
-         (event.key === "Tab" || event.key === "Shift")
-       ) {
-         return;
-       }
+    setOpen(open);
+  };
 
-       setOpen(open);
-     };
-
-    const handleOpenUserMenu = (event) => {
-      setAnchorElUser(event.currentTarget);
-    };
-    // const handleCloseUserMenu = () => {
-    //   setAnchorElUser(null);
-    // };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+  // const handleCloseUserMenu = () => {
+  //   setAnchorElUser(null);
+  // };
   return (
     <HideOnScroll {...props}>
       <AppBar component="nav" enableColorOnDark>
@@ -59,7 +59,7 @@ export default function SearchAppBar(props) {
           >
             Baking
           </Typography>
-          <BakingSearchBar></BakingSearchBar>
+          <BakingSearchBar setQuery={props.setQuery}/>
 
           <Box sx={{ flexGrow: 0, ml: 2 }}>
             <Tooltip title="Open settings">
@@ -81,3 +81,7 @@ export default function SearchAppBar(props) {
     </HideOnScroll>
   );
 }
+
+BakingNavBar.propTypes = {
+  setQuery: PropTypes.func.isRequired,
+};

@@ -9,13 +9,21 @@ import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "./ScrollTop";
-
+import PropTypes from "prop-types";
 
 export default function RecipeGrid(props) {
   const loader = React.useRef(null);
-  const itemsPerPage = 10;
+  
 
-  const { data, isError, isFetching, fetchNextPage } = useRecipes(itemsPerPage);
+  
+
+  const itemsPerPage = 10;
+  const query = useMemo(() => {
+    return props.query;
+  }, [props.query]);
+
+
+  const { data, isError, isFetching, fetchNextPage } = useRecipes(query, itemsPerPage);
 
   const handleObserver = React.useCallback(
     (entities) => {
@@ -38,6 +46,8 @@ export default function RecipeGrid(props) {
       observer.observe(loader.current);
     }
   }, [handleObserver]);
+
+
 
   const recipes = useMemo(
     () =>
@@ -62,7 +72,7 @@ export default function RecipeGrid(props) {
       <div id="back-to-top-anchor" />
       {isError && <div>ERROR</div>}
       <Grid container spacing={2}>
-        { GetSkelaton(itemsPerPage, isRecipesReady)}
+        {GetSkelaton(itemsPerPage, isRecipesReady)}
         {isRecipesReady &&
           recipes?.items.map((recipe) => (
             <Grid xs={12} sm={6} md={3} key={recipe.id}>
@@ -70,6 +80,16 @@ export default function RecipeGrid(props) {
             </Grid>
           ))}
       </Grid>
+      {recipes?.items.length === 0 && (
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <img
+            src="images/sad-bread.jpg"
+            alt="No recipes found"
+            loading="lazy"
+            height={300}
+          />
+        </Box>
+      )}
       <ScrollTop {...props}>
         <Fab size="small" aria-label="scroll back to top">
           <KeyboardArrowUpIcon />
@@ -94,3 +114,6 @@ function GetSkelaton(itemsPerPage, toShow) {
   );
 }
 
+RecipeGrid.propTypes = {
+  query: PropTypes.string,
+};

@@ -1,8 +1,9 @@
-
+import { useMemo } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import { styled, alpha } from "@mui/material/styles";
-
+import PropTypes from "prop-types";
+import { throttle } from "lodash";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -46,7 +47,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function BakingSearchBar() {
+export default function BakingSearchBar(props) {
+  const onChange = (e) => {
+    props.setQuery(e.target.value);
+  };
+  // eslint-disable-next-line
+  const throttledOnChange = useMemo(() => throttle(onChange, 500), []);
+
   return (
     <Search>
       <SearchIconWrapper>
@@ -55,7 +62,12 @@ export default function BakingSearchBar() {
       <StyledInputBase
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
+        onChange={throttledOnChange}
       />
     </Search>
   );
 }
+
+BakingSearchBar.propTypes = {
+  setQuery: PropTypes.func.isRequired,
+};
