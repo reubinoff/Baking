@@ -47,8 +47,8 @@ jobs:
           run: |
             cd server
             poetry env use 3.9
-            # poetry install 
-            # poetry run python -m pytest -xv --cov=src/baking/routers --cov-fail-under=80 --cov-report html 
+            poetry install 
+            poetry run python -m pytest -xv --cov=src/baking/routers --cov-fail-under=80 --cov-report html 
 
     build:
         runs-on: ubuntu-latest
