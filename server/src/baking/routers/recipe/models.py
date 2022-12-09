@@ -88,7 +88,7 @@ class RecipeRead(RecipeBase):
     id: PrimaryKey
     name: NameStr
     hydration: int
-    image_url: Optional[str]
+    # image_url: Optional[str]
     cdn_url: Optional[str]
 
 
