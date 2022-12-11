@@ -13,17 +13,16 @@ import PropTypes from "prop-types";
 
 export default function RecipeGrid(props) {
   const loader = React.useRef(null);
-  
-
-  
 
   const itemsPerPage = 10;
   const query = useMemo(() => {
     return props.query;
   }, [props.query]);
 
-
-  const { data, isError, isFetching, fetchNextPage } = useRecipes(query, itemsPerPage);
+  const { data, isError, isFetching, fetchNextPage } = useRecipes(
+    query,
+    itemsPerPage
+  );
 
   const handleObserver = React.useCallback(
     (entities) => {
@@ -46,8 +45,6 @@ export default function RecipeGrid(props) {
       observer.observe(loader.current);
     }
   }, [handleObserver]);
-
-
 
   const recipes = useMemo(
     () =>
