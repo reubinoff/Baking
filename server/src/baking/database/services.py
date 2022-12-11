@@ -173,6 +173,7 @@ def search_filter_sort_paginate(
         query, pagination = apply_pagination(
             query, page_number=page, page_size=items_per_page
         )
+        LOGGER.debug(query.statement.compile(compile_kwargs={"literal_binds": True}))
     except sqlalchemy.exc.ProgrammingError as e:
         LOGGER.debug(e)
         return {

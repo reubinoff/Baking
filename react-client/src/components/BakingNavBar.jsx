@@ -13,10 +13,18 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import BakingSearchBar from "./BakingSearchBar";
 import HideOnScroll from "./HideOnScroll";
 import PropTypes from "prop-types";
+import { useLocation } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 export default function BakingNavBar(props) {
   const [, setAnchorElUser] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  let location = useLocation();
+  const navigate = useNavigate();
+  const nav = (path) => (event) => {
+    navigate(path);
+  };
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -33,9 +41,20 @@ export default function BakingNavBar(props) {
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
+
+  const isHome = React.useMemo(() => {
+    return location.pathname === "/";
+  }, [location]);
+  React.useEffect(() => {
+    if (isHome === true) {
+      navigate("/");
+    }
+  }, [isHome, navigate]);
   // const handleCloseUserMenu = () => {
   //   setAnchorElUser(null);
   // };
+  console.log(`pathname: ${window.location.pathname}`);
+
   return (
     <HideOnScroll {...props}>
       <AppBar component="nav" enableColorOnDark>
@@ -45,9 +64,25 @@ export default function BakingNavBar(props) {
             edge="start"
             color="inherit"
             aria-label="open drawer"
+            onClick={nav("/")}
+            sx={{
+              mr: 2,
+              display: !isHome ? "block" : "none",
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
             onClick={toggleDrawer(true)}
             onKeyDown={toggleDrawer(false)}
-            sx={{ mr: 2 }}
+            sx={{
+              mr: 2,
+              display: isHome ? "block" : "none",
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -59,7 +94,7 @@ export default function BakingNavBar(props) {
           >
             Baking
           </Typography>
-          <BakingSearchBar setQuery={props.setQuery}/>
+          <BakingSearchBar setQuery={props.setQuery} />
 
           <Box sx={{ flexGrow: 0, ml: 2 }}>
             <Tooltip title="Open settings">
