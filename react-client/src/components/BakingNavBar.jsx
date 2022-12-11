@@ -53,7 +53,6 @@ export default function BakingNavBar(props) {
   // const handleCloseUserMenu = () => {
   //   setAnchorElUser(null);
   // };
-  console.log(`pathname: ${window.location.pathname}`);
 
   return (
     <HideOnScroll {...props}>

@@ -12,3 +12,6 @@ export * from "./About";
 
 export { default as Favorites } from "./Favorites";
 export * from "./Favorites";
+
+export { default as Recipe } from "./Recipe";
+export * from "./Recipe";

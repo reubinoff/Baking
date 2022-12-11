@@ -13,12 +13,16 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import Skeleton from "@mui/material/Skeleton";
+import { useNavigate } from "react-router-dom";
+
 export default function RecipeCard(props) {
   const [recipe] = useState(props.recipe);
   const [loading, setLoading] = useState(true);
   const [favorite, setFavorite] = useState(false);
+  const navigate = useNavigate();
 
-  const changeFavorite = useCallback(() => {
+  const changeFavorite = useCallback((event) => {
+    event.stopPropagation();
     setFavorite(!favorite);
   }, [favorite]);
 
@@ -26,8 +30,13 @@ export default function RecipeCard(props) {
     setLoading(false);
   }, []);
 
+  const navigateToRecipe = () => {
+    console.log("navigate to recipe");
+    navigate(`/recipe/${recipe.id}`, { state: { recipe } });
+  };
+
   return (
-    <Card>
+    <Card onClick={navigateToRecipe}>
       <CardHeader
         title={recipe.name}
         action={
@@ -61,7 +70,7 @@ export default function RecipeCard(props) {
             <FavoriteIcon color="error" />
           )}
         </IconButton>
-        <IconButton aria-label="share" >
+        <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>
       </CardActions>
