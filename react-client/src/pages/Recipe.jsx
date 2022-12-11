@@ -5,9 +5,9 @@ function Recipe() {
 const { state } = useLocation();
   return (
     <div>
-      <h2>Favorites!</h2>
+      <h2>{state.recipe.name}</h2>
       <div>
-        <h3>{state}</h3>
+        <p>{state.recipe.description}</p>
       </div>
       <p>
         <Link to="/">Go to the home page</Link>
