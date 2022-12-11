@@ -2,7 +2,13 @@ import "./App.css";
 import { Box } from "@mui/material";
 import BakingNavBar from "./components/BakingNavBar";
 import { Route, Routes, Outlet } from "react-router-dom";
-import { Favorites, About, ErrorPage, Home, Settings, Recipe } from "./pages";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Settings from "./pages/Settings";
+import Favorites from "./pages/Favorites";
+import Recipe from "./pages/Recipe";
+import ErrorPage from "./pages/ErrorPage";
+
 
 function Layout() {
   return (
