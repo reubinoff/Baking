@@ -2,7 +2,7 @@ import "./App.css";
 import { Box } from "@mui/material";
 import BakingNavBar from "./components/BakingNavBar";
 import { Route, Routes, Outlet } from "react-router-dom";
-import Home from "./pages/Home";
+// import Home from "./pages/Home";
 import About from "./pages/About";
 import Settings from "./pages/Settings";
 import Favorites from "./pages/Favorites";
@@ -25,7 +25,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
+        {/* <Route index element={<Home />} /> */}
         <Route path="about" element={<About />} />
         <Route path="settings" element={<Settings />} />
         <Route path="favorites" element={<Favorites />} />
