@@ -13,8 +13,8 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import BakingSearchBar from "./BakingSearchBar";
 import HideOnScroll from "./HideOnScroll";
 import PropTypes from "prop-types";
-import { useLocation } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 export default function BakingNavBar(props) {
