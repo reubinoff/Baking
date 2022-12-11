@@ -5,5 +5,4 @@ function Home() {
     return <RecipeGrid query={""} />;
 }
 
-
 export default Home;
