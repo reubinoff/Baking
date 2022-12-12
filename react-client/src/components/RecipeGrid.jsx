@@ -9,15 +9,16 @@ import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "./ScrollTop";
-import PropTypes from "prop-types";
+import { SearchContext } from "../components/context/SearchContext";
+import { useContext } from "react";
+
 
 export default function RecipeGrid(props) {
+  const { query } = useContext(SearchContext);
+
   const loader = React.useRef(null);
 
   const itemsPerPage = 10;
-  const query = useMemo(() => {
-    return props.query;
-  }, [props.query]);
 
   const { data, isError, isFetching, fetchNextPage } = useRecipes(
     query,
@@ -110,7 +111,3 @@ function GetSkelaton(itemsPerPage, toShow) {
     </React.Fragment>
   );
 }
-
-RecipeGrid.propTypes = {
-  query: PropTypes.string,
-};

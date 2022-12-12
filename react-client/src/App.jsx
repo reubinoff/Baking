@@ -1,8 +1,7 @@
 import "./App.css";
-import { Box } from "@mui/material";
-import BakingNavBar from "./components/BakingNavBar";
-import { Route, Routes, Outlet } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
+import Layout from "./pages/Layout";
 import About from "./pages/About";
 import Settings from "./pages/Settings";
 import Favorites from "./pages/Favorites";
@@ -10,21 +9,11 @@ import Recipe from "./pages/Recipe";
 import ErrorPage from "./pages/ErrorPage";
 
 
-function Layout() {
-  return (
-    <Box sx={{ display: "flex" }}>
-      <BakingNavBar setQuery={() => console.log("")}></BakingNavBar>
-      <Box component="main" sx={{ pt: 9, pr: 2, pl: 2, width: 1 }}>
-        <Outlet />
-      </Box>
-    </Box>
-  );
-}
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path="/" element={<Layout/>}>
         <Route index element={<HomePage />} />
         <Route path="about" element={<About />} />
         <Route path="settings" element={<Settings />} />

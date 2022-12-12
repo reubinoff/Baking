@@ -9,7 +9,7 @@ export default function DefaultAppContextProvider({ ...props }) {
     <AppContext.Provider
       value={{
         ready: true,
-       
+        query: "",
         customTypeRenderers: {},
         customExecutionSummaryRows: [],
         customTaskSummaryRows: [],

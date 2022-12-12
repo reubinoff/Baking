@@ -12,7 +12,6 @@ import BakingDrawer from "./BakingDrawer";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import BakingSearchBar from "./BakingSearchBar";
 import HideOnScroll from "./HideOnScroll";
-import PropTypes from "prop-types";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -93,7 +92,8 @@ export default function BakingNavBar(props) {
           >
             Baking
           </Typography>
-          <BakingSearchBar setQuery={props.setQuery} />
+          <BakingSearchBar
+          />
 
           <Box sx={{ flexGrow: 0, ml: 2 }}>
             <Tooltip title="Open settings">
@@ -116,6 +116,3 @@ export default function BakingNavBar(props) {
   );
 }
 
-BakingNavBar.propTypes = {
-  setQuery: PropTypes.func.isRequired,
-};

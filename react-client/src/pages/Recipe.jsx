@@ -1,9 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
+import _ from "lodash";
 
 
 function Recipe() {
 const { state } = useLocation();
-    if (state?.recipe === undefined) {
+    if ( _.isUndefined( state?.recipe)) {
         return (
         <div>
             <h2>Recipe not found</h2>
