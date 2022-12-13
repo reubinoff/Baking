@@ -92,9 +92,9 @@ export default function BakingNavBar(props) {
           >
             Baking
           </Typography>
-          <BakingSearchBar />
+          <BakingSearchBar show={isHome} />
 
-          <Box sx={{ flexGrow: 0, ml: 2 }} justifyContent="end">
+          <Box sx={{ flexGrow: 0, ml: 2 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Moshe Reubinoff" src="https://i.pravatar.cc/300" />

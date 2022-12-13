@@ -6,6 +6,7 @@ import { useContext } from "react";
 import {SearchContext} from "../components/context/SearchContext";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import PropTypes from "prop-types";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -50,9 +51,8 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 }));
 
-export default function BakingSearchBar() {
-  const {setQuery } = useContext(SearchContext);
-
+export default function BakingSearchBar(props) {
+  const { setQuery } = useContext(SearchContext);
 
   const onChange = (event, value) => {
     if (event?.type === "keydown" && event.key === "Enter") {
@@ -66,10 +66,10 @@ export default function BakingSearchBar() {
   const InputChanged = (event, value) => {
     if (event?.type === "keydown" && event.key === "Enter") {
       return setQuery(event.target.value);
-    } else if (event?.type === "click" ) {
+    } else if (event?.type === "click") {
       const val = value || "";
       return setQuery(val);
-    } else if( event?.type === "change" && value === "") {
+    } else if (event?.type === "change" && value === "") {
       return setQuery(value);
     }
     // else if(event?.type === "click"){
@@ -79,9 +79,10 @@ export default function BakingSearchBar() {
 
   // eslint-disable-next-line
   const throttledOnChange = useMemo(() => throttle(onChange, 500), []);
-
+  console.log("show", props.show);
   return (
-    <Search>
+   
+    <Search sx={{display: props.show ? "block" : "none"}}>
       <SearchIconWrapper>
         <SearchIcon />
       </SearchIconWrapper>
@@ -99,6 +100,7 @@ export default function BakingSearchBar() {
   );
 }
 
+
 const top100Films = [
   { title: 'The Shawshank Redemption', year: 1994 },
   { title: 'The Godfather', year: 1972 },
@@ -107,3 +109,7 @@ const top100Films = [
   { title: '12 Angry Men', year: 1957 },
   { title: "Schindler's List", year: 1993 },
 ]
+
+BakingSearchBar.propTypes = {
+  show: PropTypes.bool
+};
