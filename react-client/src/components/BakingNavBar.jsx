@@ -15,15 +15,23 @@ import HideOnScroll from "./HideOnScroll";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { SearchContext } from "../components/context/SearchContext";
+import _ from "lodash";
 
 export default function BakingNavBar(props) {
   const [, setAnchorElUser] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   let location = useLocation();
   const navigate = useNavigate();
-  const nav = (path) => (event) => {
-    navigate(path);
-  };
+  const { query, setQuery } = useContext(SearchContext);
+
+
+  const navHome = React.useCallback(() => {
+    navigate("/");
+    setQuery("");
+  }, [navigate, setQuery]);
+
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -45,14 +53,21 @@ export default function BakingNavBar(props) {
     return location.pathname === "/";
   }, [location]);
   React.useEffect(() => {
-    if (isHome === true) {
-      navigate("/");
+    if (isHome) {
+      setQuery("");
     }
-  }, [isHome, navigate]);
+  }, [isHome, setQuery]);
   // const handleCloseUserMenu = () => {
   //   setAnchorElUser(null);
   // };
+  const ShowBackButton = React.useMemo(() => {
+    if (false === _.isEmpty(query)) {
+      return true;
+    }
+    return !isHome;
+  }, [isHome, query]);
 
+  const ShowMenuButton = React.useMemo(() => !ShowBackButton, [ShowBackButton]);
   return (
     <HideOnScroll {...props}>
       <AppBar component="nav" enableColorOnDark>
@@ -62,10 +77,10 @@ export default function BakingNavBar(props) {
             edge="start"
             color="inherit"
             aria-label="open drawer"
-            onClick={nav("/")}
+            onClick={navHome}
             sx={{
               mr: 2,
-              display: !isHome ? "block" : "none",
+              display: ShowBackButton ? "block" : "none",
             }}
           >
             <ArrowBackIcon />
@@ -79,7 +94,7 @@ export default function BakingNavBar(props) {
             onKeyDown={toggleDrawer(false)}
             sx={{
               mr: 2,
-              display: isHome ? "block" : "none",
+              display: ShowMenuButton ? "block" : "none",
             }}
           >
             <MenuIcon />

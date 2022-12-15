@@ -1,7 +1,6 @@
-import { useMemo } from "react";
+import { useRef } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
-import { throttle } from "lodash";
 import { useContext } from "react";
 import {SearchContext} from "../components/context/SearchContext";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -53,7 +52,7 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 export default function BakingSearchBar(props) {
   const { setQuery } = useContext(SearchContext);
-
+  const SearchRef = useRef(null);
   const onChange = (event, value) => {
     if (event?.type === "keydown" && event.key === "Enter") {
       return setQuery(value);
@@ -62,7 +61,9 @@ export default function BakingSearchBar(props) {
       setQuery(value);
     }
   };
-
+ const onBlur = (e) => {
+   SearchRef.current.inputValue = "sssss";
+ };
   const InputChanged = (event, value) => {
     if (event?.type === "keydown" && event.key === "Enter") {
       return setQuery(event.target.value);
@@ -77,24 +78,38 @@ export default function BakingSearchBar(props) {
     // }
   };
 
-  // eslint-disable-next-line
-  const throttledOnChange = useMemo(() => throttle(onChange, 500), []);
-  console.log("show", props.show);
+  // useEffect(() => {
+  //   // overide txt filed of query changed
+  //   if(query === ""){
+  //     if(document.querySelector("#baking-search").value !== query){
+  //       document.querySelector("#baking-search").value = query;
+  //     }
+  //   }
+  // }, [query]);
+
   return (
-   
-    <Search sx={{display: props.show ? "block" : "none"}}>
+    <Search sx={{ display: props.show ? "block" : "none" }}>
       <SearchIconWrapper>
         <SearchIcon />
       </SearchIconWrapper>
       <StyledAutocomplete
+        onBlur={onBlur}
         freeSolo
-        clearOnBlur
-        clearOnEscape
+        disableClearable
         onInputChange={InputChanged}
         onChange={onChange}
-        id="free-solo-demo"
+        id="baking-search"
         options={top100Films.map((option) => option.title)}
-        renderInput={(params) => <TextField {...params} />}
+        renderInput={(params) => (
+          <TextField
+            ref={SearchRef}
+            {...params}
+            InputProps={{
+              ...params.InputProps,
+              type: "search",
+            }}
+          />
+        )}
       />
     </Search>
   );
