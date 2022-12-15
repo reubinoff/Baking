@@ -121,3 +121,63 @@ def test_hydration(session):
 
     assert recipe.hydration == 50
     assert p_new.procedure_hydration == 33
+
+
+def test_ingredients(session):
+    from baking.routers.recipe.service import create
+    from baking.routers.recipe.models import RecipeCreate
+    from baking.routers.procedure.models import Procedure, ProcedureCreate
+    from baking.routers.procedure.service import create as create_procedure
+    from baking.routers.ingredients.models import IngredientCreate, Ingredient
+    from baking.routers.ingredients.enums import IngrediantUnits, IngrediantType
+
+    ingridients = [
+        IngredientCreate(
+            name="i1_name",
+            quantity=100,
+            units=IngrediantUnits.ml,
+            type=IngrediantType.water,
+        ),
+        IngredientCreate(
+            name="i2_name",
+            quantity=200,
+            units=IngrediantUnits.ml,
+            type=IngrediantType.oil,
+        ),
+        IngredientCreate(
+            name="i3_name",
+            quantity=200,
+            units=IngrediantUnits.grams,
+            type=IngrediantType.flour,
+        ),
+        IngredientCreate(
+            name="i3_name",
+            quantity=200,
+            units=IngrediantUnits.grams,
+            type=IngrediantType.flour,
+        ),
+    ]
+
+    procedure_in = ProcedureCreate(
+        name="test_procedure",
+        ingredients=ingridients,
+    )
+    procedure = create_procedure(
+        db_session=session,
+        procedure_in=procedure_in,
+    )
+
+    recipe_name = "test"
+
+    recipe_in = RecipeCreate(name=recipe_name, procedures=[procedure])
+    recipe = create(db_session=session, recipe_in=recipe_in)
+    assert recipe
+    assert recipe.hydration == 150
+
+
+    assert recipe.ingredients == [
+        {"name": "i1_name", "quantity": 100, "units": "ml", "type": "water"},
+        {"name": "i2_name", "quantity": 200, "units": "ml", "type": "oil"},
+        {"name": "i3_name", "quantity": 400, "units": "grams", "type": "flour"},
+    ]
+    

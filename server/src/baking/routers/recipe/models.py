@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
+from baking.routers.steps.models import Step
 from pydantic import Field, validator
 
 from sqlalchemy import (
@@ -17,6 +18,7 @@ from baking.models import OurBase, PrimaryKey, TimeStampMixin, NameStr
 from baking.config import settings
 
 from baking.routers.procedure.models import Procedure, ProcedureCreate, ProcedureRead
+from baking.routers.ingredients.models import Ingredient, IngredientRead
 
 # from baking.routers.users.models import User, UserRead
 
@@ -68,7 +70,28 @@ class Recipe(Base, TimeStampMixin):
             return int((liquid / solid) * 100)
         return 100  # precent hydration
 
+    @hybrid_property
+    def total_recipe_time(self) -> int:
+        total_time = 0
+        if self.procedures is not None:
+            p: Procedure = None
+            for p in self.procedures:
+                total_time = total_time + p.duration_in_seconds
+ 
+        return total_time
 
+    @hybrid_property
+    def ingredients(self) -> List[Ingredient]:
+        ingredients = dict()
+        if self.procedures is not None:
+            p: Procedure = None
+            for p in self.procedures:
+                for i in p.ingredients:
+                    if i.name in ingredients:
+                        ingredients[i.name].quantity = ingredients[i.name].quantity + i.quantity
+                    else:
+                        ingredients[i.name] = i
+        return list(ingredients.values())
 ############################################################
 # Pydantic models...
 ############################################################
@@ -90,6 +113,8 @@ class RecipeRead(RecipeBase):
     hydration: int
     # image_url: Optional[str]
     cdn_url: Optional[str]
+    total_recipe_time: Optional[int]
+    ingredients: Optional[List[IngredientRead]]
 
 
 class RecipeCreate(RecipeBase):

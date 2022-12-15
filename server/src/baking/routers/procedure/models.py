@@ -76,6 +76,17 @@ class Procedure(Base, RecipeMixin):
         return 100  # precent hydration
 
 
+    @hybrid_property
+    def duration_in_seconds(self) -> int:
+        total_time = 0
+        if self.steps is not None:
+            s: Step = None
+            for s in self.steps:
+                total_time = total_time + s.duration_in_seconds
+        else:
+            pass
+            print("no steps")
+        return total_time
 ############################################################
 # Pydantic models...
 ############################################################
@@ -91,6 +102,7 @@ class ProcedureBase(OurBase):
 class ProcedureRead(ProcedureBase):
     id: PrimaryKey
     procedure_hydration: int
+    duration_in_seconds: int
 
 
 class ProcedureCreate(ProcedureBase):
