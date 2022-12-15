@@ -90,7 +90,7 @@ class Recipe(Base, TimeStampMixin):
                     if i.name in ingredients:
                         ingredients[i.name].quantity = ingredients[i.name].quantity + i.quantity
                     else:
-                        ingredients[i.name] = i
+                        ingredients[i.name] = IngredientRead(**i.dict())
         return list(ingredients.values())
 ############################################################
 # Pydantic models...

@@ -123,7 +123,7 @@ def test_hydration(session):
     assert p_new.procedure_hydration == 33
 
 
-def test_ingredients(session):
+def test_ingredients(session, cleaner):
     from baking.routers.recipe.service import create
     from baking.routers.recipe.models import RecipeCreate
     from baking.routers.procedure.models import Procedure, ProcedureCreate
@@ -131,7 +131,7 @@ def test_ingredients(session):
     from baking.routers.ingredients.models import IngredientCreate, Ingredient
     from baking.routers.ingredients.enums import IngrediantUnits, IngrediantType
 
-    ingridients = [
+    ingredients = [
         IngredientCreate(
             name="i1_name",
             quantity=100,
@@ -160,7 +160,7 @@ def test_ingredients(session):
 
     procedure_in = ProcedureCreate(
         name="test_procedure",
-        ingredients=ingridients,
+        ingredients=ingredients,
     )
     procedure = create_procedure(
         db_session=session,
@@ -172,12 +172,10 @@ def test_ingredients(session):
     recipe_in = RecipeCreate(name=recipe_name, procedures=[procedure])
     recipe = create(db_session=session, recipe_in=recipe_in)
     assert recipe
-    assert recipe.hydration == 150
 
-
-    assert recipe.ingredients == [
-        {"name": "i1_name", "quantity": 100, "units": "ml", "type": "water"},
-        {"name": "i2_name", "quantity": 200, "units": "ml", "type": "oil"},
-        {"name": "i3_name", "quantity": 400, "units": "grams", "type": "flour"},
-    ]
-    
+    for i in recipe.ingredients:
+        if i.name == "i3_name":
+            assert i.quantity == 400
+            assert i.units == IngrediantUnits.grams
+            assert i.type == IngrediantType.flour
+        
