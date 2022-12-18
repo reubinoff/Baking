@@ -54,7 +54,7 @@ class TimeStampMixin(object):
 #################################################################
 
 PrimaryKey = conint(gt=0, lt=2147483647)
-NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=4)
+NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=3)
 
 ########################## Pydantic models ##########################
 class OurBase(BaseModel):

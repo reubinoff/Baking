@@ -1,26 +1,49 @@
-import { Link, useLocation } from "react-router-dom";
+import React from "react";
+import { useParams } from "react-router-dom";
 import RecipeView from "../components/recipeView/RecipeView";
+import { useRecipe } from "../data/recipes";
+import { Box } from "@mui/material";
+import RecipeQuantitySelector from "../components/recipeView/RecipeQuantitySelector";
 
-import _ from "lodash";
 
 function Recipe() {
-  const { state } = useLocation();
+  const { recipeId } = useParams();
+  const { data, isFetching, error, isFetched } = useRecipe(recipeId);
 
-  if (_.isUndefined(state?.recipe)) {
-    return (
-      <div>
-        <h2>Recipe not found</h2>
-        <p>
-          <Link to="/">Go to the home page</Link>
-        </p>
-      </div>
-    );
-  }
+  const [recipe, setRecipe] = React.useState();
+
+  React.useEffect(() => {
+    if (isFetching === false && isFetched === true) {
+      setRecipe({ ...data });
+    }
+  }, [isFetching, data, isFetched]);
+   const [requiredValues, setRequiredValues] = React.useState({
+     reqHyration: 70,
+     reqTotalLoafWeight: 1000,
+     reqTotalLoafCount: 1,
+   });
+
+
   return (
-    <RecipeView recipe={state.recipe} >
-      
-    </RecipeView>
-
+    <Box>
+      <RecipeQuantitySelector
+        requiredValues={requiredValues}
+        setRequiredValues={setRequiredValues}
+      />
+      <Box>
+        {recipe === undefined ? (
+          <div>Loading...</div>
+        ) : (
+          <RecipeView
+            recipe={recipe}
+            reqHyration={requiredValues.reqHyration}
+            reqTotalLoafWeight={requiredValues.reqTotalLoafWeight}
+            reqTotalLoafCount={requiredValues.reqTotalLoafCount}
+          />
+        )}
+        {error && <div>Error: {error.message}</div>}
+      </Box>
+    </Box>
   );
 }
 

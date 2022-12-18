@@ -1,3 +1,4 @@
+import React from "react";
 import { PropTypes } from 'prop-types';
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,6 +9,11 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Box } from '@mui/material';
 export default function RecipeIngridients(props) {
+  const weight_factor = React.useMemo(() => {
+    const w = props.total_weight_per_loaf / (1 + (props.required_hydration/100));
+    return w;
+  }, [props.total_weight_per_loaf, props.required_hydration]);
+
   return (
     <Box>
       <TableContainer component={Paper}>
@@ -15,23 +21,27 @@ export default function RecipeIngridients(props) {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Quantity</TableCell>
+              <TableCell>Orign Quantity</TableCell>
               <TableCell>Type</TableCell>
+              <TableCell>Calc Quantity</TableCell>
               <TableCell>Precentage</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.ingredients.map((row) => (
+            {props.ingredients.map((ingredient) => (
               <TableRow
-                key={row.name}
+                key={ingredient.name}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {ingredient.name}
                 </TableCell>
-                <TableCell>{row.quantity}</TableCell>
-                <TableCell>{row.type}</TableCell>
-                <TableCell>0%</TableCell>
+                <TableCell>{ingredient.quantity}</TableCell>
+                <TableCell>{ingredient.type}</TableCell>
+                <TableCell>{Math.round(weight_factor * ingredient.precentage)}</TableCell>
+                <TableCell>
+                  {Math.round(ingredient.precentage * 100)}%
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -41,7 +51,9 @@ export default function RecipeIngridients(props) {
   );
 }
 
+
 RecipeIngridients.propTypes = {
   ingredients: PropTypes.array.isRequired,
-  total_weight_per_loaf: PropTypes.number, // undefined for same as recipe
+  total_weight_per_loaf: PropTypes.number.isRequired, // undefined for same as recipe
+  required_hydration: PropTypes.number.isRequired, // undefined for same as recipe
 };

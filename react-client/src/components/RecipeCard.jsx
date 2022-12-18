@@ -31,7 +31,7 @@ export default function RecipeCard(props) {
   }, []);
 
   const navigateToRecipe = () => {
-    console.log("navigate to recipe");
+    // console.log("navigate to recipe");
     navigate(`/recipe/${recipe.id}`, { state: { recipe: recipe } });
   };
 

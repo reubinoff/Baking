@@ -38,7 +38,7 @@ def get_recipes(*, common: dict = Depends(common_parameters)):
 @router.get("/{recipe_id}", response_model=RecipeRead)
 def get_recipe(*, db_session: Session = Depends(get_db), recipe_id: int):
     """
-    Update a recipe.
+    Get a recipe.
     """
     recipe = check_and_raise(db_session=db_session, recipe_id=recipe_id)
     return recipe
@@ -81,7 +81,7 @@ def update_recipe(
     return recipe
 
 
-def check_and_raise(db_session, recipe_id):
+def check_and_raise(db_session, recipe_id) -> RecipeRead:
     recipe = get(db_session=db_session, recipe_id=recipe_id)
     if not recipe:
         raise HTTPException(

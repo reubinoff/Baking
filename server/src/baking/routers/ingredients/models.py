@@ -44,6 +44,7 @@ class IngredientBase(OurBase):
 class IngredientRead(IngredientBase):
     id: PrimaryKey
     procedure_id: PrimaryKey
+    precentage: Optional[float] = 0.0
 
 
 

@@ -46,7 +46,7 @@ def test_query(session, recipe):
 
 
 def test_hydration(session):
-    from baking.routers.recipe.service import create
+    from baking.routers.recipe.service import create, get
     from baking.routers.recipe.models import RecipeCreate
     from baking.routers.procedure.models import Procedure, ProcedureCreate
     from baking.routers.procedure.service import create as create_procedure
@@ -124,7 +124,7 @@ def test_hydration(session):
 
 
 def test_ingredients(session, cleaner):
-    from baking.routers.recipe.service import create
+    from baking.routers.recipe.service import create, get
     from baking.routers.recipe.models import RecipeCreate
     from baking.routers.procedure.models import Procedure, ProcedureCreate
     from baking.routers.procedure.service import create as create_procedure
@@ -134,13 +134,13 @@ def test_ingredients(session, cleaner):
     ingredients = [
         IngredientCreate(
             name="i1_name",
-            quantity=100,
+            quantity=500,
             units=IngrediantUnits.ml,
             type=IngrediantType.water,
         ),
         IngredientCreate(
             name="i2_name",
-            quantity=200,
+            quantity=50,
             units=IngrediantUnits.ml,
             type=IngrediantType.oil,
         ),
@@ -151,31 +151,48 @@ def test_ingredients(session, cleaner):
             type=IngrediantType.flour,
         ),
         IngredientCreate(
-            name="i3_name",
-            quantity=200,
+            name="i4_name",
+            quantity=300,
             units=IngrediantUnits.grams,
             type=IngrediantType.flour,
         ),
     ]
 
-    procedure_in = ProcedureCreate(
+    procedure_in_a = ProcedureCreate(
+        name="test_procedure",
+        ingredients=[IngredientCreate(
+            name="i3_name",
+            quantity=200,
+            units=IngrediantUnits.grams,
+            type=IngrediantType.flour,
+        )],
+    )
+    procedure_in_b = ProcedureCreate(
         name="test_procedure",
         ingredients=ingredients,
     )
-    procedure = create_procedure(
+    procedure_a = create_procedure(
         db_session=session,
-        procedure_in=procedure_in,
+        procedure_in=procedure_in_a,
+    )
+    procedure_b = create_procedure(
+        db_session=session,
+        procedure_in=procedure_in_b,
     )
 
     recipe_name = "test"
 
-    recipe_in = RecipeCreate(name=recipe_name, procedures=[procedure])
+    recipe_in = RecipeCreate(name=recipe_name, procedures=[
+                             procedure_a, procedure_b])
     recipe = create(db_session=session, recipe_in=recipe_in)
     assert recipe
 
-    for i in recipe.ingredients:
+    r = get(db_session=session, recipe_id=recipe.id)
+    for i in r.ingredients:
         if i.name == "i3_name":
             assert i.quantity == 400
             assert i.units == IngrediantUnits.grams
             assert i.type == IngrediantType.flour
+            assert i.precentage == 0.57
+
         

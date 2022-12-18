@@ -16,14 +16,14 @@ export default function RecipeProcedure(props) {
     <Box>
       <Typography variant="h6">{props.procedure.name}</Typography>
       <Typography variant="body1">{props.procedure.description}</Typography>
-      <Typography variant="body1">
+      <Box>
         {props.procedure.steps.map((step) => (
-          <Box key={step.name}>
+          <Box key={step.id}>
             <RecipeStep step={step} />
             <Divider />
           </Box>
         ))}
-      </Typography>
+      </Box>
     </Box>
   );
 }

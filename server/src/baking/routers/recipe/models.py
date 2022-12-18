@@ -72,26 +72,14 @@ class Recipe(Base, TimeStampMixin):
 
     @hybrid_property
     def total_recipe_time(self) -> int:
-        total_time = 0
-        if self.procedures is not None:
-            p: Procedure = None
-            for p in self.procedures:
-                total_time = total_time + p.duration_in_seconds
- 
+        if self.procedures is None:
+            return 0
+        total_time = self.procedures.reduce(
+            lambda acc, p: acc + p.duration_in_seconds, 0
+        )
         return total_time
 
-    @hybrid_property
-    def ingredients(self) -> List[Ingredient]:
-        ingredients = dict()
-        if self.procedures is not None:
-            p: Procedure = None
-            for p in self.procedures:
-                for i in p.ingredients:
-                    if i.name in ingredients:
-                        ingredients[i.name].quantity = ingredients[i.name].quantity + i.quantity
-                    else:
-                        ingredients[i.name] = IngredientRead(**i.dict())
-        return list(ingredients.values())
+
 ############################################################
 # Pydantic models...
 ############################################################
