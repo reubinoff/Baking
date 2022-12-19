@@ -22,7 +22,6 @@ export default function RecipeIngridients(props) {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Orign Quantity</TableCell>
-              <TableCell>Type</TableCell>
               <TableCell>Calc Quantity</TableCell>
               <TableCell>Precentage</TableCell>
             </TableRow>
@@ -37,7 +36,6 @@ export default function RecipeIngridients(props) {
                   {ingredient.name}
                 </TableCell>
                 <TableCell>{ingredient.quantity}</TableCell>
-                <TableCell>{ingredient.type}</TableCell>
                 <TableCell>{Math.round(weight_factor * ingredient.precentage)}</TableCell>
                 <TableCell>
                   {Math.round(ingredient.precentage * 100)}%
