@@ -17,11 +17,11 @@ word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 
 response = requests.get(word_site)
 WORDS = response.content.splitlines()
-
+# print (WORDS)
 TOTAL_RECIPES = 35
 
-URL = "http://localhost:8888"
-# URL = "https://service.baking.reubinoff.com"
+# URL = "http://localhost:8888"
+URL = "https://service.baking.reubinoff.com"
 
 def get_types():
     from baking.routers.ingredients.enums import IngrediantType
@@ -29,7 +29,7 @@ def get_types():
     return TYPES
 
 def get_words(num_of_words):
-    return ' '.join([WORDS[random.randint(0, len(WORDS))].decode() for i in range(num_of_words)])
+    return ' '.join([WORDS[random.randint(0, len(WORDS) - num_of_words)].decode() for i in range(num_of_words)])
 
 def create_recipes():
     current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -81,13 +81,17 @@ def create_recipes():
     t = requests.get(
         f"{URL}/recipe?page=1&itemsPerPage=500")
 
-    # ids = [t["id"] for t in t.json()["items"]]
-    # print(t.status_code)
-    # for i in ids:
-    #     t = requests.post(
-    #         f"{URL}/recipe/{i}/img", files=files[i%2])
+    ids = [t["id"] for t in t.json()["items"]]
+    print(t.status_code)
+    index = 0
+    for i in ids:
+        index+=1
+        if index%3 == 0:
+            continue
+        t = requests.post(
+            f"{URL}/recipe/{i}/img", files=files[i%2])
         
-        # print(t.status_code)
+        print(t.status_code)
 
 
 def delete_all_recipes():

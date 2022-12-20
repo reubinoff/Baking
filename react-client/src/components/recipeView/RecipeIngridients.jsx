@@ -46,7 +46,7 @@ export default function RecipeIngridients(props) {
               <TableCell>Name</TableCell>
               <TableCell>Orign Quantity</TableCell>
               <TableCell>Calc Quantity</TableCell>
-              <TableCell>Precentage</TableCell>
+              <TableCell>%</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
