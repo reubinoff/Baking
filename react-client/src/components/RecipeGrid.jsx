@@ -11,7 +11,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import ScrollTop from "./ScrollTop";
 import { SearchContext } from "../components/context/SearchContext";
 import { useContext } from "react";
-
+import LinearProgress from "@mui/material/LinearProgress";
 
 export default function RecipeGrid(props) {
   const { query } = useContext(SearchContext);
@@ -94,7 +94,7 @@ export default function RecipeGrid(props) {
         </Fab>
       </ScrollTop>
       <div ref={loader} />
-      <div>{isFetching ? "Fetching..." : null}</div>
+      <LinearProgress sx={{ display: isFetching ? "block" : "none" }} />
     </Box>
   );
 }

@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 from baking.routers.steps.models import Step
 from pydantic import Field, validator
-
+import random
 from sqlalchemy import (
     Column,
     Integer,
@@ -53,6 +53,9 @@ class Recipe(Base, TimeStampMixin):
 
     @hybrid_property
     def cdn_url(self):
+        if self.image_identidier is None:
+            image_id = 200 + random.randint(1, 30)
+            return f"https://baconmockup.com/300/{ image_id }"
         return f"{settings.azure_cdn_storage_base_url}/{self.image_identidier}"
 
     @hybrid_property

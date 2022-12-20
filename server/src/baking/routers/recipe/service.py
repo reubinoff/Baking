@@ -17,16 +17,6 @@ def get(*, db_session, recipe_id: int) -> Optional[Recipe]:
     recipe.ingredients = _get_ingridients(recipe=recipe)
     return recipe
 
-def _calculate_precentage(*, ingredients: List[IngredientRead]) -> List[IngredientRead]:
-    """Returns a recipe based on the given recipe id."""
-    total_liquid = 0
-    total_solid = 0
-    for ingredient in ingredients:
-        if is_liquid(ingredient.type):
-            total_liquid += ingredient.quantity # TODO: need to cover if the units are different
-        else:
-            total_solid += ingredient.quantity
-    
 
 def _get_ingridients(*, recipe: Recipe) -> List[Optional[IngredientRead]]:
     """Returns a ingridients list"""
@@ -40,7 +30,7 @@ def _get_ingridients(*, recipe: Recipe) -> List[Optional[IngredientRead]]:
                 if i.name in ingredients:
                     ingredients[i.name].quantity = ingredients[i.name].quantity + i.quantity
                 else:
-                    ingredients[i.name] = IngredientRead(**i.dict())
+                    ingredients[i.name] = IngredientRead(**i.dict(), is_liquid=i.is_liquid)
                 if is_liquid(i.type):
                     total_liquid += i.quantity ## TODO: need to cover if the units are different
                 else:

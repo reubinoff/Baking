@@ -6,14 +6,13 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import WaterIcon from "@mui/icons-material/Water";
-import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import Skeleton from "@mui/material/Skeleton";
 import { useNavigate } from "react-router-dom";
+import Hydration from "./recipeComponents/Hydration";
 
 export default function RecipeCard(props) {
   const [recipe] = useState(props.recipe);
@@ -40,12 +39,7 @@ export default function RecipeCard(props) {
       <CardHeader
         title={recipe.name}
         action={
-          <Box display="flex" alignItems="center">
-            <WaterIcon color="primary" />
-            <Typography variant="body2" color="text.secondary">
-              {recipe.hydration}%
-            </Typography>
-          </Box>
+          <Hydration hydration={recipe.hydration} />
         }
       ></CardHeader>
       <CardMedia

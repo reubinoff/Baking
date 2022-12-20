@@ -31,7 +31,8 @@ class Ingredient(Base, ProcedureMixin):
 
     @hybrid_property
     def is_liquid(self) -> bool:
-        return is_liquid(self.type)
+        a =  is_liquid(self.type)
+        return a
 
 
 ############################################################
@@ -48,7 +49,7 @@ class IngredientRead(IngredientBase):
     id: PrimaryKey
     procedure_id: PrimaryKey
     precentage: Optional[float] = 0.0
-    is_liquid: Optional[bool] = False
+    is_liquid: Optional[bool]
 
 
 

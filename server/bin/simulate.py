@@ -45,7 +45,7 @@ def create_recipes():
         p = []
         for j in range(1, random.randint(2, 5)):
             ingredients = []
-            for k in range(1, random.randint(2, 7)):
+            for k in range(1, random.randint(2, 3)):
                 type = get_types()[random.randint(0, len(get_types())-1)]
                 ingredients.append( {
                     "name": f"i_{get_words(random.randint(1,3))}_{k}",
@@ -54,7 +54,7 @@ def create_recipes():
                     "type": type,
                 })
             steps = []
-            for k in range(1, random.randint(2, 7)):
+            for k in range(1, random.randint(2, 3)):
                 steps.append({
                     "name": f"step_{get_words(random.randint(1,3))}_{k}",
                     "description": get_words(random.randint(1, 9)),
@@ -81,13 +81,13 @@ def create_recipes():
     t = requests.get(
         f"{URL}/recipe?page=1&itemsPerPage=500")
 
-    ids = [t["id"] for t in t.json()["items"]]
-    print(t.status_code)
-    for i in ids:
-        t = requests.post(
-            f"{URL}/recipe/{i}/img", files=files[i%2])
+    # ids = [t["id"] for t in t.json()["items"]]
+    # print(t.status_code)
+    # for i in ids:
+    #     t = requests.post(
+    #         f"{URL}/recipe/{i}/img", files=files[i%2])
         
-        print(t.status_code)
+        # print(t.status_code)
 
 
 def delete_all_recipes():
