@@ -4,6 +4,7 @@ import RecipeView from "../components/recipeView/RecipeView";
 import { useRecipe } from "../data/recipes";
 import { Box } from "@mui/material";
 import RecipeQuantitySelector from "../components/recipeView/RecipeQuantitySelector";
+import CircularProgress from "@mui/material/CircularProgress";
 
 
 function Recipe() {
@@ -25,23 +26,36 @@ function Recipe() {
 
 
   return (
+    // Loader
     <Box>
-      <RecipeQuantitySelector
-        requiredValues={requiredValues}
-        setRequiredValues={setRequiredValues}
+      <CircularProgress 
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          display: isFetching === true ? "flex" : "none",
+        }}
       />
-      <Box>
-        {recipe === undefined ? (
-          <div>Loading...</div>
-        ) : (
-          <RecipeView
-            recipe={recipe}
-            reqHyration={requiredValues.reqHyration}
-            reqTotalLoafWeight={requiredValues.reqTotalLoafWeight}
-            reqTotalLoafCount={requiredValues.reqTotalLoafCount}
-          />
-        )}
-        {error && <div>Error: {error.message}</div>}
+
+      <Box sx={{ display: isFetching === true ? "none" : "block" }}>
+        <RecipeQuantitySelector
+          requiredValues={requiredValues}
+          setRequiredValues={setRequiredValues}
+        />
+        <Box>
+          {recipe === undefined ? (
+            <div>Loading...</div>
+          ) : (
+            <RecipeView
+              recipe={recipe}
+              reqHyration={requiredValues.reqHyration}
+              reqTotalLoafWeight={requiredValues.reqTotalLoafWeight}
+              reqTotalLoafCount={requiredValues.reqTotalLoafCount}
+            />
+          )}
+          {error && <div>Error: {error.message}</div>}
+        </Box>
       </Box>
     </Box>
   );

@@ -10,14 +10,14 @@ import Paper from "@mui/material/Paper";
 import { Box } from '@mui/material';
 export default function RecipeIngridients(props) {
   const weight_factor = React.useMemo(() => {
-    const w = props.total_weight_per_loaf / (1 + (props.required_hydration/100));
-    return w;
-  }, [props.total_weight_per_loaf, props.required_hydration]);
+    const w = props.reqTotalLoafWeight / (1 + props.reqHyration / 100);
+    return w * props.reqTotalLoafCount;
+  }, [props.reqTotalLoafWeight, props.reqHyration, props.reqTotalLoafCount]);
 
   return (
     <Box>
       <TableContainer component={Paper}>
-        <Table aria-label="simple table">
+        <Table aria-label="ingredients table">
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
@@ -36,7 +36,9 @@ export default function RecipeIngridients(props) {
                   {ingredient.name}
                 </TableCell>
                 <TableCell>{ingredient.quantity}</TableCell>
-                <TableCell>{Math.round(weight_factor * ingredient.precentage)}</TableCell>
+                <TableCell>
+                  {Math.round(weight_factor * ingredient.precentage)}
+                </TableCell>
                 <TableCell>
                   {Math.round(ingredient.precentage * 100)}%
                 </TableCell>
@@ -52,6 +54,7 @@ export default function RecipeIngridients(props) {
 
 RecipeIngridients.propTypes = {
   ingredients: PropTypes.array.isRequired,
-  total_weight_per_loaf: PropTypes.number.isRequired, // undefined for same as recipe
-  required_hydration: PropTypes.number.isRequired, // undefined for same as recipe
+  reqTotalLoafWeight: PropTypes.number.isRequired, // undefined for same as recipe
+  reqHyration: PropTypes.number.isRequired, // undefined for same as recipe
+  reqTotalLoafCount: PropTypes.number.isRequired, // undefined for same as recipe
 };

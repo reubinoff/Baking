@@ -18,8 +18,9 @@ export default function RecipeView(props) {
             Ingredients
             <RecipeIngridients
               ingredients={props.recipe.ingredients}
-              total_weight_per_loaf={props.reqTotalLoafWeight}
-              required_hydration={props.reqHyration}
+              reqTotalLoafWeight={props.reqTotalLoafWeight}
+              reqHyration={props.reqHyration}
+              reqTotalLoafCount={props.reqTotalLoafCount}
             />
           </Typography>
         </Paper>
