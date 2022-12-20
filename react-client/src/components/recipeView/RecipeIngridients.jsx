@@ -9,6 +9,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Box } from '@mui/material';
 export default function RecipeIngridients(props) {
+
+
   const weight_factor = React.useMemo(() => {
     const w = props.reqTotalLoafWeight / (1 + props.reqHyration / 100);
     return w * props.reqTotalLoafCount;

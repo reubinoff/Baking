@@ -5,13 +5,13 @@ from sqlalchemy import (
     Integer,
     String,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
+
 from baking.database.core import Base
 from baking.models import NameStr, OurBase, PrimaryKey
 from baking.models import ProcedureMixin
-from sqlalchemy.sql.schema import ForeignKey
 from pydantic import Field
-from .enums import IngrediantUnits, IngrediantType
+from .enums import IngrediantUnits, IngrediantType, is_liquid
 
 ############################################################
 # SQL models...
@@ -29,6 +29,9 @@ class Ingredient(Base, ProcedureMixin):
     units = Column(String, default=IngrediantUnits.grams)
     type = Column(String, default=IngrediantType.Other)
 
+    @hybrid_property
+    def is_liquid(self) -> bool:
+        return is_liquid(self.type)
 
 
 ############################################################
@@ -45,6 +48,7 @@ class IngredientRead(IngredientBase):
     id: PrimaryKey
     procedure_id: PrimaryKey
     precentage: Optional[float] = 0.0
+    is_liquid: Optional[bool] = False
 
 
 
