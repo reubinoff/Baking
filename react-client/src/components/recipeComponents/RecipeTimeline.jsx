@@ -2,10 +2,6 @@ import Timeline from "@mui/lab/Timeline";
 import TimelineItem from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent, {
-  timelineContentClasses,
-} from "@mui/lab/TimelineContent";
-import timelineItemClasses from "@mui/lab/TimelineItem";
 import TimelineDot from "@mui/lab/TimelineDot";
 import { PropTypes } from 'prop-types';
 import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
