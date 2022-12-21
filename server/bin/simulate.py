@@ -20,8 +20,8 @@ WORDS = response.content.splitlines()
 # print (WORDS)
 TOTAL_RECIPES = 35
 
-# URL = "http://localhost:8888"
-URL = "https://service.baking.reubinoff.com"
+URL = "http://localhost:8888"
+# URL = "https://service.baking.reubinoff.com"
 
 def get_types():
     from baking.routers.ingredients.enums import IngrediantType
@@ -57,7 +57,7 @@ def create_recipes():
             for k in range(1, random.randint(2, 3)):
                 steps.append({
                     "name": f"step_{get_words(random.randint(1,3))}_{k}",
-                    "description": get_words(random.randint(1, 9)),
+                    "description": get_words(random.randint(1, 90)),
                     "duration_in_seconds": random.randint(10, 10000),
                 })
             p.append({

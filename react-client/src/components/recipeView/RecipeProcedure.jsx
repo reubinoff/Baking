@@ -9,18 +9,18 @@ import { PropTypes } from 'prop-types';
 import { Box } from '@mui/material';
 import { Typography } from '@mui/material';
 import RecipeStep from './RecipeStep';
-import Divider from '@mui/material/Divider';
 
 export default function RecipeProcedure(props) {
+  console.log(props.procedure);
   return (
     <Box>
       <Typography variant="h6">{props.procedure.name}</Typography>
       <Typography variant="body1">{props.procedure.description}</Typography>
       <Box>
         {props.procedure.steps.map((step) => (
-          <Box key={step.id}>
+          <Box key={step.id} sx={{mt:"5px"}}>
             <RecipeStep step={step} />
-            <Divider />
+            {/* <Divider /> */}
           </Box>
         ))}
       </Box>

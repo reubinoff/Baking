@@ -5,17 +5,16 @@ import { Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import RecipeIngridients from "./RecipeIngridients";
 import RecipeProcedure from "./RecipeProcedure";
-// import Hydration from "../recipeComponents/Hydration";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-// import ScaleIcon from '@mui/icons-material/Scale';
+// import RecipeTimeline from "../recipeComponents/RecipeTimeline";
 export default function RecipeView(props) {
   const { recipe } = props;
   return (
     <Box>
       <Grid container spacing={2}>
         <Grid xs={9}>
-          <h1>{recipe.name}</h1>
-          <p>{recipe.description}</p>
+          <Typography variant="h4">{recipe.name}</Typography>
+          <Typography variant="body1">{recipe.description}</Typography>
         </Grid>
         {/* <Grid xs={3}>
           <Hydration
@@ -27,7 +26,7 @@ export default function RecipeView(props) {
       </Grid>
 
       <Paper>
-        <Typography variant="h6">
+        <Typography variant="h5" sx={{ ml: "5px" }}>
           Ingredients
           <RecipeIngridients
             ingredients={recipe.ingredients}
@@ -39,14 +38,23 @@ export default function RecipeView(props) {
         </Typography>
       </Paper>
 
-      <Paper sx={{ mt: 5 }}>
-        <Typography variant="h6">
-          Procedures
-          {recipe.procedures.map((procedure) => (
-            <RecipeProcedure key={procedure.name} procedure={procedure} />
-          ))}
-        </Typography>
-      </Paper>
+      <Grid container spacing={2}>
+        <Grid xs={12}>
+          <Paper sx={{ mt: 5 }}>
+            <Typography variant="h5" sx={{ ml: "5px" }}>
+              Procedures
+              {recipe.procedures.map((procedure) => (
+                <Box key={procedure.name} sx={{ mt: "20px" }}>
+                  <RecipeProcedure procedure={procedure} />
+                </Box>
+              ))}
+            </Typography>
+          </Paper>
+        </Grid>
+        <Grid >
+          {/* <RecipeTimeline /> */}
+        </Grid>
+      </Grid>
     </Box>
   );
 }

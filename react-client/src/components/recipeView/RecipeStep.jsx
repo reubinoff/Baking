@@ -12,7 +12,7 @@ import { Typography } from '@mui/material';
 export default function RecipeStep(props) {
   return (
     <Box>
-      <Typography variant="h7">{props.step.name}</Typography>
+      <Typography variant="subtitle1">{props.step.name}</Typography>
       <Typography variant="body1">{props.step.description}</Typography>
     </Box>
   );
