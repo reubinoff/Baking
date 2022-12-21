@@ -18,8 +18,8 @@ export default function RecipeProcedure(props) {
   
   return (
     <Box>
-      <Grid container spacing={1}>
-        <Grid xs={10}>
+      <Grid container spacing={0}>
+        <Grid xs={9}>
           <Typography variant="h6">{props.procedure.name}</Typography>
           <Typography variant="body1">{props.procedure.description}</Typography>
           <React.Fragment>
@@ -31,7 +31,7 @@ export default function RecipeProcedure(props) {
             ))}
           </React.Fragment>
         </Grid>
-        <Grid xs={2} >
+        <Grid xs={3} >
           <RecipeTimeline
             items={generateItems(steps)}
           />
@@ -42,7 +42,7 @@ export default function RecipeProcedure(props) {
 }
 
 function generateItems(steps) {
-  var d = new moment("2014-01-01 10:11:55");
+  var d = new moment();
   d = d.add(10, "seconds");
   let items = [];
   steps.forEach(step => {
