@@ -12,9 +12,9 @@ import { Typography } from '@mui/material';
 import RecipeStep from './RecipeStep';
 import RecipeTimeline from '../recipeComponents/RecipeTimeline';
 import Grid from '@mui/material/Unstable_Grid2';
-import moment from 'moment';
 export default function RecipeProcedure(props) {
   const { steps } = props.procedure;
+  const { startTimestamp} = props;
   
   return (
     <Box>
@@ -31,30 +31,29 @@ export default function RecipeProcedure(props) {
             ))}
           </React.Fragment>
         </Grid>
-        <Grid xs={3} >
-          <RecipeTimeline
-            items={generateItems(steps)}
-          />
+        <Grid xs={3}>
+          <RecipeTimeline items={generateItems(steps, startTimestamp)} />
         </Grid>
       </Grid>
     </Box>
   );
 }
 
-function generateItems(steps) {
-  var d = new moment();
-  d = d.add(10, "seconds");
+function generateItems(steps, startTimestamp) {
   let items = [];
-  steps.forEach(step => {
+  steps.forEach((step) => {
     items.push({
-      val: d.add( step.duration_in_seconds, "seconds").format("HH:mm"),
+      val: startTimestamp
+        .add(step.duration_in_seconds, "seconds")
+        .format("HH:mm"),
       main: false,
       connector: true,
-    });    
+    });
   });
   return items;
 }
 
 RecipeProcedure.propTypes = {
     procedure: PropTypes.object.isRequired,
+    startTimestamp: PropTypes.object.isRequired,
 };

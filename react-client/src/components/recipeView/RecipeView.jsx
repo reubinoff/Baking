@@ -6,8 +6,13 @@ import Typography from "@mui/material/Typography";
 import RecipeIngridients from "./RecipeIngridients";
 import RecipeProcedure from "./RecipeProcedure";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
+import moment from "moment";
 export default function RecipeView(props) {
   const { recipe } = props;
+  var d = new moment();
+  const procedures = recipe.procedures.sort((a, b) => {
+    return a.order - b.order;
+  });
   return (
     <Box>
       <Grid container spacing={2}>
@@ -39,11 +44,21 @@ export default function RecipeView(props) {
       <Box sx={{ mt: 5 }}>
         <Typography variant="h5" sx={{ ml: "5px" }}>
           Procedures
-          {recipe.procedures.map((procedure) => (
-            <Box key={procedure.name} sx={{ mt: "20px" }}>
-              <RecipeProcedure procedure={procedure} />
-            </Box>
-          ))}
+          {procedures.map((procedure, idx) => {
+            console.log("idx", idx);
+            if (idx > 0) {
+              d = d.add(
+                procedures[idx - 1].duration_in_seconds,
+                "seconds"
+              );
+            }
+            return (
+              <Box key={procedure.name} sx={{ mt: "20px" }}>
+                {procedure.duration_in_seconds}
+                <RecipeProcedure procedure={procedure} startTimestamp={d} />
+              </Box>
+            );
+          })}
         </Typography>
       </Box>
     </Box>
