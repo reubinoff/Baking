@@ -18,7 +18,7 @@ export default function RecipeProcedure(props) {
   
   return (
     <Box>
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
         <Grid xs={10}>
           <Typography variant="h6">{props.procedure.name}</Typography>
           <Typography variant="body1">{props.procedure.description}</Typography>
@@ -31,8 +31,10 @@ export default function RecipeProcedure(props) {
             ))}
           </React.Fragment>
         </Grid>
-        <Grid xs={2} sx={{ position: 'relative', top: '30%', left: '15%' }}>
-          <RecipeTimeline items={generateItems(steps)} />
+        <Grid xs={2} >
+          <RecipeTimeline
+            items={generateItems(steps)}
+          />
         </Grid>
       </Grid>
     </Box>

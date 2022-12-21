@@ -5,35 +5,26 @@ import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent, {
   timelineContentClasses,
 } from "@mui/lab/TimelineContent";
+import timelineItemClasses from "@mui/lab/TimelineItem";
 import TimelineDot from "@mui/lab/TimelineDot";
-import Box from "@mui/material/Box";
 import { PropTypes } from 'prop-types';
-
+import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
 export default function RecipeTimeline(props) {
     const { items } = props;
   return (
-    <Box {...props}>
-      <Timeline
-        position="left"
-        sx={{
-          [`& .${timelineContentClasses.root}`]: {
-            flex: 0.2,
-          },
-        }}
-      >
-        {items.map((item) => (
-          <TimelineItem key={item.val}>
-            <TimelineSeparator>
-              <TimelineDot variant={item.main ? "default" : "outlined"} />
-              <TimelineConnector
-                sx={{ display: item.connector === true ? "block" : "none" }}
-              />
-            </TimelineSeparator>
-            <TimelineContent> {item.val} </TimelineContent>
-          </TimelineItem>
-        ))}
-      </Timeline>
-    </Box>
+    <Timeline {...props}>
+      {items.map((item) => (
+        <TimelineItem key={item.val}>
+          <TimelineOppositeContent> {item.val} </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot variant={item.main ? "default" : "outlined"} />
+            <TimelineConnector
+              sx={{ display: item.connector === true ? "flex" : "none" }}
+            />
+          </TimelineSeparator>
+        </TimelineItem>
+      ))}
+    </Timeline>
   );
 }
 
