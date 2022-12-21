@@ -7,9 +7,10 @@ import TimelineContent, {
 } from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
 import Box from "@mui/material/Box";
-
+import { PropTypes } from 'prop-types';
 
 export default function RecipeTimeline(props) {
+    const { items } = props;
   return (
     <Box {...props}>
       <Timeline
@@ -20,27 +21,30 @@ export default function RecipeTimeline(props) {
           },
         }}
       >
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Eat</TimelineContent>
-        </TimelineItem>
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent>Code</TimelineContent>
-        </TimelineItem>
-        <TimelineItem>
-          <TimelineSeparator>
-            <TimelineDot />
-          </TimelineSeparator>
-          <TimelineContent>Sleep</TimelineContent>
-        </TimelineItem>
+        {items.map((item) => (
+          <TimelineItem key={item.val}>
+            <TimelineSeparator>
+              <TimelineDot variant={item.main ? "default" : "outlined"} />
+              <TimelineConnector
+                sx={{ display: item.connector === true ? "block" : "none" }}
+              />
+            </TimelineSeparator>
+            <TimelineContent> {item.val} </TimelineContent>
+          </TimelineItem>
+        ))}
       </Timeline>
     </Box>
   );
 }
+
+RecipeTimeline.propTypes = {
+    items: PropTypes.array.isRequired,
+}
+
+// items = [
+//     {
+//         val: "Step 1",
+//         main: false,
+//         connector: true,
+//     }
+// ]

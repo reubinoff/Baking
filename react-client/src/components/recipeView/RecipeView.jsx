@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import RecipeIngridients from "./RecipeIngridients";
 import RecipeProcedure from "./RecipeProcedure";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-// import RecipeTimeline from "../recipeComponents/RecipeTimeline";
 export default function RecipeView(props) {
   const { recipe } = props;
   return (
@@ -37,24 +36,16 @@ export default function RecipeView(props) {
           />
         </Typography>
       </Paper>
-
-      <Grid container spacing={2}>
-        <Grid xs={12}>
-          <Paper sx={{ mt: 5 }}>
-            <Typography variant="h5" sx={{ ml: "5px" }}>
-              Procedures
-              {recipe.procedures.map((procedure) => (
-                <Box key={procedure.name} sx={{ mt: "20px" }}>
-                  <RecipeProcedure procedure={procedure} />
-                </Box>
-              ))}
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid >
-          {/* <RecipeTimeline /> */}
-        </Grid>
-      </Grid>
+      <Box sx={{ mt: 5 }}>
+        <Typography variant="h5" sx={{ ml: "5px" }}>
+          Procedures
+          {recipe.procedures.map((procedure) => (
+            <Box key={procedure.name} sx={{ mt: "20px" }}>
+              <RecipeProcedure procedure={procedure} />
+            </Box>
+          ))}
+        </Typography>
+      </Box>
     </Box>
   );
 }
