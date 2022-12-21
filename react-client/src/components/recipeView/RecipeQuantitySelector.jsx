@@ -9,20 +9,27 @@ import Select from "@mui/material/Select";
 import _ from "lodash";
 
 export default function RecipeQuantitySelector(props) {
-  const [defaultValues] = React.useState({
+  const [defaultValues, setDefaultValues] = React.useState({
     reqHyration: props.requiredValues.reqHyration,
     reqTotalLoafWeight: props.requiredValues.reqTotalLoafWeight,
     reqTotalLoafCount: props.requiredValues.reqTotalLoafCount,
   });
 
+  React.useEffect(() => {
+    setDefaultValues({
+      ...props.requiredValues,
+    });
+  }, [props, setDefaultValues]);
+
   const hydrationOptions = React.useMemo(() => {
-    const min = 40;
-    const max = 100;
-    const step = 2;
+    const offset = 15;
+    const min =
+      defaultValues.reqHyration > offset
+        ? defaultValues.reqHyration - offset
+        : 0;
+    const max = defaultValues.reqHyration + offset;
+    const step = 1;
     const l = _.range(min, max, step);
-    if (l.includes(defaultValues.reqHyration) === false) {
-      l.push(defaultValues.reqHyration);
-    }
     // sort the array
     return l.sort((a, b) => a - b);
   }, [defaultValues]);
@@ -30,7 +37,7 @@ export default function RecipeQuantitySelector(props) {
   const weightOptions = React.useMemo(() => {
     const min = 100;
     const max = 1000;
-    const step = 100;
+    const step = 50;
     const l = _.range(min, max, step);
     if (l.includes(defaultValues.reqTotalLoafWeight) === false) {
       l.push(defaultValues.reqTotalLoafWeight);
@@ -41,7 +48,7 @@ export default function RecipeQuantitySelector(props) {
 
   const countOptions = React.useMemo(() => {
     const min = 1;
-    const max = 10;
+    const max = 20;
     const step = 1;
     const l = _.range(min, max, step);
     if (l.includes(defaultValues.reqTotalLoafCount) === false) {
@@ -69,7 +76,7 @@ export default function RecipeQuantitySelector(props) {
     },
     {
       label: "setReqTotalLoafWeight",
-      value: props.requiredValues["reqTotalLoafWeight"],
+      value: props.requiredValues.reqTotalLoafWeight,
       onchange: (event) =>
         updateRequiredValues("reqTotalLoafWeight", event.target.value),
 
@@ -78,7 +85,7 @@ export default function RecipeQuantitySelector(props) {
     },
     {
       label: "ReqTotalLoafCount",
-      value: props.requiredValues["reqTotalLoafCount"],
+      value: props.requiredValues.reqTotalLoafCount,
       onchange: (event) =>
         updateRequiredValues("reqTotalLoafCount", event.target.value),
 

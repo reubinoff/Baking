@@ -5,9 +5,9 @@ import { Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import RecipeIngridients from "./RecipeIngridients";
 import RecipeProcedure from "./RecipeProcedure";
-import Hydration from "../recipeComponents/Hydration";
+// import Hydration from "../recipeComponents/Hydration";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-
+// import ScaleIcon from '@mui/icons-material/Scale';
 export default function RecipeView(props) {
   const { recipe } = props;
   return (
@@ -17,12 +17,13 @@ export default function RecipeView(props) {
           <h1>{recipe.name}</h1>
           <p>{recipe.description}</p>
         </Grid>
-        <Grid xs={3}>
+        {/* <Grid xs={3}>
           <Hydration
             hydration={recipe.hydration}
             sx={{ position: "relative", top: "30%", left: "30%" }}
           />
-        </Grid>
+          <ScaleIcon/>
+        </Grid> */}
       </Grid>
 
       <Paper>

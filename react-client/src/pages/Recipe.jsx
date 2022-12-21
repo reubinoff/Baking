@@ -12,23 +12,24 @@ function Recipe() {
   const { data, isFetching, error, isFetched } = useRecipe(recipeId);
 
   const [recipe, setRecipe] = React.useState();
+   const [requiredValues, setRequiredValues] = React.useState();
 
   React.useEffect(() => {
     if (isFetching === false && isFetched === true) {
       setRecipe({ ...data });
+      setRequiredValues({
+        reqTotalLoafWeight: 700,
+        reqTotalLoafCount: 1,
+        reqHyration: data.hydration,
+      });
     }
   }, [isFetching, data, isFetched]);
-   const [requiredValues, setRequiredValues] = React.useState({
-     reqHyration: 70,
-     reqTotalLoafWeight: 1000,
-     reqTotalLoafCount: 1,
-   });
 
 
   return (
     // Loader
     <Box>
-      <CircularProgress 
+      <CircularProgress
         sx={{
           position: "absolute",
           top: "50%",
@@ -39,26 +40,30 @@ function Recipe() {
       />
 
       <Box sx={{ display: isFetching === true ? "none" : "block" }}>
-        <RecipeQuantitySelector
+       { requiredValues!== undefined? <RecipeQuantitySelector
           requiredValues={requiredValues}
           setRequiredValues={setRequiredValues}
-        />
+        /> : null}
         <Box>
-          {recipe === undefined ? (
-            <div>Loading...</div>
-          ) : (
-            <RecipeView
-              recipe={recipe}
-              reqHyration={requiredValues.reqHyration}
-              reqTotalLoafWeight={requiredValues.reqTotalLoafWeight}
-              reqTotalLoafCount={requiredValues.reqTotalLoafCount}
-            />
-          )}
+          {GetRecipeView(isFetched, recipe, requiredValues)}
           {error && <div>Error: {error.message}</div>}
         </Box>
       </Box>
     </Box>
   );
+}
+
+function GetRecipeView(isFetched, recipe, requiredValues) {
+  if (isFetched === true && recipe !== undefined) {
+    return (
+      <RecipeView
+        recipe={recipe}
+        reqHyration={requiredValues.reqHyration}
+        reqTotalLoafWeight={requiredValues.reqTotalLoafWeight}
+        reqTotalLoafCount={requiredValues.reqTotalLoafCount}
+      />
+    );
+  }
 }
 
 export default Recipe;
