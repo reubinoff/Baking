@@ -9,10 +9,10 @@ import PropTypes from "prop-types";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import ShareIcon from "@mui/icons-material/Share";
 import Skeleton from "@mui/material/Skeleton";
 import { useNavigate } from "react-router-dom";
 import Hydration from "./recipeComponents/Hydration";
+import ShareButton from "./recipeComponents/ShareButton";
 
 export default function RecipeCard(props) {
   const [recipe] = useState(props.recipe);
@@ -35,23 +35,22 @@ export default function RecipeCard(props) {
   };
 
   return (
-    <Card onClick={navigateToRecipe}>
+    <Card >
       <CardHeader
         title={recipe.name}
-        action={
-          <Hydration hydration={recipe.hydration} />
-        }
+        action={<Hydration hydration={recipe.hydration} />}
       ></CardHeader>
       <CardMedia
         component="img"
         alt={recipe.name}
         image={recipe.cdn_url}
         onLoad={handleImageLoaded}
+        onClick={navigateToRecipe}
       />
       {loading && <CardMedia variant="top" src="images/placeholder.png" />}
       {loading && <Skeleton animation="wave" variant="rectangular" />}
 
-      <CardContent>
+      <CardContent onClick={navigateToRecipe}>
         <Typography variant="body2" color="text.secondary">
           {recipe.description}
         </Typography>
@@ -64,9 +63,10 @@ export default function RecipeCard(props) {
             <FavoriteIcon color="error" />
           )}
         </IconButton>
-        <IconButton aria-label="share">
+        <ShareButton />
+        {/* <IconButton aria-label="share">
           <ShareIcon />
-        </IconButton>
+        </IconButton> */}
       </CardActions>
     </Card>
   );
