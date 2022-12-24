@@ -12,6 +12,8 @@ import ScrollTop from "./ScrollTop";
 import { SearchContext } from "../components/context/SearchContext";
 import { useContext } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
+import AddIcon from "@mui/icons-material/Add";
+import Grow from "@mui/material/Grow";
 
 export default function RecipeGrid(props) {
   const { query } = useContext(SearchContext);
@@ -72,10 +74,17 @@ export default function RecipeGrid(props) {
       <Grid container spacing={2}>
         {GetSkelaton(itemsPerPage, isRecipesReady)}
         {isRecipesReady &&
-          recipes?.items.map((recipe) => (
-            <Grid xs={12} sm={6} md={3} key={recipe.id}>
-              <RecipeCard recipe={recipe} />
-            </Grid>
+          recipes?.items.map((recipe, index) => (
+            <Grow
+              key={recipe.id}
+              in={true}
+              style={{ transformOrigin: "0 0 0" }}
+              timeout={(index % itemsPerPage) * 500}
+            >
+              <Grid xs={12} sm={6} md={3}>
+                <RecipeCard recipe={recipe} />
+              </Grid>
+            </Grow>
           ))}
       </Grid>
       {recipes?.items.length === 0 && (
@@ -88,11 +97,21 @@ export default function RecipeGrid(props) {
           />
         </Box>
       )}
-      <ScrollTop {...props}>
-        <Fab size="small" aria-label="scroll back to top">
-          <KeyboardArrowUpIcon />
+      <Box sx={{ "& > :not(style)": { m: 1 } }}>
+        <ScrollTop {...props}>
+          <Fab size="small" aria-label="scroll back to top">
+            <KeyboardArrowUpIcon />
+          </Fab>
+        </ScrollTop>
+        <Fab
+        size="small"
+          color="primary"
+          aria-label="add"
+          sx={{ position: "fixed", bottom: 16, right: 16 }}
+        >
+          <AddIcon />
         </Fab>
-      </ScrollTop>
+      </Box>
       <div ref={loader} />
       <LinearProgress sx={{ display: isFetching ? "block" : "none" }} />
     </Box>
