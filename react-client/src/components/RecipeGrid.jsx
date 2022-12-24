@@ -14,9 +14,11 @@ import { useContext } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 import AddIcon from "@mui/icons-material/Add";
 import Grow from "@mui/material/Grow";
+import { useNavigate } from "react-router-dom";
 
 export default function RecipeGrid(props) {
   const { query } = useContext(SearchContext);
+  const navigate = useNavigate();
 
   const loader = React.useRef(null);
 
@@ -104,10 +106,11 @@ export default function RecipeGrid(props) {
           </Fab>
         </ScrollTop>
         <Fab
-        size="small"
+          size="small"
           color="primary"
           aria-label="add"
-          sx={{ position: "fixed", bottom: 16, right: 16 }}
+          sx={{ position: "fixed", bottom: 15, right: 16 }}
+          onClick={() => {navigate("/add");}}
         >
           <AddIcon />
         </Fab>
