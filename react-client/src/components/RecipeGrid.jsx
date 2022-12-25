@@ -81,7 +81,7 @@ export default function RecipeGrid(props) {
               key={recipe.id}
               in={true}
               style={{ transformOrigin: "0 0 0" }}
-              timeout={(index % itemsPerPage) * 500}
+              timeout={(index % itemsPerPage) * 50}
             >
               <Grid xs={12} sm={6} md={3}>
                 <RecipeCard recipe={recipe} />

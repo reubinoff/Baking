@@ -18,6 +18,10 @@ export default function ShareButton(params) {
       top: theme.spacing(2),
       left: theme.spacing(2),
     },
+    "&.MuiSpeedDial-fab": {
+      background: "#FFFFFF",
+    },
+    
   }));
 
   const shareToWhatsapp = () => {
@@ -31,11 +35,11 @@ export default function ShareButton(params) {
   };
 
   const shareToFacebook = () => {
-    const message =
-      "Check out this recipe on: https://app.baking.reubinoff.com/";
+    const url_to_share =
+      "https://app.baking.reubinoff.com/";
     const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-      message
-    )}`;
+      url_to_share
+    )}&t=${encodeURIComponent("Check out this recipe I found")}`;
     window.open(url, "_blank");
   };
 
@@ -54,7 +58,7 @@ export default function ShareButton(params) {
     { icon: <WhatsAppIcon onClick={shareToWhatsapp} />, name: "WhatsApp" },
     { icon: <EmailIcon onClick={shareToEmail} />, name: "Email" },
   ];
-
+  
   return (
     <Box sx={{ transform: "translateZ(0px)", flexGrow: 1 }}>
       <StyledSpeedDial
@@ -62,6 +66,15 @@ export default function ShareButton(params) {
         icon={<ShareRoundedIcon />}
         direction="right"
         FabProps={{ size: "small" }}
+        sx={{
+          "& .MuiFab-primary": {
+            backgroundColor: "transparent",
+            color: "black",
+            boxShadow: "none",
+
+            "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
+          },
+        }}
       >
         {actions.map((action) => (
           <SpeedDialAction
