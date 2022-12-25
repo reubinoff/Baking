@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
 import BakingDrawer from "./BakingDrawer";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Drawer from "@mui/material/Drawer";
 import BakingSearchBar from "./BakingSearchBar";
 import HideOnScroll from "./HideOnScroll";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -117,14 +117,14 @@ export default function BakingNavBar(props) {
             </Tooltip>
           </Box>
         </Toolbar>
-        <SwipeableDrawer
+        <Drawer
           anchor="left"
           open={open}
           onOpen={toggleDrawer(true)}
           onClose={toggleDrawer(false)}
         >
           <BakingDrawer setOpen={toggleDrawer(false)}></BakingDrawer>
-        </SwipeableDrawer>
+        </Drawer>
       </AppBar>
     </HideOnScroll>
   );
