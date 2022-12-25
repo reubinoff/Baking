@@ -5,6 +5,7 @@ import { useRecipe } from "../data/recipes";
 import { Box } from "@mui/material";
 import RecipeQuantitySelector from "../components/recipeView/RecipeQuantitySelector";
 import CircularProgress from "@mui/material/CircularProgress";
+import Page from "./Page";
 
 
 function Recipe() {
@@ -28,6 +29,7 @@ function Recipe() {
 
   return (
     // Loader
+    <Page title={recipe.name} content={
     <Box>
       <CircularProgress
         sx={{
@@ -50,6 +52,8 @@ function Recipe() {
         </Box>
       </Box>
     </Box>
+    } />
+    
   );
 }
 
