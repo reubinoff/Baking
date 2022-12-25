@@ -46,7 +46,7 @@ export default function RecipeCard(props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <FavoriteRecipeButton favoirite={true} />
+        <FavoriteRecipeButton favoirite={false} />
         <ShareButton recipe_id={recipe.id} recipe_name={recipe.name} />
       </CardActions>
     </Card>
