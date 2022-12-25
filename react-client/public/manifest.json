@@ -1,6 +1,7 @@
 {
+  "name": "Baking",
   "short_name": "Baking",
-  "name": "Bake all you need",
+  "description": "Bake all you need",
   "icons": [
     {
       "src": "favicon.ico",
