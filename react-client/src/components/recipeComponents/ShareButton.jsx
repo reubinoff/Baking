@@ -1,3 +1,4 @@
+import React from "react";
 import Box from "@mui/material/Box";
 import SpeedDial from "@mui/material/SpeedDial";
 import { styled } from "@mui/material/styles";
@@ -16,6 +17,7 @@ function GetRecipeUrl(recipe) {
   const url = `https://app.baking.reubinoff.com/recipe/${recipe.id}`;
   return url;
 }
+
 
 export default function ShareButton(params) {
   const { recipe } = params;
@@ -53,14 +55,27 @@ export default function ShareButton(params) {
     window.open(url, "_blank");
   };
 
-  const actions = [
+  const [actions] = React.useState(
+    [
     {
       icon: <FacebookOutlinedIcon onClick={shareToFacebook} />,
       name: "Facebook",
     },
     { icon: <WhatsAppIcon onClick={shareToWhatsapp} />, name: "WhatsApp" },
     { icon: <EmailIcon onClick={shareToEmail} />, name: "Email" },
-  ];
+  ]);
+
+  const actionItems = React.useMemo(() => {
+    const items = actions.map((action) => (
+      <SpeedDialAction
+        key={action.name}
+        icon={action.icon}
+        tooltipTitle={action.name}
+      />
+    ));
+    return items;
+  }, [actions]);
+
 
   return (
     <Box sx={{ transform: "translateZ(0px)", flexGrow: 1 }}>
@@ -79,13 +94,7 @@ export default function ShareButton(params) {
           },
         }}
       >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-          />
-        ))}
+        {actionItems}
       </StyledSpeedDial>
     </Box>
   );
