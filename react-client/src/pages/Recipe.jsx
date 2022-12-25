@@ -7,13 +7,12 @@ import RecipeQuantitySelector from "../components/recipeView/RecipeQuantitySelec
 import CircularProgress from "@mui/material/CircularProgress";
 import Page from "./Page";
 
-
 function Recipe() {
   const { recipeId } = useParams();
   const { data, isFetching, error, isFetched } = useRecipe(recipeId);
 
   const [recipe, setRecipe] = React.useState();
-   const [requiredValues, setRequiredValues] = React.useState();
+  const [requiredValues, setRequiredValues] = React.useState();
 
   React.useEffect(() => {
     if (isFetching === false && isFetched === true) {
@@ -26,10 +25,9 @@ function Recipe() {
     }
   }, [isFetching, data, isFetched]);
 
-
   return (
     // Loader
-    <Page title={recipe.name} content={
+
     <Box>
       <CircularProgress
         sx={{
@@ -42,18 +40,23 @@ function Recipe() {
       />
 
       <Box sx={{ display: isFetching === true ? "none" : "block" }}>
-       { requiredValues!== undefined? <RecipeQuantitySelector
-          requiredValues={requiredValues}
-          setRequiredValues={setRequiredValues}
-        /> : null}
-        <Box>
-          {GetRecipeView(isFetched, recipe, requiredValues)}
-          {error && <div>Error: {error.message}</div>}
-        </Box>
+        {requiredValues !== undefined ? (
+          <RecipeQuantitySelector
+            requiredValues={requiredValues}
+            setRequiredValues={setRequiredValues}
+          />
+        ) : null}
+        <Page
+          title={recipe ? recipe.name : "Recipe"}
+          content={
+            <Box>
+              {GetRecipeView(isFetched, recipe, requiredValues)}
+              {error && <div>Error: {error.message}</div>}
+            </Box>
+          }
+        />
       </Box>
     </Box>
-    } />
-    
   );
 }
 

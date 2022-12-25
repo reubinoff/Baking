@@ -4,12 +4,11 @@ import PropTypes from "prop-types";
 
 export default function Page(props) {
     const {title, content} = props;
-  const titlePrefix = "AppName 🤠 | ";
-  useDocumentTitle(`${titlePrefix}${title}`);
+  useDocumentTitle(`${title}`);
   return <React.Fragment>{content}</React.Fragment>;
 }
 
 Page.propTypes = {
     title: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
+    content: PropTypes.object.isRequired,
 };

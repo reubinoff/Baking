@@ -47,7 +47,6 @@ export default function RecipeView(props) {
         <Typography variant="h5" sx={{ ml: "5px" }}>
           Procedures
           {procedures.map((procedure, idx) => {
-            console.log("idx", idx);
             if (idx > 0) {
               d = d.add(procedures[idx - 1].duration_in_seconds, "seconds");
             }
@@ -68,7 +67,6 @@ export default function RecipeView(props) {
             "repeat(auto-fill, minmax(150px, 1fr))!important",
         }}
         rowHeight={164}
-        cols={{ xs: 1, sm: 2, md: 4 }}
       >
         <ImageListItem key={recipe.name} sx={{ height: "100% !important" }}>
           <img
