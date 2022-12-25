@@ -1,14 +1,8 @@
-import { Link } from "react-router-dom";
+import Page from "./Page";
+import NewRecipeMain from "../components/RecipeModificationComponents/NewRecipeMain";
 
-function Favorites() {
-  return (
-    <div>
-      <h2>New Recipe</h2>
-      <p>
-        <Link to="/">Go to the home page</Link>
-      </p>
-    </div>
-  );
+function NewRecipe() {
+  return <Page title="Baking" content={<NewRecipeMain />} />;
 }
 
-export default Favorites;
+export default NewRecipe;
