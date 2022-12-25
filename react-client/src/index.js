@@ -8,7 +8,7 @@ import "@fontsource/roboto/700.css";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 
