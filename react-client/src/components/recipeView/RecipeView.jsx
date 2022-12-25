@@ -7,6 +7,8 @@ import RecipeIngridients from "./RecipeIngridients";
 import RecipeProcedure from "./RecipeProcedure";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import moment from "moment";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
 export default function RecipeView(props) {
   const { recipe } = props;
   var d = new moment();
@@ -47,10 +49,7 @@ export default function RecipeView(props) {
           {procedures.map((procedure, idx) => {
             console.log("idx", idx);
             if (idx > 0) {
-              d = d.add(
-                procedures[idx - 1].duration_in_seconds,
-                "seconds"
-              );
+              d = d.add(procedures[idx - 1].duration_in_seconds, "seconds");
             }
             return (
               <Box key={procedure.name} sx={{ mt: "20px" }}>
@@ -61,6 +60,26 @@ export default function RecipeView(props) {
           })}
         </Typography>
       </Box>
+      <ImageList
+        gap={12}
+        sx={{
+          mb: 8,
+          gridTemplateColumns:
+            "repeat(auto-fill, minmax(150px, 1fr))!important",
+        }}
+        rowHeight={164}
+        cols={{ xs: 1, sm: 2, md: 4 }}
+      >
+        <ImageListItem key={recipe.name} sx={{ height: "100% !important" }}>
+          <img
+            src={`${recipe.cdn_url}?w=164&h=164&fit=crop&auto=format`}
+            srcSet={`${recipe.cdn_url}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+            alt={recipe.name}
+            loading="lazy"
+          />
+        </ImageListItem>
+  
+      </ImageList>
     </Box>
   );
 }
