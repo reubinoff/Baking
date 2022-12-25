@@ -47,7 +47,7 @@ function Recipe() {
           />
         ) : null}
         <Page
-          title={recipe ? recipe.name : "Recipe"}
+          title={"🍞 " + (recipe ? recipe.name : "Recipe")}
           content={
             <Box>
               {GetRecipeView(isFetched, recipe, requiredValues)}
