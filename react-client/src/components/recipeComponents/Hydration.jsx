@@ -8,7 +8,7 @@ export default function Hydration(props){
     const { hydration } = props;
     return (
       <Box display="flex" alignItems="center" {...props}>
-        <WaterIcon color="primary" />
+        <WaterIcon color="info" />
         <Typography variant="body2" color="text.secondary">
           {hydration}%
         </Typography>

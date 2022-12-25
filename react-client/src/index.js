@@ -8,10 +8,28 @@ import "@fontsource/roboto/700.css";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 
 import DefaultAppContextProvider from "./components/context/DefaultAppContextProvider";
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        light: "#757ce8",
+        main: "#e65100",
+        dark: "#002884",
+        contrastText: "#fff",
+      },
+      secondary: {
+        light: "#ff7961",
+        main: "#e65100",
+        dark: "#ba000d",
+        contrastText: "#000",
+      },
+    },
+  });
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,6 +43,7 @@ const queryClient = new QueryClient({
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
+    <ThemeProvider theme={theme}>
     <BrowserRouter>
       <DefaultAppContextProvider>
         <QueryClientProvider client={queryClient}>
@@ -32,6 +51,7 @@ root.render(
         </QueryClientProvider>
       </DefaultAppContextProvider>
     </BrowserRouter>
+    </ThemeProvider>
   </React.StrictMode>
 );
 
