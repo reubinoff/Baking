@@ -35,7 +35,7 @@ export default function RecipeCard(props) {
       />
       {loading && <CardMedia variant="top" src="images/placeholder.png" />}
       <Skeleton
-        sx={{ height: 190, width: "90%", display: loading ? "block" : "none" }}
+        sx={{ height: 190, width: "90%", display: loading ? "flex" : "none" }}
         animation="wave"
         variant="rectangular"
       />

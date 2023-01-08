@@ -2,10 +2,11 @@ import { useRef } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import { useContext } from "react";
-import {SearchContext} from "../components/context/SearchContext";
+import { SearchContext } from "../components/context/SearchContext";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import PropTypes from "prop-types";
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -47,7 +48,6 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
       },
     },
   },
-
 }));
 
 export default function BakingSearchBar(props) {
@@ -61,9 +61,6 @@ export default function BakingSearchBar(props) {
       setQuery(value);
     }
   };
- const onBlur = (e) => {
-   SearchRef.current.inputValue = "sssss";
- };
   const InputChanged = (event, value) => {
     if (event?.type === "keydown" && event.key === "Enter") {
       return setQuery(event.target.value);
@@ -73,27 +70,14 @@ export default function BakingSearchBar(props) {
     } else if (event?.type === "change" && value === "") {
       return setQuery(value);
     }
-    // else if(event?.type === "click"){
-    //   return setQuery(event.target.value);
-    // }
   };
 
-  // useEffect(() => {
-  //   // overide txt filed of query changed
-  //   if(query === ""){
-  //     if(document.querySelector("#baking-search").value !== query){
-  //       document.querySelector("#baking-search").value = query;
-  //     }
-  //   }
-  // }, [query]);
-
   return (
-    <Search sx={{ display: props.show ? "block" : "none" }}>
+    <Search sx={{ display: props.show ? "flex" : "none" }}>
       <SearchIconWrapper>
         <SearchIcon />
       </SearchIconWrapper>
       <StyledAutocomplete
-        onBlur={onBlur}
         freeSolo
         disableClearable
         onInputChange={InputChanged}
@@ -115,15 +99,13 @@ export default function BakingSearchBar(props) {
   );
 }
 
-
 const top100Films = [
   { title: "fros", year: 1994 },
   { title: "track", year: 1972 },
   { title: "nokia", year: 1974 },
   { title: "no result option", year: 1974 },
-
 ];
 
 BakingSearchBar.propTypes = {
-  show: PropTypes.bool
+  show: PropTypes.bool,
 };

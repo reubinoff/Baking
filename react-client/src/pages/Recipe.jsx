@@ -5,6 +5,7 @@ import { useRecipe } from "../data/recipes";
 import { Box } from "@mui/material";
 import RecipeQuantitySelector from "../components/recipeView/RecipeQuantitySelector";
 import CircularProgress from "@mui/material/CircularProgress";
+import {Stack} from "@mui/material";
 import Page from "./Page";
 
 function Recipe() {
@@ -39,22 +40,24 @@ function Recipe() {
         }}
       />
 
-      <Box sx={{ display: isFetching === true ? "none" : "block" }}>
-        {requiredValues !== undefined ? (
-          <RecipeQuantitySelector
-            requiredValues={requiredValues}
-            setRequiredValues={setRequiredValues}
+      <Box sx={{ display: isFetching === true ? "none" : "flex" }}>
+        <Stack>
+          {requiredValues !== undefined ? (
+            <RecipeQuantitySelector
+              requiredValues={requiredValues}
+              setRequiredValues={setRequiredValues}
+            />
+          ) : null}
+          <Page
+            title={"🍞 " + (recipe ? recipe.name : "Recipe")}
+            content={
+              <Box>
+                {GetRecipeView(isFetched, recipe, requiredValues)}
+                {error && <div>Error: {error.message}</div>}
+              </Box>
+            }
           />
-        ) : null}
-        <Page
-          title={"🍞 " + (recipe ? recipe.name : "Recipe")}
-          content={
-            <Box>
-              {GetRecipeView(isFetched, recipe, requiredValues)}
-              {error && <div>Error: {error.message}</div>}
-            </Box>
-          }
-        />
+        </Stack>
       </Box>
     </Box>
   );

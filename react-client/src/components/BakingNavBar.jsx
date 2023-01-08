@@ -70,62 +70,67 @@ export default function BakingNavBar(props) {
   const ShowMenuButton = React.useMemo(() => !ShowBackButton, [ShowBackButton]);
   return (
     <HideOnScroll {...props}>
-      <AppBar component="nav" enableColorOnDark>
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={navHome}
-            sx={{
-              mr: 2,
-              display: ShowBackButton ? "block" : "none",
-            }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer(true)}
-            onKeyDown={toggleDrawer(false)}
-            sx={{
-              mr: 2,
-              display: ShowMenuButton ? "block" : "none",
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-          >
-            Baking
-          </Typography>
-          <BakingSearchBar show={isHome} />
+      <Box>
+        <AppBar component="nav" enableColorOnDark>
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={navHome}
+              sx={{
+                mr: 2,
+                display: ShowBackButton ? "flex" : "none",
+              }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={toggleDrawer(true)}
+              onKeyDown={toggleDrawer(false)}
+              sx={{
+                mr: 2,
+                display: ShowMenuButton ? "flex" : "none",
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ display: { xs: "none", sm: "flex" } }}
+            >
+              Baking
+            </Typography>
 
-          <Box sx={{ flexGrow: 0, ml: 2 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Moshe Reubinoff" src="https://i.pravatar.cc/300" />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </Toolbar>
-        <Drawer
-          anchor="left"
-          open={open}
-          onOpen={toggleDrawer(true)}
-          onClose={toggleDrawer(false)}
-        >
-          <BakingDrawer setOpen={toggleDrawer(false)}></BakingDrawer>
-        </Drawer>
-      </AppBar>
+            <Box flexDirection="row" sx={{ ml: "auto", display: "flex" }}>
+              <BakingSearchBar show={isHome} />
+              <Tooltip title="Open settings" >
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 , ml: 2}}>
+                  <Avatar
+                    alt="Moshe Reubinoff"
+                    src="https://i.pravatar.cc/300"
+                  />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Toolbar>
+          <Drawer
+            anchor="left"
+            open={open}
+            onOpen={toggleDrawer(true)}
+            onClose={toggleDrawer(false)}
+          >
+            <BakingDrawer setOpen={toggleDrawer(false)}></BakingDrawer>
+          </Drawer>
+        </AppBar>
+      </Box>
     </HideOnScroll>
   );
 }

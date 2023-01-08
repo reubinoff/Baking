@@ -116,7 +116,7 @@ export default function RecipeGrid(props) {
         </Fab>
       </Box>
       <div ref={loader} />
-      <LinearProgress sx={{ display: isFetching ? "block" : "none" }} />
+      <LinearProgress sx={{ display: isFetching ? "flex" : "none" }} />
     </Box>
   );
 }
