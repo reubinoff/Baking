@@ -44,7 +44,7 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
     [theme.breakpoints.up("sm")]: {
       width: "30ch",
       "&:focus": {
-        width: "45ch",
+        width: "70ch",
       },
     },
   },

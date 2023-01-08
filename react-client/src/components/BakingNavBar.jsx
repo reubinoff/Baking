@@ -104,15 +104,20 @@ export default function BakingNavBar(props) {
               variant="h6"
               noWrap
               component="div"
-              sx={{ display: { xs: "none", sm: "flex" } }}
+              sx={{ display: { xs: "none", sm: "flex" }, pr: 2 }}
             >
               Baking
             </Typography>
 
-            <Box flexDirection="row" sx={{ ml: "auto", display: "flex" }}>
+            <Box
+              flexDirection="row"
+              width="100%"
+              justifyContent={"flex-end"}
+              sx={{ ml: "auto", display: "flex" }}
+            >
               <BakingSearchBar show={isHome} />
-              <Tooltip title="Open settings" >
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 , ml: 2}}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 2 }}>
                   <Avatar
                     alt="Moshe Reubinoff"
                     src="https://i.pravatar.cc/300"
