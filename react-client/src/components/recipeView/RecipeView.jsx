@@ -1,11 +1,10 @@
 import { PropTypes } from "prop-types";
 
-import { Box } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import RecipeIngridients from "./RecipeIngridients";
 import RecipeProcedure from "./RecipeProcedure";
-import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import moment from "moment";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
@@ -17,19 +16,8 @@ export default function RecipeView(props) {
   });
   return (
     <Box>
-      <Grid container spacing={2}>
-        <Grid xs={9}>
-          <Typography variant="h4">{recipe.name}</Typography>
-          <Typography variant="body1">{recipe.description}</Typography>
-        </Grid>
-        {/* <Grid xs={3}>
-          <Hydration
-            hydration={recipe.hydration}
-            sx={{ position: "relative", top: "30%", left: "30%" }}
-          />
-          <ScaleIcon/>
-        </Grid> */}
-      </Grid>
+      <Typography variant="h4">{recipe.name}</Typography>
+      <Typography variant="body1">{recipe.description}</Typography>
 
       <Paper>
         <Typography variant="h5" sx={{ ml: "5px" }}>
@@ -52,8 +40,8 @@ export default function RecipeView(props) {
             }
             return (
               <Box key={procedure.name} sx={{ mt: "20px" }}>
-                {procedure.duration_in_seconds}
                 <RecipeProcedure procedure={procedure} startTimestamp={d} />
+                <Divider />
               </Box>
             );
           })}
@@ -76,7 +64,6 @@ export default function RecipeView(props) {
             loading="lazy"
           />
         </ImageListItem>
-  
       </ImageList>
     </Box>
   );

@@ -1,19 +1,35 @@
-import { PropTypes } from 'prop-types';
-// import Table from "@mui/material/Table";
-// import TableBody from "@mui/material/TableBody";
-// import TableCell from "@mui/material/TableCell";
-// import TableContainer from "@mui/material/TableContainer";
-// import TableHead from "@mui/material/TableHead";
-// import TableRow from "@mui/material/TableRow";
-// import Paper from "@mui/material/Paper";
-import { Box } from '@mui/material';
-import { Typography } from '@mui/material';
+import { PropTypes } from "prop-types";
+import { Box } from "@mui/material";
+import { Typography } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import RecipeTimeline from "../recipeComponents/RecipeTimeline";
+import moment from "moment";
 
 export default function RecipeStep(props) {
+  const {step} = props;
+  const currentTimestamp = new moment();
+  const timeline = {
+    val: currentTimestamp
+      .add(props.step.duration_in_seconds, "seconds")
+      .format("HH:mm"),
+    main: false,
+    connector: true,
+  };
   return (
-    <Box>
-      <Typography variant="subtitle1">{props.step.name}</Typography>
-      <Typography variant="body1">{props.step.description}</Typography>
+    <Box sx={{ flexGrow: 1, mt: "5px" }} key={step.id} {...props}>
+      <Grid container spacing={2}>
+        <Grid xs={10}>
+          <Box>
+            <Typography variant="subtitle1">{step.name}</Typography>
+            <Typography variant="body1">{step.description}</Typography>
+          </Box>
+        </Grid>
+        <Grid xs={2}>
+          <Box display={"flex"} justifyContent={"flex-end"}>
+            <RecipeTimeline item={timeline} />
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

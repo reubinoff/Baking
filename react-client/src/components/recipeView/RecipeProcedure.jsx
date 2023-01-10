@@ -1,59 +1,40 @@
-import React from 'react';
-import { PropTypes } from 'prop-types';
-// import Table from "@mui/material/Table";
-// import TableBody from "@mui/material/TableBody";
-// import TableCell from "@mui/material/TableCell";
-// import TableContainer from "@mui/material/TableContainer";
-// import TableHead from "@mui/material/TableHead";
-// import TableRow from "@mui/material/TableRow";
-// import Paper from "@mui/material/Paper";
-import { Box } from '@mui/material';
-import { Typography } from '@mui/material';
-import RecipeStep from './RecipeStep';
-import RecipeTimeline from '../recipeComponents/RecipeTimeline';
-import Grid from '@mui/material/Unstable_Grid2';
+import { PropTypes } from "prop-types";
+import { Box } from "@mui/material";
+import { Typography } from "@mui/material";
+import RecipeStep from "./RecipeStep";
+import RecipeTimeline from "../recipeComponents/RecipeTimeline";
+import Grid from "@mui/material/Unstable_Grid2";
 export default function RecipeProcedure(props) {
   const { steps } = props.procedure;
-  const { startTimestamp} = props;
-  
+  const { startTimestamp } = props;
+
   return (
-    <Box>
+    <Box display={"flex"} flexDirection={"column"}>
       <Grid container spacing={0}>
         <Grid xs={9}>
           <Typography variant="h6">{props.procedure.name}</Typography>
           <Typography variant="body1">{props.procedure.description}</Typography>
-          <React.Fragment>
-            {steps.map((step) => (
-              <Box key={step.id} sx={{ mt: "5px" }}>
-                <RecipeStep step={step} />
-                {/* <Divider /> */}
-              </Box>
-            ))}
-          </React.Fragment>
         </Grid>
         <Grid xs={3}>
-          <RecipeTimeline items={generateItems(steps, startTimestamp)} />
+          <RecipeTimeline item={generateItem(startTimestamp)} />
         </Grid>
       </Grid>
+      {steps.map((step) => (
+        <RecipeStep step={step} key={step.id} />
+      ))}
     </Box>
   );
 }
 
-function generateItems(steps, startTimestamp) {
-  let items = [];
-  steps.forEach((step) => {
-    items.push({
-      val: startTimestamp
-        .add(step.duration_in_seconds, "seconds")
-        .format("HH:mm"),
-      main: false,
-      connector: true,
-    });
-  });
-  return items;
+function generateItem(startTimestamp) {
+  return {
+    val: startTimestamp.format("HH:mm"),
+    main: false,
+    connector: true,
+  };
 }
 
 RecipeProcedure.propTypes = {
-    procedure: PropTypes.object.isRequired,
-    startTimestamp: PropTypes.object.isRequired,
+  procedure: PropTypes.object.isRequired,
+  startTimestamp: PropTypes.object.isRequired,
 };
