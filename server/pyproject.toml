@@ -1,42 +1,43 @@
 [tool.poetry]
 name = "baking"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Moshe Reubinoff <reubinoff@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10.0"
 
+fastapi = "^0.95.0"
 colorlog = "^6.4.1"
-psycopg2-binary = "^2.9.3"
+psycopg2-binary = "^2.9.5"
 python-multipart = "^0.0.5"
-fastapi = "0.89.1"
 pydantic =  {extras = ["dotenv"], version = "^1.10.2"}
 uvicorn = "0.20.0"
 azure-storage-blob = "^12.13.1"
 SQLAlchemy-Utils = "0.39.0"
-SQLAlchemy = "^1.4.44"
+SQLAlchemy = "^2.0.7"
 SQLAlchemy-Searchable = "^1.4.1"
 alembic = "^1.8.1"
 cryptography = "^39.0.0"
 
 
+
 [tool.poetry.dev-dependencies]
 pylint = "^2.11.1"
 mypy = "^0.910"
-black = {version = "^21.9b0", allow-prereleases = true}
+black = "^23.1.0"
 autopep8 = "^1.5.7"
 factory-boy = "^3.2.0"
 requests = "^2.26.0"
 pytest-cov = "^3.0.0"
 hypothesis = "^6.23.3"
 schemathesis = "^3.10.1"
-nox = "^2021.10.1"
-nox-poetry = "^0.8.6"
-pytest = "^7.2.0"
-
-[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.2"
+nox = "^2022.11.21"
+nox-poetry = "^1.0.2"
 flake8 = "^6.0.0"
+
+
 
 [build-system]
 requires = ["poetry-core>=1.2.*"]
