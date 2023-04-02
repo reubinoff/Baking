@@ -1,4 +1,3 @@
-from sqlalchemy_searchable import sync_trigger
 import os
 import logging
 
@@ -10,7 +9,7 @@ from alembic.config import Config as AlembicConfig
 from alembic import command as alembic_command
 
 from baking.config import settings
-# from baking.search.fulltext import sync_trigger
+from baking.search.fulltext import sync_trigger
 from baking.search import fulltext
 
 from .core import Base, get_sql_url
@@ -85,7 +84,7 @@ def setup_fulltext_search(connection, tables):
                     table_triggers.append(
                         {
                             "conn": connection,
-                            "table_name": table.name,
+                            "table": table,
                             "tsvector_column": "search_vector",
                             "indexed_columns": column.type.columns,
                         }

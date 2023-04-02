@@ -57,9 +57,11 @@ def search(query, search_query, vector=None, regconfig=None, sort=False):
     if regconfig is None:
         regconfig = search_manager.options["regconfig"]
 
-    query = query.filter(vector.op("@@")(func.tsq_parse(regconfig, search_query)))
+    query = query.filter(
+        vector.op("@@")(func.tsq_parse(regconfig, search_query)))
     if sort:
-        query = query.order_by(desc(func.ts_rank_cd(vector, func.tsq_parse(search_query))))
+        query = query.order_by(
+            desc(func.ts_rank_cd(vector, func.tsq_parse(search_query))))
 
     return query.params(term=search_query)
 
@@ -214,9 +216,10 @@ class SearchManager:
         "weights": (),
     }
 
-    def __init__(self, options={}):
+    def __init__(self, options=None):
         self.options = self.default_options
-        self.options.update(options)
+        if options:
+            self.options.update(options)
         self.processed_columns = []
         self.classes = set()
         self.listeners = []
@@ -251,7 +254,8 @@ class SearchManager:
         return [column for column in table.c if isinstance(column.type, TSVectorType)]
 
     def append_index(self, cls, column):
-        Index("_".join((column.table.name, column.name, "idx")), column, postgresql_using="gin")
+        Index("_".join((column.table.name, column.name, "idx")),
+              column, postgresql_using="gin")
 
     def process_mapper(self, mapper, cls):
         columns = self.inspect_columns(mapper.persist_selectable)
@@ -284,11 +288,13 @@ class SearchManager:
             if column.type.columns:
                 table = column.table
                 if self.option(column, "weights") or vectorizer.contains_tsvector(column):
-                    self.add_listener((table, "after_create", self.search_function_ddl(column)))
+                    self.add_listener(
+                        (table, "after_create", self.search_function_ddl(column)))
                     self.add_listener(
                         (table, "after_drop", DDL(str(DropSearchFunctionSQL(column))))
                     )
-                self.add_listener((table, "after_create", self.search_trigger_ddl(column)))
+                self.add_listener(
+                    (table, "after_create", self.search_trigger_ddl(column)))
 
 
 search_manager = SearchManager()
@@ -387,12 +393,12 @@ def sync_trigger(conn, table, tsvector_column, indexed_columns, metadata=None, o
     """
     if metadata is None:
         metadata = MetaData()
-    params = dict(
-        tsvector_column=getattr(table.c, tsvector_column),
-        indexed_columns=indexed_columns,
-        options=options,
-        conn=conn,
-    )
+    params = {
+        "tsvector_column": getattr(table.c, tsvector_column),
+        "indexed_columns": indexed_columns,
+        "options": options,
+        "conn": conn,
+    }
     classes = [
         DropSearchTriggerSQL,
         DropSearchFunctionSQL,
@@ -401,9 +407,12 @@ def sync_trigger(conn, table, tsvector_column, indexed_columns, metadata=None, o
     ]
     for class_ in classes:
         sql = class_(**params)
-        conn.execute(str(sql), **sql.params)
-    update_sql = table.update().values({indexed_columns[0]: text(indexed_columns[0])})
-    conn.execute(update_sql)
+
+
+    with conn.connect() as c:
+        result = c.execute(text(str(sql)), **sql.params)
+        update_sql = table.update().values({indexed_columns[0]: text(indexed_columns[0])})
+        c.execute(update_sql)
 
 
 def drop_trigger(conn, table_name, tsvector_column, metadata=None, options=None):
@@ -438,7 +447,11 @@ def drop_trigger(conn, table_name, tsvector_column, metadata=None, options=None)
     if metadata is None:
         metadata = MetaData()
     table = Table(table_name, metadata, autoload=True, autoload_with=conn)
-    params = dict(tsvector_column=getattr(table.c, tsvector_column), options=options, conn=conn)
+    params = {
+        "tsvector_column": getattr(table.c, tsvector_column),
+        "options": options,
+        "conn": conn,
+    }
     classes = [
         DropSearchTriggerSQL,
         DropSearchFunctionSQL,
@@ -455,8 +468,9 @@ with open(os.path.join(path, "expressions.sql")) as file:
     sql_expressions = DDL(file.read())
 
 
-def make_searchable(metadata, mapper=orm.mapper, manager=search_manager, options={}):
-    manager.options.update(options)
+def make_searchable(metadata, mapper=orm.mapper, manager=search_manager, options=None):
+    if options:
+        manager.options.update(options)
     event.listen(mapper, "instrument_class", manager.process_mapper)
     # event.listen(mapper, "after_configured", manager.attach_ddl_listeners)
     event.listen(metadata, "before_create", sql_expressions)

@@ -6,11 +6,11 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy import URL
 
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy_searchable import make_searchable
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base, configure_mappers
 from starlette.requests import Request
 
 from baking.config import settings as app_settings
+from baking.search.fulltext import make_searchable
 
 
 @lru_cache
@@ -25,7 +25,8 @@ def get_sql_url() -> URL:
 
 
 engine = create_engine(get_sql_url())
-SessionLocal = sessionmaker(bind=engine)
+configure_mappers()  # IMPORTANT!
+
 
 
 def resolve_table_name(name):
