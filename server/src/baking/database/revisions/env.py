@@ -11,7 +11,7 @@ from baking.database.core import get_sql_url, Base as BaseDecl
 config = context.config
 
 
-config.set_main_option("sqlalchemy.url", str(get_sql_url()))
+config.set_main_option("sqlalchemy.url", get_sql_url().render_as_string(False))
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)

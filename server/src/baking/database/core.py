@@ -14,7 +14,7 @@ from baking.config import settings as app_settings
 
 
 @lru_cache
-def get_sql_url() -> str:
+def get_sql_url() -> URL:
     return URL.create(
         "postgresql+psycopg2",
         username=app_settings.db_user,
