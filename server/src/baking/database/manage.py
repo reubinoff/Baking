@@ -56,7 +56,7 @@ def init_database(engine):
 
 def internal_create_database_for_tests(engine):
     if database_exists(get_sql_url()) is False:
-        create_database(get_sql_url())
+        create_database(engine.url)
     schema_name = settings.db_name
     with engine.connect() as connection:
         if schema_name not in connection.dialect.get_schema_names(connection):
@@ -73,7 +73,9 @@ def setup_fulltext_search(connection, tables):
     function_path = os.path.join(
         os.path.dirname(os.path.abspath(fulltext.__file__)), "expressions.sql"
     )
-    connection.execute(text(open(function_path).read()))
+
+    with connection.connect() as conn:
+        result = conn.execute(text(open(function_path).read()))
 
     for table in tables:
         table_triggers = []
@@ -94,4 +96,5 @@ def setup_fulltext_search(connection, tables):
                     )
 
         for trigger in table_triggers:
+            print(f"{trigger}")
             sync_trigger(**trigger)

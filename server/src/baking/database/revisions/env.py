@@ -11,7 +11,7 @@ from baking.database.core import get_sql_url, Base as BaseDecl
 config = context.config
 
 
-config.set_main_option("sqlalchemy.url", get_sql_url())
+config.set_main_option("sqlalchemy.url", str(get_sql_url()))
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
@@ -62,7 +62,6 @@ def run_migrations_online():
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
@@ -70,6 +69,7 @@ def run_migrations_online():
 
         with context.begin_transaction():
             context.run_migrations()
+            
 
 
 if context.is_offline_mode():

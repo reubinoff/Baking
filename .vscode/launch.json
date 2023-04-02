@@ -20,7 +20,7 @@
         "env": {
           "SERVICE_NAME": "baking-service",
           "DB_PASS": "rootsql",
-          "DB_HOST": "127.0.0.1",
+          "DB_HOST": "localhost",
           "DB_NAME": "baking-dev",
           "DB_USER": "postgres",
           "DB_DEBUG_DROP_IN_STARTUP": "False",
@@ -46,7 +46,7 @@
       "env": {
         "SERVICE_NAME": "baking-service",
         "DB_PASS": "rootsql",
-        "DB_HOST": "127.0.0.1",
+        "DB_HOST": "localhost",
         "DB_NAME": "baking-dev",
         "DB_USER": "postgres",
         "DB_DEBUG_DROP_IN_STARTUP": "False",

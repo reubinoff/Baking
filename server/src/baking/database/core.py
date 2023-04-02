@@ -3,9 +3,11 @@ from typing import Any
 from functools import lru_cache
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy import URL
+
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_searchable import make_searchable
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 from starlette.requests import Request
 
 from baking.config import settings as app_settings
@@ -13,25 +15,16 @@ from baking.config import settings as app_settings
 
 @lru_cache
 def get_sql_url() -> str:
-    return str(
-        URL.create(
-            drivername="postgresql+psycopg2",
-            username=app_settings.db_user,
-            password=app_settings.db_pass,
-            host=app_settings.db_host,
-            port=5432,
-            database=app_settings.db_name,
-        )
+    return URL.create(
+        "postgresql+psycopg2",
+        username=app_settings.db_user,
+        password=app_settings.db_pass,
+        host=app_settings.db_host,
+        database=app_settings.db_name,
     )
 
 
-def get_ssl_args():
-    if app_settings.db_cert_path and app_settings.db_cert_path != "":
-        return {"sslrootcert": app_settings.db_cert_path}
-    return None
-
-
-engine = create_engine(get_sql_url(), encoding="utf8")
+engine = create_engine(get_sql_url())
 SessionLocal = sessionmaker(bind=engine)
 
 
