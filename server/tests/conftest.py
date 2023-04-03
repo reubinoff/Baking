@@ -9,7 +9,7 @@ from factory import Sequence
 # set test config
 environ["DB_PASS"] = "rootsql"
 environ["DB_HOST"] = "localhost"
-environ["DB_NAME"] = "baking-db-test-" + str(random.random())
+environ["DB_NAME"] = "baking_db_test_int_" + str(int( random.random() * 1000000))
 environ["DB_USER"] = "postgres"
 environ["azure_storage_connection_string"] = "test.com"
 environ["is_debug"] = "True"

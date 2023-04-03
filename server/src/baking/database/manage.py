@@ -45,7 +45,11 @@ def init_database(engine):
             connection.execute(CreateSchema(schema_name))
 
     tables = get_tables()
-    setup_fulltext_search(engine, tables)
+    with engine.connect() as connection:
+        # we need to map this for full text search as it uses sql literal strings
+        # and schema translate map does not apply
+       
+        setup_fulltext_search(connection, tables)
 
 
     if settings.db_debug_drop_in_startup is True or required_tables_creation is True:
@@ -65,16 +69,13 @@ def internal_create_database_for_tests(engine):
     Base.metadata.create_all(engine, tables=tables)
 
 
-
 def setup_fulltext_search(connection, tables):
     """Syncs any required fulltext table triggers and functions."""
     # parsing functions
     function_path = os.path.join(
         os.path.dirname(os.path.abspath(fulltext.__file__)), "expressions.sql"
     )
-
-    with connection.connect() as conn:
-        result = conn.execute(text(open(function_path).read()))
+    connection.execute(text(open(function_path).read()))
 
     for table in tables:
         table_triggers = []
@@ -90,10 +91,9 @@ def setup_fulltext_search(connection, tables):
                         }
                     )
                 else:
-                    LOGGER.warning(
+                    log.warning(
                         f"Column search_vector defined but no index columns found. Table: {table.name}"
                     )
 
         for trigger in table_triggers:
-            print(f"{trigger}")
             sync_trigger(**trigger)

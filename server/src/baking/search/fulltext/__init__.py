@@ -407,12 +407,10 @@ def sync_trigger(conn, table, tsvector_column, indexed_columns, metadata=None, o
     ]
     for class_ in classes:
         sql = class_(**params)
-
-
-    with conn.connect() as c:
-        result = c.execute(text(str(sql)), **sql.params)
-        update_sql = table.update().values({indexed_columns[0]: text(indexed_columns[0])})
-        c.execute(update_sql)
+        conn.execute(text(str(sql)), sql.params)
+    update_sql = table.update().values(
+        {indexed_columns[0]: text(indexed_columns[0])})
+    conn.execute(update_sql)
 
 
 def drop_trigger(conn, table_name, tsvector_column, metadata=None, options=None):
