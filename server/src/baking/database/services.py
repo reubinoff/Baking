@@ -41,8 +41,7 @@ def common_parameters(
     }
 
 
-
-def search_filter_sort_paginate(
+async def search_filter_sort_paginate(
     db: AsyncIOMotorDatabase,
     *,
     collection_name: str,
@@ -55,29 +54,22 @@ def search_filter_sort_paginate(
     # role: UserRoles = UserRoles.member,
 ):
     """Common functionality for searching, filtering, sorting, and pagination."""
-      # Build the MongoDB filter criteria based on the provided parameters
+    # Build the MongoDB filter criteria based on the provided parameters
     validate_filter_spec(filter_criteria)
     filter_query = {}
     for criteria in filter_criteria:
-        field_query = {}
-        field_query[f"${criteria.operator}"] = criteria.value
-        filter_query[criteria.name] = field_query
+        filter_query[criteria.name] = {f"${criteria.operator}": criteria.value}
 
-   
     # Connect to the MongoDB server and perform the search
     collection = db[collection_name]
 
     # Apply sorting if requested
-    sort_order = pymongo.ASCENDING
-    if descending:
-        sort_order = pymongo.DESCENDING
-    if sort_by:
-        results = collection.find(filter_query).sort(sort_by, sort_order)
-    else:
-        results = collection.find(filter_query)
+    sort_order = pymongo.DESCENDING if descending else pymongo.ASCENDING
+    sort_criteria = [(sort_by, sort_order)] if sort_by else []
+    results = collection.find(filter_query).sort(sort_criteria)
 
     # Apply pagination if requested
-    total_items = results.count()
+    total_items = await results.count()
     offset = (page - 1) * items_per_page
     results = results.skip(offset).limit(items_per_page)
 
@@ -86,8 +78,9 @@ def search_filter_sort_paginate(
         "total": total_items,
         "itemsPerPage": items_per_page,
         "page": page,
-        "items": list(results)
+        "items": (item async for item in results),
     }
+
 
 
 
