@@ -1,15 +1,14 @@
 import logging
 from baking.utils.azure_storage import delete_image_from_blob, upload_image_to_blob
 from baking.utils.general import is_image
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi import status
 
-from sqlalchemy.orm import Session
 
-
-from baking.models import OurBase, PrimaryKey
-from baking.database.core import get_db
+from baking.models import PrimaryKey
+from baking.database.manage import get_db
 from baking.database.services import common_parameters, search_filter_sort_paginate
 
 from baking.routers.recipe.models import (
@@ -36,34 +35,34 @@ def get_recipes(*, common: dict = Depends(common_parameters)):
 
 
 @router.get("/{recipe_id}", response_model=RecipeRead)
-def get_recipe(*, db_session: Session = Depends(get_db), recipe_id: int):
+def get_recipe(*, db: AsyncIOMotorDatabase = Depends(get_db), recipe_id: int):
     """
     Get a recipe.
     """
-    recipe = check_and_raise(db_session=db_session, recipe_id=recipe_id)
+    recipe = check_and_raise(db=db, recipe_id=recipe_id)
     return recipe
 
 
 @router.post("")
-def create_recipe(*, db_session: Session = Depends(get_db), recipe_in: RecipeCreate):
+def create_recipe(*, db: AsyncIOMotorDatabase = Depends(get_db), recipe_in: RecipeCreate):
     """
     Create a new recipes.
     """
-    recipe = create(db_session=db_session, recipe_in=recipe_in)
+    recipe = create(db=db, recipe_in=recipe_in)
     return recipe
 
 
 @router.delete("/{recipe_id}", response_model=RecipeRead)
-def delete_recipe(*, db_session: Session = Depends(get_db), recipe_id: PrimaryKey):
+def delete_recipe(*, db: AsyncIOMotorDatabase = Depends(get_db), recipe_id: PrimaryKey):
     """Delete a recipe."""
-    recipe = get(db_session=db_session, recipe_id=recipe_id)
+    recipe = get(db=db, recipe_id=recipe_id)
     if not recipe:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=[{"msg": "The recipe with this id does not exist."}],
         )
     Identifier_to_delete = recipe.image_identidier
-    delete(db_session=db_session, recipe_id=recipe_id)
+    delete(db=db, recipe_id=recipe_id)
     delete_image_from_blob(Identifier_to_delete)
     return recipe
 
@@ -71,18 +70,18 @@ def delete_recipe(*, db_session: Session = Depends(get_db), recipe_id: PrimaryKe
 @router.put("/{recipe_id}", response_model=RecipeRead)
 def update_recipe(
     *,
-    db_session: Session = Depends(get_db),
+    db: AsyncIOMotorDatabase = Depends(get_db),
     recipe_id: PrimaryKey,
     recipe_in: RecipeUpdate
 ):
     """Update a recipe."""
-    recipe = check_and_raise(db_session=db_session, recipe_id=recipe_id)
-    recipe = update(db_session=db_session, recipe=recipe, recipe_in=recipe_in)
+    recipe = check_and_raise(db=db, recipe_id=recipe_id)
+    recipe = update(db=db, recipe=recipe, recipe_in=recipe_in)
     return recipe
 
 
-def check_and_raise(db_session, recipe_id) -> RecipeRead:
-    recipe = get(db_session=db_session, recipe_id=recipe_id)
+def check_and_raise(db, recipe_id) -> RecipeRead:
+    recipe = get(db=db, recipe_id=recipe_id)
     if not recipe:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -92,7 +91,7 @@ def check_and_raise(db_session, recipe_id) -> RecipeRead:
 
 @router.post("/{recipe_id}/img")
 async def update_recipe_img(*,
-                            db_session: Session = Depends(get_db),
+                            db: AsyncIOMotorDatabase = Depends(get_db),
                             recipe_id: PrimaryKey,
                             file: UploadFile = File(...)):
     """Update a recipe image."""
@@ -101,7 +100,7 @@ async def update_recipe_img(*,
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=[{"msg": "No file was uploaded."}],
         )
-    recipe = check_and_raise(db_session=db_session, recipe_id=recipe_id)
+    recipe = check_and_raise(db=db, recipe_id=recipe_id)
     is_file_image = is_image(file.content_type)
 
     try:
@@ -112,7 +111,7 @@ async def update_recipe_img(*,
             detail=[{"msg": "Upload failed"}],
         )
     try:
-        recipe = update_image(db_session=db_session,
+        recipe = update_image(db=db,
                               recipe=recipe, image=uploaded_file)
     except Exception as e:
         delete_image_from_blob(uploaded_file.identidier)

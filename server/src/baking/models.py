@@ -8,30 +8,6 @@ from pydantic.types import conint, constr
 
 ########################## SQLAlchemy models ##########################
 
-
-class RecipeMixin(object):
-    """Recipe mixin"""
-
-    @declared_attr
-    def recipe_id(cls):  # noqa
-        return Column(Integer, ForeignKey("recipe.id", ondelete="CASCADE"))
-
-    @declared_attr
-    def recipe(cls):  # noqa
-        return relationship("Recipe")
-
-
-class ProcedureMixin(object):
-    """Procedure mixin"""
-
-    @declared_attr
-    def procedure_id(cls):  # noqa
-        return Column(Integer, ForeignKey("procedure.id", ondelete="CASCADE"))
-
-    @declared_attr
-    def procedure(cls):  # noqa
-        return relationship("Procedure")
-
 class TimeStampMixin(object):
     """Timestamping mixin"""
 

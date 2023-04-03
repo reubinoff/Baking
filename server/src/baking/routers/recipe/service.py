@@ -1,128 +1,117 @@
 from typing import Optional, List
-
+from bson.objectid import ObjectId
 from baking.models import FileUploadData
 from baking.routers.ingredients.enums import is_liquid
 
-from baking.routers.recipe.models import RecipeRead, Recipe, RecipeCreate, RecipeUpdate
+from baking.routers.recipe.models import RecipeRead, RecipeCreate, RecipeUpdate
 
 from baking.routers.procedure.service import get_or_create as get_or_create_procedure
 from baking.routers.ingredients.models import IngredientRead
 
+RECIPE_COLLECTION_NAME = "recipes"
+def get_collection(db):
+    return db[RECIPE_COLLECTION_NAME]
 
-def get(*, db_session, recipe_id: int) -> Optional[Recipe]:
+
+async def get(*, db, recipe_id: int) -> Optional[RecipeRead]:
     """Returns a recipe based on the given recipe id."""
-    recipe = db_session.query(Recipe).filter(Recipe.id == recipe_id).one_or_none()
-    if recipe is None:
-        return None
-    recipe.ingredients = _get_ingridients(recipe=recipe)
-    return recipe
+    collection = get_collection(db)
+    recipe = await collection.find_one({"id": recipe_id})
+    if recipe:
+        return RecipeRead(**recipe)
+    return None
 
 
-def _get_ingridients(*, recipe: Recipe) -> List[Optional[IngredientRead]]:
-    """Returns a ingridients list"""
-    total_liquid = 0
-    total_solid = 0
-    max_precentage_liquid: float = recipe.hydration/100
-    ingredients = dict()
-    if recipe.procedures is not None:
-        for p in recipe.procedures:
-            for i in p.ingredients:
-                if i.name in ingredients:
-                    ingredients[i.name].quantity = ingredients[i.name].quantity + i.quantity
-                else:
-                    ingredients[i.name] = IngredientRead(**i.dict(), is_liquid=i.is_liquid)
-                if is_liquid(i.type):
-                    total_liquid += i.quantity ## TODO: need to cover if the units are different
-                else:
-                    total_solid += i.quantity
+# def _get_ingridients(*, recipe: Recipe) -> List[Optional[IngredientRead]]:
+#     """Returns a ingridients list"""
+#     total_liquid = 0
+#     total_solid = 0
+#     max_precentage_liquid: float = recipe.hydration/100
+#     ingredients = dict()
+#     if recipe.procedures is not None:
+#         for p in recipe.procedures:
+#             for i in p.ingredients:
+#                 if i.name in ingredients:
+#                     ingredients[i.name].quantity = ingredients[i.name].quantity + i.quantity
+#                 else:
+#                     ingredients[i.name] = IngredientRead(**i.dict(), is_liquid=i.is_liquid)
+#                 if is_liquid(i.type):
+#                     total_liquid += i.quantity ## TODO: need to cover if the units are different
+#                 else:
+#                     total_solid += i.quantity
 
-    for name, ingredient in ingredients.items():
-        if is_liquid(ingredient.type):
-            ingredient.precentage = round(
-                (ingredient.quantity / total_liquid) * max_precentage_liquid, 2)
-        else:
-            ingredient.precentage = round(
-                (ingredient.quantity / total_solid) , 2)
+#     for name, ingredient in ingredients.items():
+#         if is_liquid(ingredient.type):
+#             ingredient.precentage = round(
+#                 (ingredient.quantity / total_liquid) * max_precentage_liquid, 2)
+#         else:
+#             ingredient.precentage = round(
+#                 (ingredient.quantity / total_solid) , 2)
 
-    return list(ingredients.values())
+#     return list(ingredients.values())
 
-def get_all(*, db_session) -> List[Optional[Recipe]]:
+async def get_all(*, db) -> List[Optional[RecipeRead]]:
     """Returns all recipes."""
-    return db_session.query(Recipe)
+    collection = get_collection(db)
+    recipes = []
+    async for recipe in collection.find():
+        recipes.append(recipe)
+    return recipes
 
 
-def create(*, db_session, recipe_in: RecipeCreate) -> Recipe:
+def create(*, db, recipe_in: RecipeCreate):
     """Creates a new Recipe."""
-    if db_session is None:
+    if db is None:
         return None
-    procedures = []
-    if recipe_in.procedures is not None and isinstance(recipe_in.procedures, List):
-        procedures = [
-            get_or_create_procedure(db_session=db_session, procedure_in=procedure_in)
-            for procedure_in in recipe_in.procedures
-        ]
+    collection = get_collection(db)
 
-    recipe = Recipe(**recipe_in.dict(exclude={"procedures"}), procedures=procedures)
-    # print(recipe_in.dict())
-    db_session.add(recipe)
-    db_session.commit()
-    return recipe
+    recipe = recipe_in
+    
+    created_recipe = collection.insert_one(recipe.dict())
+    return RecipeRead(**created_recipe)
 
 
-def update(*, db_session, recipe: Recipe, recipe_in: RecipeUpdate) -> Recipe:
+
+def update(*, db, recipe_in: RecipeUpdate):
     """Updates a recipe."""
-    recipe_data = recipe.dict()
+    collection = get_collection(db)
 
-    procedures = []
-    # print(recipe_in.procedures)
-    for p in recipe_in.procedures:
-        procedures.append(
-            get_or_create_procedure(db_session=db_session, procedure_in=p)
-        )
+    # Get the ID of the recipe to update
+    recipe_id = recipe_in.id
 
-    update_data = recipe_in.dict(exclude_unset=True, exclude={"procedures"})
+    # Convert the ID to a BSON ObjectID
+    recipe_oid = ObjectId(recipe_id)
 
-    for field in recipe_data:
-        if field in update_data:
-            setattr(recipe, field, update_data[field])
-    recipe.procedures = procedures
+    # Build the MongoDB update query
+    update_query = {}
+    for key, value in recipe_in.dict(exclude_unset=True).items():
+        update_query[f"$set.{key}"] = value
 
-    db_session.commit()
-    return recipe
+    # Update the recipe in the database
+    result = collection.update_one({"_id": recipe_oid}, update_query)
+
+    # Check that the update was successful
+    if not result.matched_count:
+       return None
+    elif not result.modified_count:
+       return None
+    #return the updated recipe
+    recipe = collection.find_one({"_id": recipe_oid})
+    return RecipeRead(**recipe)
 
 
-def update_image(*, db_session, recipe: Recipe, image: FileUploadData):
+
+def update_image(*, db, recipe_id: int, image: FileUploadData):
     """Updates a recipe."""
-    recipe.image_url = image.url
-    recipe.image_identidier = image.identidier
+    collection = get_collection(db)
+    return update(db=db, recipe_in=RecipeUpdate(id=recipe_id, **image.dict()))
 
-    db_session.commit()
-    return recipe
-
-def delete(*, db_session, recipe_id: int):
+def delete(*, db, recipe_id: int) -> bool:
     """Deletes a recipe."""
-    recipe = db_session.query(Recipe).filter(Recipe.id == recipe_id).first()
-    db_session.delete(recipe)
-    db_session.commit()
+    collection = get_collection(db)
+    result = collection.delete_one({"id": recipe_id})
+    return result.deleted_count == 1
 
 
 if __name__ == "__main__":
-    from baking.routers.procedure.models import ProcedureRead
-    from baking.routers.ingredients.models import IngredientRead
-    from baking.routers.ingredients.enums import IngrediantType, IngrediantUnits
-
-    i1 = IngredientRead(name="flour_a", quantity=400, procedure_id=5, id=5,
-                          type=IngrediantType.flour, units=IngrediantUnits.grams)
-    i2 = IngredientRead(name="flour_b", quantity=300, units=IngrediantUnits.grams, procedure_id=5, id=1,
-                          type=IngrediantType.flour)
-    i3 = IngredientRead(name="water", quantity=500, units=IngrediantUnits.grams, procedure_id=5, id=2,
-                          type=IngrediantType.water)
-    i4 = IngredientRead(name="oil", quantity=50, procedure_id=5, id=3,
-                        type=IngrediantType.oil, units=IngrediantUnits.grams)
-    ingredients = [i1, i2, i3, i4]
-    p = ProcedureRead(name="test", description="test", ingredients=ingredients , id=5, order=1, recipe_id=1, procedure_hydration=71, duration_in_seconds=60)
-    recipe = RecipeRead(name="test", description="test", procedures=[
-                        p], hydration=round((550/700)*100, 2), id=1)
-    rec = RecipeRead(**recipe.dict())
-    l = _get_ingridients(recipe=recipe)
-    print(recipe.dict())
+   pass
