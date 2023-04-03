@@ -1,13 +1,11 @@
+import pymongo
+from enum import Enum
 from datetime import datetime
 
 from pydantic import BaseModel, HttpUrl
 from pydantic.types import conint, constr
 
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy import Column, DateTime, Integer, event, ForeignKey
-from sqlalchemy.orm import relationship
 
-from baking.database.filters.filters import Operator
 ########################## SQLAlchemy models ##########################
 
 
@@ -57,19 +55,6 @@ PrimaryKey = conint(gt=0, lt=2147483647)
 NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=3)
 
 ########################## Pydantic models ##########################
-class OurBase(BaseModel):
-    class Config:
-        orm_mode = True
-        validate_assignment = True
-        arbitrary_types_allowed = True
-        anystr_strip_whitespace = True
-
-        json_encoders = {
-            # custom output conversion for datetime
-            datetime: lambda v: v.strftime("%Y-%m-%dT%H:%M:%SZ")
-            if v
-            else None
-        }
 
 
 class FileUploadData(BaseModel):
@@ -77,9 +62,30 @@ class FileUploadData(BaseModel):
     identidier: str
 
 
-class FilterObject(BaseModel):
-    model: str
-    field: str
-    op: str
+class FilterOperator(str, Enum):
+    EQUALS = "equals"
+    CONTAINS = "contains"
+    GREATER_THAN = "gt"
+    GREATER_THAN_OR_EQUAL = "gte"
+    LESS_THAN = "lt"
+    LESS_THAN_OR_EQUAL = "lte"
+
+
+class FilterCriteria(BaseModel):
+    name: str
     value: str
+    operator: str = "equals"
+
+
+class SortOrder(str, Enum):
+    ASCENDING = pymongo.ASCENDING
+    DESCENDING = pymongo.DESCENDING
+
+class FilterOperator(str, Enum):
+    CONTAINS = "$regex"
+    EQUALS = "$eq"
+    GREATER_THAN = "$gt"
+    GREATER_THAN_OR_EQUAL = "$gte"
+    LESS_THAN = "$lt"
+    LESS_THAN_OR_EQUAL = "$lte"
 #################################################################
