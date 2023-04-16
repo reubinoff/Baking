@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from .models import ProcedureRead, ProcedureCreate, Procedure, ProcedureUpdate
+from .models import ProcedureCreate, Procedure, ProcedureUpdate
 
 from baking.routers.ingredients.service import (
     get_or_create as get_or_create_ingidient,

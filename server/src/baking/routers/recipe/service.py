@@ -5,8 +5,6 @@ from baking.models import FileUploadData
 
 from baking.routers.recipe.models import RecipeRead, RecipeCreate, RecipeUpdate
 
-from baking.routers.procedure.service import get_or_create as get_or_create_procedure
-from baking.routers.ingredients.models import IngredientRead
 
 RECIPE_COLLECTION_NAME = "recipes"
 def get_collection(db):
