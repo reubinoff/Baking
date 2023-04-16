@@ -38,6 +38,6 @@ convertion_table = {
 }
 
 
-def is_liquid(ingridiant_type: IngrediantType) -> bool:
+def is_type_liquid(ingridiant_type: IngrediantType) -> bool:
     state = convertion_table.get(ingridiant_type, IngrediantTypeState.solid)
     return state == IngrediantTypeState.liquid

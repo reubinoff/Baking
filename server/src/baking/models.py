@@ -1,37 +1,42 @@
 import pymongo
 from enum import Enum
 from datetime import datetime
-
-from pydantic import BaseModel, HttpUrl
-from pydantic.types import conint, constr
-
-
-########################## SQLAlchemy models ##########################
-
-class TimeStampMixin(object):
-    """Timestamping mixin"""
-
-    created_at = Column(DateTime, default=datetime.utcnow)
-    created_at._creation_order = 9998
-    updated_at = Column(DateTime, default=datetime.utcnow)
-    updated_at._creation_order = 9998
-
-    @staticmethod
-    def _updated_at(mapper, connection, target):
-        target.updated_at = datetime.utcnow()
-
-    @classmethod
-    def __declare_last__(cls):
-        event.listen(cls, "before_update", cls._updated_at)
+from bson import ObjectId
+from pydantic import BaseModel, HttpUrl, constr
 
 
-#################################################################
+from pydantic.fields import Field
 
-PrimaryKey = conint(gt=0, lt=2147483647)
+
 NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=3)
 
-########################## Pydantic models ##########################
 
+class PyObjectId(ObjectId):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not ObjectId.is_valid(v):
+            raise ValueError("Invalid objectid")
+        return ObjectId(v)
+
+    @classmethod
+    def __modify_schema__(cls, field_schema):
+        field_schema.update(type="string")
+
+
+class BakingBaseModel(BaseModel):
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
+    
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
+        }
 
 class FileUploadData(BaseModel):
     url: HttpUrl

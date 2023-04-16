@@ -5,9 +5,6 @@ from .models import ProcedureRead, ProcedureCreate, Procedure, ProcedureUpdate
 from baking.routers.ingredients.service import (
     get_or_create as get_or_create_ingidient,
 )
-from baking.routers.steps.service import (
-    get_or_create as get_or_create_step,
-)
 
 def get(*, db_session, procedure_id: int) -> Optional[Procedure]:
     """Returns a item based on the given Procedure id."""

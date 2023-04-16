@@ -197,7 +197,7 @@ development = ["black", "flake8", "mypy", "pytest", "types-colorama"]
 
 [[package]]
 name = "coverage"
-version = "7.2.2"
+version = "7.2.3"
 description = "Code coverage measurement for Python"
 category = "dev"
 optional = false
@@ -729,6 +729,23 @@ dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
+name = "polyfactory"
+version = "2.0.0"
+description = "Mock data generation factories"
+category = "dev"
+optional = false
+python-versions = ">=3.8,<4.0"
+
+[package.dependencies]
+faker = "*"
+typing-extensions = "*"
+
+[package.extras]
+beanie = ["beanie", "pydantic"]
+odmantic = ["odmantic", "pydantic"]
+pydantic = ["pydantic"]
+
+[[package]]
 name = "pycodestyle"
 version = "2.10.0"
 description = "Python style guide checker"
@@ -851,6 +868,21 @@ tomli = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
 
 [package.extras]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
+
+[[package]]
+name = "pytest-asyncio"
+version = "0.21.0"
+description = "Pytest support for asyncio"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+pytest = ">=7.0.0"
+
+[package.extras]
+docs = ["sphinx (>=5.3)", "sphinx-rtd-theme (>=1.0)"]
+testing = ["coverage (>=6.2)", "hypothesis (>=5.7.1)", "flaky (>=3.5.0)", "mypy (>=0.931)", "pytest-trio (>=0.7.0)"]
 
 [[package]]
 name = "pytest-cov"
@@ -1167,7 +1199,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10.0"
-content-hash = "b75caf8233169a354567a83ebf2f96b4a25c06cafc8941bb2aa9be1819c835a8"
+content-hash = "e208560544032f4cbddf31b7dddf21ec270bca1420d4a5c301586142ee19d8a9"
 
 [metadata.files]
 anyio = []
@@ -1225,6 +1257,7 @@ pandas = []
 pathspec = []
 platformdirs = []
 pluggy = []
+polyfactory = []
 pycodestyle = []
 pycparser = []
 pydantic = []
@@ -1234,6 +1267,7 @@ pymongo = []
 pyrate-limiter = []
 pyrsistent = []
 pytest = []
+pytest-asyncio = []
 pytest-cov = []
 pytest-subtests = []
 python-dateutil = []

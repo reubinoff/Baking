@@ -1,30 +1,31 @@
+
 import pytest
-import random
-from sqlalchemy_utils import drop_database
+import asyncio
 from starlette.testclient import TestClient
-from starlette.config import environ
 
-from factory import Sequence
+from .mongo_db import mongo_db
 
-# set test config
-environ["DB_PASS"] = "rootsql"
-environ["DB_HOST"] = "localhost"
-environ["DB_NAME"] = "baking_db_test_int_" + str(int( random.random() * 1000000))
-environ["DB_USER"] = "postgres"
-environ["azure_storage_connection_string"] = "test.com"
-environ["is_debug"] = "True"
+from baking.routers.recipe.models import RecipeCreate
+from baking.routers.ingredients.models import IngrediantType, IngrediantUnits, IngredientCreate
+from baking.routers.procedure.models import ProcedureCreate, Step
 
-from baking import config
-from baking.database.core import engine, get_sql_url
-from baking.database.manage import init_database, internal_create_database_for_tests
+from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory import Use
+from polyfactory.pytest_plugin import register_fixture
 
 
-from .factories import IngredientFactory, ProcedureFactory, RecipeFactory, StepFactory
 
-from .database import Session
+from .factories import AsyncPersistenceHandler
 
 
-internal_create_database_for_tests(engine)
+@pytest.fixture(scope="session")
+def event_loop():
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()
 
 def pytest_runtest_setup(item):
     if "slow" in item.keywords and not item.config.getoption("--runslow"):
@@ -43,75 +44,54 @@ def pytest_runtest_makereport(item, call):
             parent._previousfailed = item
 
 
-@pytest.fixture(scope="session")
-def db():
-    init_database(engine)
-    Session.configure(bind=engine)
-    yield
-    drop_database(get_sql_url())
-
-
 @pytest.fixture(scope="function", autouse=True)
-def session(db):
+def database():
     """
-    Creates a new database session with (with working transaction)
-    for test duration.
+    Creates a new database 
     """
-    session = Session()
-    session.begin_nested()
-    yield session
-    session.rollback()
+    from baking.database.manage import drop_database
+    mock_db = mongo_db
+    yield mock_db
+    drop_database()
+    
 
 
 @pytest.fixture(scope="function")
-def client(testapp, session, client):
+def client(testapp):
     yield TestClient(testapp)
 
 
-@pytest.fixture(scope="function")
-def cleaner(session):
-    from baking.routers.ingredients.models import Ingredient
-    from baking.routers.procedure.models import Procedure
-    from baking.routers.recipe.models import Recipe
-    session.query(Ingredient).delete()
-    session.query(Procedure).delete()
-    session.query(Recipe).delete()
-    session.commit()
+class StepFactory(ModelFactory[Step]):
+    __model__ = Step
 
-@pytest.fixture
-def recipe(session):
-    return RecipeFactory()
+    name = Use(ModelFactory.__random__.choice, ['step_' + str(i) for i in range(100)])
+    description = Use(ModelFactory.__random__.choice, ['description_' + str(i) for i in range(100)])
+    duration_in_seconds = Use(ModelFactory.__random__.randint, 1, 10000)
+    
+class IngredientFactory(ModelFactory[IngredientCreate]):
+    __model__ = IngredientCreate
 
+    name = Use(ModelFactory.__random__.choice, [
+               'ingredient_' + str(i) for i in range(100)])
+    quantity = Use(ModelFactory.__random__.randint, 1, 10000)
+    units = Use(ModelFactory.__random__.choice, list(map(str, IngrediantUnits)))
+    type = Use(ModelFactory.__random__.choice, list(map(str, IngrediantType)))
 
-@pytest.fixture
-def recipes(session):
-    return [RecipeFactory(), RecipeFactory()]
+class ProcedureFactory(ModelFactory[ProcedureCreate]):
+    """Procedure Factory."""
+    __model__ = ProcedureCreate
 
+    name = Use(ModelFactory.__random__.choice, ['procedure_' + str(i) for i in range(100)])
+    ingredients = Use(IngredientFactory.batch, 3)
+    steps = Use(StepFactory.batch, 3)
 
-@pytest.fixture
-def ingredient(session):
-    return IngredientFactory()
+@register_fixture
+class RecipeFactory(ModelFactory[RecipeCreate]):
+    """Recipe Factory."""
+    __model__ = RecipeCreate
+    __async_persistence__ = AsyncPersistenceHandler()
 
-
-@pytest.fixture
-def ingredients(session):
-    return [IngredientFactory(), IngredientFactory()]
-
-
-@pytest.fixture
-def step(session):
-    return StepFactory()
-
-
-@pytest.fixture
-def steps(session):
-    return [StepFactory(), StepFactory(), StepFactory()]
-
-@pytest.fixture
-def procedure(session):
-    return ProcedureFactory()
-
-
-@pytest.fixture
-def procedures(session):
-    return [ProcedureFactory(), ProcedureFactory(), ProcedureFactory()]
+    name = Use(ModelFactory.__random__.choice, ['recipe_' + str(i) for i in range(100)])
+    description = Use(ModelFactory.__random__.choice, ['description_' + str(i) for i in range(100)])
+    procedures = Use(ProcedureFactory.batch, 2)
+    pass
