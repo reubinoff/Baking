@@ -218,15 +218,9 @@ async def test_ingredients(database):
 async def test_total_recipe_time(database, recipe_factory, steps, procedure):
     recipe = await recipe_factory.create_async()
 
-    from baking.routers.procedure.models import ProcedureCreate
-    from baking.routers.recipe.models import RecipeCreate
-    from baking.routers.recipe.service import create
-
     total_recipe_time = 0
     for p in recipe.procedures:
         for s in p.steps:
             total_recipe_time += s.duration_in_seconds
     print(total_recipe_time)
     assert recipe.total_recipe_time == total_recipe_time
-
-    
