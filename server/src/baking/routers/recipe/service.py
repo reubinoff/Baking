@@ -37,7 +37,8 @@ async def create(*, db, recipe_in: RecipeCreate) -> Optional[RecipeRead]:
     recipe_in.created_at = recipe_in.updated_at = datetime.now()
     recipe = recipe_in.dict()
     created_recipe = await collection.insert_one(recipe)
-    return RecipeRead(**recipe)
+    created_recipe_item = await collection.find_one({"_id": created_recipe.inserted_id})
+    return RecipeRead(**created_recipe_item)
 
 
 async def update(*, db, recipe_id: int, recipe_in: RecipeUpdate) -> Optional[RecipeRead]:

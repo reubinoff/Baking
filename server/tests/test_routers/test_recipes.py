@@ -109,7 +109,23 @@ async def test_search_filter_sort_by_name(database, recipe_factory):
     assert results["items"]
     assert len(results["items"]) == TOTAL
     assert results["items"][0]['name'] < results["items"][1]['name']
-    
+
+
+@pytest.mark.asyncio
+async def test_search_filter_not_found(database, recipe_factory):
+    TOTAL = 4
+    _ = await recipe_factory.create_batch_async(TOTAL)
+    from baking.database.services import search_filter_sort_paginate, common_parameters
+    from baking.models import FilterCriteria, FilterOperator
+
+    filter = FilterCriteria(
+        name="name", operator=FilterOperator.CONTAINS, value=f"moshe")
+    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=[filter], sort_by='name', descending=True)
+
+    assert results
+    assert isinstance(results["items"], list)
+    assert len(results["items"]) == 0
+
 
 @pytest.mark.asyncio
 async def test_get_all(database, recipe_factory):

@@ -59,7 +59,7 @@ class Procedure(BakingBaseModel):
                     solid = solid + i.quantity
 
         return solid
-
+    
     @property
     def procedure_hydration(self) -> int:
         if self.total_solid > 0:

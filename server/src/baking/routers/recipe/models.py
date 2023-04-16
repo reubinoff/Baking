@@ -42,7 +42,7 @@ class RecipeRead(Recipe):
 
 
 
-    procedures: List[ProcedureCreate]
+    procedures: List[ProcedureRead]
 
     @property    
     def cdn_url(self) -> str:
@@ -58,8 +58,8 @@ class RecipeRead(Recipe):
         return 100  # precent hydration
 
     @property
-    def total_recipe_time(procedures) -> int:
-        return sum(p.duration_in_seconds for p in procedures or [])
+    def total_recipe_time(self) -> int:
+        return sum(p.duration_in_seconds for p in self.procedures or [])
 
     @property 
     def total_liquid(self) -> int:
@@ -72,18 +72,22 @@ class RecipeRead(Recipe):
     def ingredients(self) -> List[IngredientRead]:
         max_precentage_liquid: float = self.hydration/100
         # Use a defaultdict to simplify the logic of adding ingredients to the dictionary
-        ingredients = defaultdict(Ingredient)
+        ingredients = dict()
         for p in self.procedures:
             for i in p.ingredients or []:
-                ingredients[i.name].quantity += i.quantity
+                if i.name not in ingredients:
+                    ingredients[i.name] = IngredientRead(**i.dict())
+                else:
+                    ingredients[i.name].quantity += i.quantity
+                #TODO normilzed units
 
                 # Compute percentage based on whether ingredient is liquid or solid
                 if i.is_liquid:
                     ingredients[i.name].precentage = round(
-                        (i.quantity / self.total_liquid) * max_precentage_liquid, 2)
+                        (ingredients[i.name].quantity / self.total_liquid) * max_precentage_liquid, 2)
                 else:
                     ingredients[i.name].precentage = round(
-                        (i.quantity / self.total_solid), 2)
+                        (ingredients[i.name].quantity / self.total_solid), 2)
 
         return list(ingredients.values())
 
@@ -92,5 +96,6 @@ class RecipeCreate(Recipe):
 
 
 class RecipeUpdate(Recipe):
+    name: Optional[NameStr] = None
     procedures: Optional[List[ProcedureCreate]] = []
 

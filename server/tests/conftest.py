@@ -102,3 +102,13 @@ class RecipeFactory(ModelFactory[RecipeCreate]):
 @pytest.fixture(scope="function")
 def procedures():
     return ProcedureFactory.batch(2)
+
+
+@pytest.fixture(scope="function")
+def procedure():
+    return ProcedureFactory().build()
+
+
+@pytest.fixture(scope="function")
+def steps():
+    return ProcedureFactory().batch(4)
