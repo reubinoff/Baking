@@ -40,10 +40,9 @@ async def create(*, db, recipe_in: RecipeCreate) -> Optional[RecipeRead]:
     return RecipeRead(**recipe)
 
 
-async def update(*, db, recipe_in: RecipeUpdate) -> Optional[RecipeRead]:
+async def update(*, db, recipe_id: int, recipe_in: RecipeUpdate) -> Optional[RecipeRead]:
     """Updates a recipe."""
     collection = get_collection(db)
-    recipe_id = recipe_in.id
     recipe_in.updated_at = datetime.now()
     recipe_oid = ObjectId(recipe_id)
     update_query = {"$set": recipe_in.dict(exclude_unset=True)}

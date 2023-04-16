@@ -58,18 +58,20 @@ async def search_filter_sort_paginate(
     validate_filter_spec(filter_criteria)
     filter_query = {}
     for criteria in filter_criteria:
-        filter_query[criteria.name] = {f"${criteria.operator}": criteria.value}
+        filter_query[criteria.name] = {f"{criteria.operator}": criteria.value}
 
     # Connect to the MongoDB server and perform the search
     collection = db[collection_name]
 
+    results = collection.find(filter_query)
     # Apply sorting if requested
-    sort_order = pymongo.DESCENDING if descending else pymongo.ASCENDING
-    sort_criteria = [(sort_by, sort_order)] if sort_by else []
-    results = collection.find(filter_query).sort(sort_criteria)
+    if sort_by:
+        sort_order = pymongo.DESCENDING if descending else pymongo.ASCENDING
+        sort_criteria = [(sort_by, sort_order)]
+        results = results.sort(sort_criteria)
 
     # Apply pagination if requested
-    total_items = await results.count()
+    total_items = await collection.count_documents(filter_query)
     offset = (page - 1) * items_per_page
     results = results.skip(offset).limit(items_per_page)
 
@@ -78,7 +80,7 @@ async def search_filter_sort_paginate(
         "total": total_items,
         "itemsPerPage": items_per_page,
         "page": page,
-        "items": (item async for item in results),
+        "items": await results.to_list(length=items_per_page),
     }
 
 
@@ -90,15 +92,18 @@ def validate_filter_spec(filter_spec: List[dict]):
     Validate the filter_spec parameter to ensure that all criteria are well-formed.
     Raises an InvalidFilterError with a 400 status code if any criteria are invalid.
     """
+    if not isinstance(filter_spec, list):
+        raise InvalidFilterError(
+            status_code=400, detail="Invalid filter: filter is not a list")
     for criteria in filter_spec:
-        if "name" not in criteria or "value" not in criteria or "operator" not in criteria:
+        if not getattr(criteria, "name") or not getattr(criteria, "value") or not getattr(criteria, "operator"):
             raise InvalidFilterError(
                 status_code=400, detail="Invalid filter criteria: missing name, value, or operator")
-        if not isinstance(criteria["name"], str) or not isinstance(criteria["value"], str) or not isinstance(criteria["operator"], str):
+        if not isinstance(criteria.name, str) or not isinstance(criteria.value, str) or not isinstance(criteria.operator, str):
             raise InvalidFilterError(
                 status_code=400, detail="Invalid filter criteria: name, value, or operator is not a string")
         try:
-            operator = FilterOperator(criteria["operator"])
+            operator = FilterOperator(criteria.operator)
         except ValueError:
             raise InvalidFilterError(
-                status_code=400, detail=f"Invalid filter criteria operator: {criteria['operator']}")
+                status_code=400, detail=f"Invalid filter criteria operator: {criteria.operator}")
