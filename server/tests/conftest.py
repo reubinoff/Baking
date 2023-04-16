@@ -45,14 +45,15 @@ def pytest_runtest_makereport(item, call):
 
 
 @pytest.fixture(scope="function", autouse=True)
-def database():
+async def database():
     """
     Creates a new database 
     """
     from baking.database.manage import drop_database
     mock_db = mongo_db
     yield mock_db
-    drop_database()
+    await drop_database()
+    
     
 
 
@@ -77,6 +78,7 @@ class IngredientFactory(ModelFactory[IngredientCreate]):
     units = Use(ModelFactory.__random__.choice, list(map(str, IngrediantUnits)))
     type = Use(ModelFactory.__random__.choice, list(map(str, IngrediantType)))
 
+
 class ProcedureFactory(ModelFactory[ProcedureCreate]):
     """Procedure Factory."""
     __model__ = ProcedureCreate
@@ -95,3 +97,8 @@ class RecipeFactory(ModelFactory[RecipeCreate]):
     description = Use(ModelFactory.__random__.choice, ['description_' + str(i) for i in range(100)])
     procedures = Use(ProcedureFactory.batch, 2)
     pass
+
+
+@pytest.fixture(scope="function")
+def procedures():
+    return ProcedureFactory.batch(2)

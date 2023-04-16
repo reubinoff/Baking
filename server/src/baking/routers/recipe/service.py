@@ -1,5 +1,5 @@
 from typing import Optional, List
-import datetime
+from datetime import datetime
 from bson.objectid import ObjectId
 from baking.models import FileUploadData
 
@@ -63,7 +63,7 @@ async def update_image(*, db, recipe_id: int, image: FileUploadData) -> Optional
 async def delete(*, db, recipe_id: int) -> bool:
     """Deletes a recipe."""
     collection = get_collection(db)
-    result = await collection.delete_one({"id": recipe_id})
+    result = await collection.delete_one({"_id": recipe_id})
 
     return result.deleted_count == 1
 

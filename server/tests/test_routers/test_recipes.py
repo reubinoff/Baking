@@ -37,25 +37,36 @@ async def test_get(database, recipe_factory):
 
 @pytest.mark.asyncio
 async def test_get_all(database, recipe_factory):
-    recipes = await recipe_factory.create_batch_async(10)
+    TOTAL = 10
+    recipes = await recipe_factory.create_batch_async(TOTAL)
     from baking.routers.recipe.service import get_all
 
     t_recipes = await get_all(db=database)
     assert t_recipes
+    assert len(t_recipes) == len(recipes)
 
 
-# def test_create(session, procedures):
-#     from baking.routers.recipe.service import create
-#     from baking.routers.recipe.models import RecipeCreate
+@pytest.mark.asyncio
+async def test_create(database, procedures):
+    from baking.routers.recipe.service import create
+    from baking.routers.recipe.models import RecipeCreate
+    from baking.routers.recipe.service import get
 
-#     recipe_name = "test"
+    recipe_name = "test"
 
-#     recipe_in = RecipeCreate(name=recipe_name, procedures=procedures)
+    recipe_in = RecipeCreate(name=recipe_name, procedures=procedures)
 
-#     recipe = create(db_session=session, recipe_in=recipe_in)
-#     assert recipe
-#     assert len(recipe.procedures) == len(procedures)
-#     assert recipe.procedures[0].recipe.name == recipe_name
+    recipe = await create(db=database, recipe_in=recipe_in)
+    assert recipe
+    assert len(recipe.procedures) == len(procedures)
+    assert recipe.name == recipe_name
+    
+    t_recipe = await get(db=database, recipe_id=recipe.id)
+    assert t_recipe
+    assert len(t_recipe.procedures) == len(procedures)
+    assert t_recipe.name == recipe_name
+    assert t_recipe.id == recipe.id
+
 
 
 # def test_update(session, recipe):
@@ -74,9 +85,11 @@ async def test_get_all(database, recipe_factory):
 #     )
 #     assert recipe.name == name
 
+@pytest.mark.asyncio
+async def test_delete(database, recipe_factory):
+    recipe = await recipe_factory.create_async()
+    recipe_id = recipe.id
+    from baking.routers.recipe.service import get, delete
 
-# def test_delete(session, recipe):
-#     from baking.routers.recipe.service import get, delete
-
-#     delete(db_session=session, recipe_id=recipe.id)
-#     assert not get(db_session=session, recipe_id=recipe.id)
+    await delete(db=database, recipe_id=recipe_id)
+    assert not await get(db=database, recipe_id=recipe_id)

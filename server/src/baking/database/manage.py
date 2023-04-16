@@ -37,7 +37,7 @@ def init_database():
         mongo_client[app_settings.db_name]
 
 
-def drop_database():
+async def drop_database():
     """Drops the database."""
     mongo_client: AsyncIOMotorClient = get_client()
-    mongo_client.drop_database(app_settings.db_name)
+    await mongo_client.drop_database(app_settings.db_name)
