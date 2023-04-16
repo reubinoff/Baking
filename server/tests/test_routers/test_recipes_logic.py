@@ -33,7 +33,7 @@ async def test_create_and_update(database, procedures, procedure):
 async def test_hydration(database):
     from baking.routers.recipe.service import create, get, update
     from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
-    from baking.routers.procedure.models import ProcedureUpdate, ProcedureCreate
+    from baking.routers.procedure.models import ProcedureCreate
     from baking.routers.ingredients.models import IngredientCreate, Ingredient
     from baking.routers.ingredients.enums import IngrediantUnits, IngrediantType
 

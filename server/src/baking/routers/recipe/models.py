@@ -1,16 +1,15 @@
 from datetime import datetime
 from typing import List, Optional
 # from baking.routers.steps.models import Step
-from pydantic import Field, validator
+from pydantic import Field
 import random
-from collections import defaultdict
 
 # from baking.models import OurBase, PrimaryKey, TimeStampMixin, NameStr
 from baking.config import settings
 from baking.models import BakingBaseModel, NameStr, PyObjectId
 
-from baking.routers.procedure.models import Procedure, ProcedureCreate, ProcedureRead
-from baking.routers.ingredients.models import Ingredient, IngredientRead
+from baking.routers.procedure.models import ProcedureCreate, ProcedureRead
+from baking.routers.ingredients.models import IngredientRead
 
 # from baking.routers.users.models import User, UserRead
 
