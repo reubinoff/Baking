@@ -9,13 +9,10 @@ from baking.router import api_router
 from baking.exceptions import base_error_handler
 from baking.middlewares import get_middlewares
 from baking.database.manage import init_database
-from baking.database.core import engine
 
 
 init_logger()
 logger = logging.getLogger(__name__)
-
-init_database(engine=engine)
 
 
 # base_path = f"/{settings.root_path}" if settings.root_path else ""

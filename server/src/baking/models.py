@@ -2,15 +2,14 @@ import pymongo
 from enum import Enum
 from datetime import datetime
 from bson import ObjectId
-from pydantic import BaseModel, HttpUrl, constr
+from pydantic import BaseModel, HttpUrl, constr, conint
 
 
 from pydantic.fields import Field
 
 
 NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=3)
-
-
+PrimaryKey = conint(gt=0)
 class PyObjectId(ObjectId):
     @classmethod
     def __get_validators__(cls):
@@ -43,21 +42,6 @@ class FileUploadData(BaseModel):
     identidier: str
 
 
-class FilterOperator(str, Enum):
-    EQUALS = "equals"
-    CONTAINS = "contains"
-    GREATER_THAN = "gt"
-    GREATER_THAN_OR_EQUAL = "gte"
-    LESS_THAN = "lt"
-    LESS_THAN_OR_EQUAL = "lte"
-
-
-class FilterCriteria(BaseModel):
-    name: str
-    value: str
-    operator: str = "equals"
-
-
 class SortOrder(str, Enum):
     ASCENDING = pymongo.ASCENDING
     DESCENDING = pymongo.DESCENDING
@@ -69,4 +53,11 @@ class FilterOperator(str, Enum):
     GREATER_THAN_OR_EQUAL = "$gte"
     LESS_THAN = "$lt"
     LESS_THAN_OR_EQUAL = "$lte"
+
+
+class FilterCriteria(BaseModel):
+    # name mak length 3 chars
+    name: str = Field(..., min_length=1, max_length=20)
+    value: str = Field(..., min_length=1, max_length=50)
+    operator: FilterOperator = Field(..., min_length=1, max_length=50)
 #################################################################

@@ -1,4 +1,5 @@
 import logging
+from typing import Annotated
 from baking.utils.azure_storage import delete_image_from_blob, upload_image_to_blob
 from baking.utils.general import is_image
 from motor.motor_asyncio import AsyncIOMotorDatabase
@@ -21,21 +22,24 @@ from baking.routers.recipe.service import create, get, delete, update, update_im
 
 LOGGER = logging.getLogger(__name__)
 
+appDb = Annotated[AsyncIOMotorDatabase, Depends(get_db)]
+
 router = APIRouter()
 
 
 @router.get("", response_model=RecipePagination)
-def get_recipes(*, common: dict = Depends(common_parameters)):
+async def get_recipes(*, common: dict = Depends(common_parameters)):
     """
     Get all recipes.
     """
-    LOGGER.info("Get Recipes filter={0}".format(common["filter_spec"]))
-    pagination = search_filter_sort_paginate(model="Recipe", **common)
+    LOGGER.info("Get Recipes filter={0}".format(common["filter_criteria"]))
+    pagination = await search_filter_sort_paginate(
+        **common, collection_name="recipe")
     return RecipePagination(**pagination).dict()
 
 
 @router.get("/{recipe_id}", response_model=RecipeRead)
-def get_recipe(*, db: AsyncIOMotorDatabase = Depends(get_db), recipe_id: int):
+def get_recipe(*, db: appDb, recipe_id: int):
     """
     Get a recipe.
     """
@@ -44,7 +48,7 @@ def get_recipe(*, db: AsyncIOMotorDatabase = Depends(get_db), recipe_id: int):
 
 
 @router.post("")
-def create_recipe(*, db: AsyncIOMotorDatabase = Depends(get_db), recipe_in: RecipeCreate):
+def create_recipe(*, db: appDb, recipe_in: RecipeCreate):
     """
     Create a new recipes.
     """
@@ -53,7 +57,7 @@ def create_recipe(*, db: AsyncIOMotorDatabase = Depends(get_db), recipe_in: Reci
 
 
 @router.delete("/{recipe_id}", response_model=RecipeRead)
-def delete_recipe(*, db: AsyncIOMotorDatabase = Depends(get_db), recipe_id: PrimaryKey):
+def delete_recipe(*, db: appDb, recipe_id: PrimaryKey):
     """Delete a recipe."""
     recipe = get(db=db, recipe_id=recipe_id)
     if not recipe:
@@ -68,20 +72,20 @@ def delete_recipe(*, db: AsyncIOMotorDatabase = Depends(get_db), recipe_id: Prim
 
 
 @router.put("/{recipe_id}", response_model=RecipeRead)
-def update_recipe(
+async def update_recipe(
     *,
-    db: AsyncIOMotorDatabase = Depends(get_db),
+    db: appDb,
     recipe_id: PrimaryKey,
     recipe_in: RecipeUpdate
 ):
     """Update a recipe."""
-    recipe = check_and_raise(db=db, recipe_id=recipe_id)
-    recipe = update(db=db, recipe=recipe, recipe_id=recipe_id, recipe_in=recipe_in)
+    recipe = await check_and_raise(db=db, recipe_id=recipe_id)
+    recipe = await update(db=db, recipe_id=recipe_id, recipe_in=recipe_in)
     return recipe
 
 
-def check_and_raise(db, recipe_id) -> RecipeRead:
-    recipe = get(db=db, recipe_id=recipe_id)
+async def check_and_raise(db, recipe_id) -> RecipeRead:
+    recipe = await get(db=db, recipe_id=recipe_id)
     if not recipe:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -91,7 +95,7 @@ def check_and_raise(db, recipe_id) -> RecipeRead:
 
 @router.post("/{recipe_id}/img")
 async def update_recipe_img(*,
-                            db: AsyncIOMotorDatabase = Depends(get_db),
+                            db: appDb,
                             recipe_id: PrimaryKey,
                             file: UploadFile = File(...)):
     """Update a recipe image."""

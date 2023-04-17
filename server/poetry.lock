@@ -316,7 +316,7 @@ python-dateutil = ">=2.4"
 
 [[package]]
 name = "fastapi"
-version = "0.95.0"
+version = "0.95.1"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 category = "main"
 optional = false
@@ -933,6 +933,17 @@ python-versions = ">=3.8"
 cli = ["click (>=5.0)"]
 
 [[package]]
+name = "python-multipart"
+version = "0.0.6"
+description = "A streaming multipart parser for Python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+dev = ["atomicwrites (==1.2.1)", "attrs (==19.2.0)", "coverage (==6.5.0)", "hatch", "invoke (==1.7.3)", "more-itertools (==4.3.0)", "pbr (==4.3.0)", "pluggy (==1.0.0)", "py (==1.11.0)", "pytest-cov (==4.0.0)", "pytest-timeout (==2.1.0)", "pytest (==7.2.0)", "pyyaml (==5.1)"]
+
+[[package]]
 name = "pytz"
 version = "2023.3"
 description = "World timezone definitions, modern and historical"
@@ -1199,7 +1210,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10.0"
-content-hash = "e208560544032f4cbddf31b7dddf21ec270bca1420d4a5c301586142ee19d8a9"
+content-hash = "1c3f7feaf9d2c43dd6cc67b8f5ab8442b5ee36450fef7ce2736a736757c58b04"
 
 [metadata.files]
 anyio = []
@@ -1272,6 +1283,7 @@ pytest-cov = []
 pytest-subtests = []
 python-dateutil = []
 python-dotenv = []
+python-multipart = []
 pytz = []
 pyyaml = []
 requests = []

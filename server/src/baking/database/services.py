@@ -6,15 +6,11 @@ from typing import List
 from baking.models import FilterCriteria, FilterOperator
 
 from fastapi import Depends, Query
+from typing import Annotated
 
-from pydantic.error_wrappers import ErrorWrapper, ValidationError
-from pydantic import BaseModel
-from pydantic.types import Json, constr
+from pydantic.types import Json
 
 from baking.exceptions import (
-    FieldNotFound,
-    FieldNotFoundError,
-    BadFilterFormat,
     InvalidFilterError,
 )
 from .manage import get_db
@@ -22,22 +18,21 @@ from .manage import get_db
 LOGGER = logging.getLogger(__name__)
 
 def common_parameters(
-    db_session: AsyncIOMotorDatabase = Depends(get_db),
-    page: int = Query(1, gt=0, lt=2147483647),
-    items_per_page: int = Query(5, alias="itemsPerPage", gt=-2, lt=2147483647),
-    sort_by: List[str] = Query([], alias="sortBy[]"),
-    descending: List[bool] = Query([], alias="descending[]"),
-    filter_spec: Json = Query([], alias="filter"),
-
+    db: Annotated[AsyncIOMotorDatabase ,Depends(get_db)],
+    page: Annotated[int, Query(alias="page", gt=0)] = 1,
+    items_per_page: Annotated[int, Query(alias="itemsPerPage", gt=0, lt=200)] = 5,
+    sort_by: Annotated[str, Query(alias="sortBy")] = "",
+    descending: Annotated[bool, Query(alias="descending")] = False,
+    filter_criteria: Annotated[Json[List], Query(alias="filter")] = [],
 ):
 
     return {
-        "db_session": db_session,
+        "db": db,
         "page": page,
         "items_per_page": items_per_page,
         "sort_by": sort_by,
         "descending": descending,
-        "filter_spec": filter_spec,
+        "filter_criteria": filter_criteria,
     }
 
 

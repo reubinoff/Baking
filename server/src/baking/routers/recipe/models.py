@@ -4,7 +4,7 @@ from typing import List, Optional
 from pydantic import Field
 import random
 
-# from baking.models import OurBase, PrimaryKey, TimeStampMixin, NameStr
+from pydantic import BaseModel
 from baking.config import settings
 from baking.models import BakingBaseModel, NameStr, PyObjectId
 
@@ -98,3 +98,9 @@ class RecipeUpdate(Recipe):
     name: Optional[NameStr] = None
     procedures: Optional[List[ProcedureCreate]] = []
 
+
+class RecipePagination(BaseModel):
+    total: int
+    itemsPerPage: int
+    page: int
+    items: List[RecipeRead] = []

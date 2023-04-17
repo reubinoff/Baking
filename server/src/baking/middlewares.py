@@ -9,11 +9,10 @@ from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.responses import JSONResponse
 
-from baking.database.core import engine, sessionmaker
+from baking.database.manage import get_client
 from pydantic.error_wrappers import ValidationError
 from starlette.middleware.cors import CORSMiddleware
 
-from sqlalchemy.exc import IntegrityError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -52,12 +51,12 @@ async def add_security_headers(request: Request, call_next):
 async def db_session_middleware(request: Request, call_next):
     response = Response("Internal Server Error", status_code=500)
     try:
-        session = sessionmaker(bind=engine)
+        client = get_client()
 
-        if not session:
+        if not client:
             return response
 
-        request.state.db = session()
+        request.state.db = client
         response = await call_next(request)
     finally:
         request.state.db.close()
@@ -82,18 +81,5 @@ async def exceptions(request: Request, call_next) -> Response:
                 "detail": [{"msg": "Unknown", "loc": ["Unknown"], "type": "Unknown"}]
             },
         )
-    except IntegrityError as e:
-        LOGGER.exception(e)
-        response = JSONResponse(
-            status_code=status.HTTP_409_CONFLICT,
-            content={
-                "detail": [
-                    {
-                        "msg": "An object with this id already exists.",
-                        "loc": ["Unknown"],
-                        "type": "Unknown",
-                    }
-                ]
-            },
-        )
+
     return response
