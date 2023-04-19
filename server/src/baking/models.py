@@ -1,7 +1,8 @@
 import pymongo
+from typing import Annotated
 from enum import Enum
 from datetime import datetime
-from bson import ObjectId
+from bson.objectid import ObjectId
 from pydantic import BaseModel, HttpUrl, constr, conint
 
 
@@ -9,7 +10,7 @@ from pydantic.fields import Field
 
 
 NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=3)
-PrimaryKey = conint(gt=0)
+PrimaryKey = constr(strip_whitespace=True)
 class PyObjectId(ObjectId):
     @classmethod
     def __get_validators__(cls):
@@ -24,6 +25,7 @@ class PyObjectId(ObjectId):
     @classmethod
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string")
+    
 
 
 class BakingBaseModel(BaseModel):

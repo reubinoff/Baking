@@ -35,6 +35,8 @@ nox-poetry = "^1.0.2"
 flake8 = "^6.0.0"
 pytest-asyncio = "^0.21.0"
 polyfactory = "^2.0.0"
+httpx = "^0.24.0"
+anyio = "^3.6.2"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

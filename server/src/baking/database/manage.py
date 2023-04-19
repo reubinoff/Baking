@@ -1,5 +1,5 @@
 import logging
-from motor.motor_asyncio import AsyncIOMotorClient 
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from functools import lru_cache
 
 from starlette.requests import Request
@@ -17,27 +17,24 @@ def get_sql_url() -> str:
 
 
 def get_db(request: Request):
-    return request.state.db[app_settings.db_name]
+    return request.app.db
 
-
-def get_client() -> AsyncIOMotorClient:
-    return AsyncIOMotorClient(get_sql_url())
-
-def init_database():
+def init_database() -> AsyncIOMotorDatabase:
     """Initializes a the database."""
+    db = None
     LOGGER.debug(f"conn str: {get_sql_url()}")
     # check if mongiodb exists
-    mongo_client: AsyncIOMotorClient = get_client()
-    if app_settings.db_name not in mongo_client.list_database_names():
-        #create db
-        mongo_client[app_settings.db_name]
+    mongo_client: AsyncIOMotorClient = AsyncIOMotorClient(get_sql_url())
+   
+    db = mongo_client[app_settings.db_name]
 
-    elif settings.db_debug_drop_in_startup is True:
+    if settings.db_debug_drop_in_startup is True:
         mongo_client.drop_database(app_settings.db_name)
         mongo_client[app_settings.db_name]
+    return db
 
 
 async def drop_database():
     """Drops the database."""
-    mongo_client: AsyncIOMotorClient = get_client()
+    mongo_client: AsyncIOMotorClient = AsyncIOMotorClient(get_sql_url())
     await mongo_client.drop_database(app_settings.db_name)

@@ -1,17 +1,20 @@
 from typing import Optional, List
 from datetime import datetime
-from bson.objectid import ObjectId
-from baking.models import FileUploadData
+from baking.models import FileUploadData, PyObjectId
+
+from motor.motor_asyncio import AsyncIOMotorCollection
 
 from baking.routers.recipe.models import RecipeRead, RecipeCreate, RecipeUpdate
 
 
 RECIPE_COLLECTION_NAME = "recipes"
-def get_collection(db):
+
+
+def get_collection(db) -> AsyncIOMotorCollection:
     return db[RECIPE_COLLECTION_NAME]
 
 
-async def get(*, db, recipe_id: int) -> Optional[RecipeRead]:
+async def get(*, db, recipe_id: PyObjectId) -> Optional[RecipeRead]:
     """Returns a recipe based on the given recipe id."""
     collection = get_collection(db)
     recipe = await collection.find_one({"_id": recipe_id})
@@ -39,11 +42,11 @@ async def create(*, db, recipe_in: RecipeCreate) -> Optional[RecipeRead]:
     return RecipeRead(**created_recipe_item)
 
 
-async def update(*, db, recipe_id: int, recipe_in: RecipeUpdate) -> Optional[RecipeRead]:
+async def update(*, db, recipe_id: PyObjectId, recipe_in: RecipeUpdate) -> Optional[RecipeRead]:
     """Updates a recipe."""
     collection = get_collection(db)
     recipe_in.updated_at = datetime.now()
-    recipe_oid = ObjectId(recipe_id)
+    recipe_oid = recipe_id
     update_query = {"$set": recipe_in.dict(exclude_unset=True)}
     result = await collection.update_one({"_id": recipe_oid}, update_query, upsert=True)
     if not result.matched_count or not result.modified_count:
@@ -52,13 +55,13 @@ async def update(*, db, recipe_id: int, recipe_in: RecipeUpdate) -> Optional[Rec
     return RecipeRead(**recipe)
 
 
-async def update_image(*, db, recipe_id: int, image: FileUploadData) -> Optional[RecipeRead]:
+async def update_image(*, db, recipe_id: PyObjectId, image: FileUploadData) -> Optional[RecipeRead]:
     """Updates the image of a recipe."""
     img_dict = {"image": image.dict()}
     return await update(db=db, recipe_in=RecipeUpdate(id=recipe_id, **img_dict))
 
 
-async def delete(*, db, recipe_id: int) -> bool:
+async def delete(*, db, recipe_id: PyObjectId) -> bool:
     """Deletes a recipe."""
     collection = get_collection(db)
     result = await collection.delete_one({"_id": recipe_id})

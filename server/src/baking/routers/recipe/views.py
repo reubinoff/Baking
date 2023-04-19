@@ -1,5 +1,5 @@
 import logging
-from typing import Annotated
+from typing import Annotated, Any
 from baking.utils.azure_storage import delete_image_from_blob, upload_image_to_blob
 from baking.utils.general import is_image
 from motor.motor_asyncio import AsyncIOMotorDatabase
@@ -8,9 +8,9 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi import status
 
 
-from baking.models import PrimaryKey
+from baking.models import PrimaryKey, PyObjectId
 from baking.database.manage import get_db
-from baking.database.services import common_parameters, search_filter_sort_paginate
+from baking.database.services import  search_filter_sort_paginate, CommonQueryParams
 
 from baking.routers.recipe.models import (
     RecipeCreate,
@@ -28,47 +28,69 @@ router = APIRouter()
 
 
 @router.get("", response_model=RecipePagination)
-async def get_recipes(*, common: dict = Depends(common_parameters)):
+async def get_recipes(*, db: appDb, common: Annotated[CommonQueryParams, Depends()]):
     """
     Get all recipes.
     """
-    LOGGER.info("Get Recipes filter={0}".format(common["filter_criteria"]))
+    LOGGER.info("Get Recipes filter={0}".format(common.filter_criteria))
     pagination = await search_filter_sort_paginate(
-        **common, collection_name="recipe")
+        collection_name="recipe", params=common)
     return RecipePagination(**pagination).dict()
 
 
 @router.get("/{recipe_id}", response_model=RecipeRead)
-def get_recipe(*, db: appDb, recipe_id: int):
+async def get_recipe(*, db: appDb, recipe_id: PrimaryKey):
     """
     Get a recipe.
     """
-    recipe = check_and_raise(db=db, recipe_id=recipe_id)
-    return recipe
+    try:
+        recipe = await check_and_raise(db=db, recipe_id=recipe_id)
+        return recipe
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        LOGGER.exception(e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
 
 
 @router.post("")
-def create_recipe(*, db: appDb, recipe_in: RecipeCreate):
+async def create_recipe(*, db: appDb, recipe_in: RecipeCreate):
     """
     Create a new recipes.
     """
-    recipe = create(db=db, recipe_in=recipe_in)
-    return recipe
+    try:
+        recipe = await create(db=db, recipe_in=recipe_in)
+        return recipe
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        LOGGER.exception(e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="failed to create recipe",
+        )
 
 
 @router.delete("/{recipe_id}", response_model=RecipeRead)
-def delete_recipe(*, db: appDb, recipe_id: PrimaryKey):
+async def delete_recipe(*, db: appDb, recipe_id: PrimaryKey):
     """Delete a recipe."""
-    recipe = get(db=db, recipe_id=recipe_id)
-    if not recipe:
+    try:
+        recipe = await check_and_raise(db=db, recipe_id=recipe_id)
+        Identifier_to_delete = recipe.image_identidier
+        await delete(db=db, recipe_id=recipe_id)
+        delete_image_from_blob(Identifier_to_delete)
+        return recipe
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        LOGGER.exception(e)
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=[{"msg": "The recipe with this id does not exist."}],
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to delete recipe",
         )
-    Identifier_to_delete = recipe.image_identidier
-    delete(db=db, recipe_id=recipe_id)
-    delete_image_from_blob(Identifier_to_delete)
-    return recipe
 
 
 @router.put("/{recipe_id}", response_model=RecipeRead)
@@ -79,17 +101,34 @@ async def update_recipe(
     recipe_in: RecipeUpdate
 ):
     """Update a recipe."""
-    recipe = await check_and_raise(db=db, recipe_id=recipe_id)
-    recipe = await update(db=db, recipe_id=recipe_id, recipe_in=recipe_in)
-    return recipe
+    try:
+        recipe = await check_and_raise(db=db, recipe_id=recipe_id)
+        recipe = await update(db=db, recipe_id=recipe_id, recipe_in=recipe_in)
+        return recipe
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        LOGGER.exception(e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to update recipe",
+        )
 
 
-async def check_and_raise(db, recipe_id) -> RecipeRead:
-    recipe = await get(db=db, recipe_id=recipe_id)
+async def check_and_raise(db, recipe_id: str) -> RecipeRead:
+    _id = recipe_id
+    try:
+        _id = PyObjectId(_id)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid recipe id",
+        )
+    recipe = await get(db=db, recipe_id=_id)
     if not recipe:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=[{"msg": "The recipe with this id does not exist."}],
+            detail="The recipe with this id does not exist",
         )
     return recipe
 
@@ -102,17 +141,28 @@ async def update_recipe_img(*,
     if file is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=[{"msg": "No file was uploaded."}],
+            detail="No file was uploaded.",
         )
-    recipe = check_and_raise(db=db, recipe_id=recipe_id)
+    try:
+        recipe = check_and_raise(db=db, recipe_id=recipe_id)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        LOGGER.exception(e)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to update recipe img",
+        )
     is_file_image = is_image(file.content_type)
 
     try:
         uploaded_file = upload_image_to_blob(file.filename, file.file.read())
+    except HTTPException as e:
+        raise e
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_410_GONE,
-            detail=[{"msg": "Upload failed"}],
+            detail="Upload failed",
         )
     try:
         recipe = update_image(db=db,
@@ -121,6 +171,6 @@ async def update_recipe_img(*,
         delete_image_from_blob(uploaded_file.identidier)
         raise HTTPException(
             status_code=status.HTTP_410_GONE,
-            detail=[{"msg": "Update failed"}],
+            detail="Update failed",
         )
     return {"file_path": file.filename, "is_valid": is_file_image, **uploaded_file.dict()}

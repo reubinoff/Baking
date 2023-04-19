@@ -8,8 +8,7 @@ environ["azure_storage_connection_string"] = "test.com"
 environ["is_debug"] = "True"
 
 
-from baking.database.manage import get_client
-from baking.config import settings as app_settings
+from baking.database.manage import init_database
 
-mongo_db = get_client()[app_settings.db_name]
+mongo_db = init_database()
 

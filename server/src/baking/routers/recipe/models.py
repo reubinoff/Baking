@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from baking.config import settings
 from baking.models import BakingBaseModel, NameStr, PyObjectId
 
-from baking.routers.procedure.models import ProcedureCreate, ProcedureRead
+from baking.routers.procedure.models import ProcedureCreate, ProcedureRead, ProcedureUpdate
 from baking.routers.ingredients.models import IngredientRead
 
 # from baking.routers.users.models import User, UserRead
@@ -30,8 +30,6 @@ class Recipe(BakingBaseModel):
 class RecipeRead(Recipe):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     hydration: int
-    created_at: datetime
-    updated_at: datetime
 
     cdn_url: Optional[str]
     total_recipe_time: Optional[int]
@@ -96,7 +94,7 @@ class RecipeCreate(Recipe):
 
 class RecipeUpdate(Recipe):
     name: Optional[NameStr] = None
-    procedures: Optional[List[ProcedureCreate]] = []
+    procedures: Optional[List[ProcedureUpdate]] = []
 
 
 class RecipePagination(BaseModel):

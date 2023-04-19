@@ -21,19 +21,19 @@ class Step(BakingBaseModel):
     for example: mixing, mix all the ingredients, 10 seconds
     """
     name: NameStr
-    description: Optional[str] = Field(None, nullable=True)
-    duration_in_seconds: Optional[int] = Field(1, gt=0, lt=100000)
+    description: Optional[str] = Field(None, nullable=True, min_length=2)
+    duration_in_seconds: int = Field(1, gt=0, lt=100000)
 
 
-class StepUpdate(BakingBaseModel):
-    description: Optional[str] = Field(None, nullable=True)
+class StepUpdate(Step):
+    description: Optional[str] = Field(None, nullable=True, min_length=2)
     duration_in_seconds: Optional[int] = Field(None, gt=0, lt=100000)
 
 ############################################################
 
 class Procedure(BakingBaseModel):
     name: NameStr
-    description: Optional[str] = Field(None, nullable=True)
+    description: Optional[str] = Field(None, nullable=True, min_length=2)
     order: Optional[int] = Field(1, gt=0, lt=100)
     steps: Optional[List[Step]]
     ingredients: Optional[List[IngredientRead]]

@@ -15,15 +15,15 @@ async def test_get(database, recipe_factory):
 async def test_search_filter_not_list(database, recipe_factory):
     recipe = await recipe_factory.create_async()
     name = recipe.name
-    from baking.database.services import search_filter_sort_paginate, common_parameters
+    from baking.database.services import search_filter_sort_paginate, CommonQueryParams
     from baking.models import FilterCriteria, FilterOperator
     from baking.exceptions import InvalidFilterError
 
     filter = FilterCriteria(
         name="name", operator=FilterOperator.EQUALS, value=f"{name}")
-    
+    query = CommonQueryParams(filter_criteria=filter)
     with pytest.raises(InvalidFilterError) as exc_info:
-        results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=filter)
+        results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query)
     assert 'Invalid filter: filter is not a list' == exc_info.value.detail
 
 
@@ -31,11 +31,13 @@ async def test_search_filter_not_list(database, recipe_factory):
 async def test_search_filter_sort_paginate_query_equal(database, recipe_factory):
     recipe = await recipe_factory.create_async()
     name = recipe.name
-    from baking.database.services import search_filter_sort_paginate, common_parameters
+    from baking.database.services import search_filter_sort_paginate, CommonQueryParams
     from baking.models import FilterCriteria, FilterOperator
 
     filter = FilterCriteria(name="name", operator=FilterOperator.EQUALS, value=f"{name}")
-    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=[filter])
+    query = CommonQueryParams(filter_criteria=[filter])
+
+    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query)
     
     assert results
     assert results["items"]
@@ -47,12 +49,14 @@ async def test_search_filter_sort_paginate_query_equal(database, recipe_factory)
 async def test_search_filter_sort_paginate_query_contains(database, recipe_factory):
     TOTAL = 4
     recipe = await recipe_factory.create_batch_async(TOTAL)
-    from baking.database.services import search_filter_sort_paginate, common_parameters
+    from baking.database.services import search_filter_sort_paginate, CommonQueryParams
     from baking.models import FilterCriteria, FilterOperator
 
     filter = FilterCriteria(
         name="name", operator=FilterOperator.CONTAINS, value=f"recipe")
-    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=[filter])
+    query = CommonQueryParams(filter_criteria=[filter])
+
+    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query)
 
     assert results
     assert results["items"]
@@ -63,25 +67,31 @@ async def test_search_filter_sort_paginate_query_contains(database, recipe_facto
 async def test_search_filter_sort_paginate_query_contains_paging(database, recipe_factory):
     TOTAL = 4
     _ = await recipe_factory.create_batch_async(TOTAL)
-    from baking.database.services import search_filter_sort_paginate, common_parameters
+    from baking.database.services import search_filter_sort_paginate, CommonQueryParams
     from baking.models import FilterCriteria, FilterOperator
 
     filter = FilterCriteria(
         name="name", operator=FilterOperator.CONTAINS, value=f"recipe")
-    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=[filter], page=1, items_per_page=2)
+    query = CommonQueryParams(filter_criteria=[filter], page=1, items_per_page=2)
+
+    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query )
 
     assert results
     assert results["items"]
     assert len(results["items"]) == 2
+    query = CommonQueryParams(
+        filter_criteria=[filter], page=2, items_per_page=2)
 
-    results_2 = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=[filter], page=2, items_per_page=2)
+    results_2 = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query)
     assert results_2
     assert results_2["items"]
     assert len(results_2["items"]) == 2
 
     assert results["items"][0]['name'] != results_2["items"][0]['name']
+    query = CommonQueryParams(
+        filter_criteria=[filter], page=2, items_per_page=1)
 
-    results_3 = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=[filter], page=2, items_per_page=1)
+    results_3 = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query)
     assert results_3
     assert results_3["items"]
     assert len(results_3["items"]) == 1
@@ -92,19 +102,22 @@ async def test_search_filter_sort_paginate_query_contains_paging(database, recip
 async def test_search_filter_sort_by_name(database, recipe_factory):
     TOTAL = 4
     _ = await recipe_factory.create_batch_async(TOTAL)
-    from baking.database.services import search_filter_sort_paginate, common_parameters
+    from baking.database.services import search_filter_sort_paginate, CommonQueryParams
     from baking.models import FilterCriteria, FilterOperator
 
     filter = FilterCriteria(
         name="name", operator=FilterOperator.CONTAINS, value=f"recipe")
-    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=[filter], sort_by='name', descending=True)
+    query = CommonQueryParams(
+        filter_criteria=[filter], sort_by='name', descending=True)
+    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query)
 
     assert results
     assert results["items"]
     assert len(results["items"]) == TOTAL
     assert results["items"][0]['name'] > results["items"][1]['name']
-
-    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=[filter], sort_by='name', descending=False)
+    query = CommonQueryParams(
+        filter_criteria=[filter], sort_by='name', descending=False)
+    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query)
     assert results
     assert results["items"]
     assert len(results["items"]) == TOTAL
@@ -115,12 +128,14 @@ async def test_search_filter_sort_by_name(database, recipe_factory):
 async def test_search_filter_not_found(database, recipe_factory):
     TOTAL = 4
     _ = await recipe_factory.create_batch_async(TOTAL)
-    from baking.database.services import search_filter_sort_paginate, common_parameters
+    from baking.database.services import search_filter_sort_paginate, CommonQueryParams
     from baking.models import FilterCriteria, FilterOperator
 
     filter = FilterCriteria(
         name="name", operator=FilterOperator.CONTAINS, value=f"moshe")
-    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, filter_criteria=[filter], sort_by='name', descending=True)
+    query = CommonQueryParams(
+        filter_criteria=[filter], sort_by='name', descending=True)
+    results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query)
 
     assert results
     assert isinstance(results["items"], list)
