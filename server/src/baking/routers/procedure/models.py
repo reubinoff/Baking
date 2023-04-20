@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime
 from baking.models import NameStr
 from pydantic import Field
 
@@ -26,8 +27,9 @@ class Step(BakingBaseModel):
 
 
 class StepUpdate(Step):
-    description: Optional[str] = Field(None, nullable=True, min_length=2)
+    description: Optional[str] 
     duration_in_seconds: Optional[int] = Field(None, gt=0, lt=100000)
+    created_at: Optional[datetime]
 
 ############################################################
 
@@ -93,5 +95,6 @@ class ProcedureCreate(Procedure):
 
 class ProcedureUpdate(Procedure):
     name: Optional[NameStr]
-    ingredients: Optional[List[IngredientCreate]] = []
-    steps: Optional[List[StepUpdate]] = []
+    ingredients: Optional[List[IngredientCreate]]
+    steps: Optional[List[StepUpdate]]
+    created_at: Optional[datetime]

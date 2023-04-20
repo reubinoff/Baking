@@ -79,9 +79,9 @@ async def delete_recipe(*, db: appDb, recipe_id: PrimaryKey):
     """Delete a recipe."""
     try:
         recipe = await check_and_raise(db=db, recipe_id=recipe_id)
-        Identifier_to_delete = recipe.image_identidier
+        image_to_delete = recipe.image
         await delete(db=db, recipe_id=recipe_id)
-        delete_image_from_blob(Identifier_to_delete)
+        delete_image_from_blob(image_to_delete)
         return recipe
     except HTTPException as e:
         raise e
@@ -168,7 +168,7 @@ async def update_recipe_img(*,
         recipe = update_image(db=db,
                               recipe=recipe, image=uploaded_file)
     except Exception as e:
-        delete_image_from_blob(uploaded_file.identidier)
+        delete_image_from_blob(uploaded_file.identifier)
         raise HTTPException(
             status_code=status.HTTP_410_GONE,
             detail="Update failed",

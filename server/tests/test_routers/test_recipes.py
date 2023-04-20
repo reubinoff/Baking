@@ -192,6 +192,7 @@ async def test_update(database, recipe_factory):
         recipe_in=recipe_in,
     )
     assert t_recipe.name == name
+    assert t_recipe.description == recipe.description
 
 @pytest.mark.asyncio
 async def test_delete(database, recipe_factory):

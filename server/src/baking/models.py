@@ -31,7 +31,11 @@ class PyObjectId(ObjectId):
 class BakingBaseModel(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
-    
+    _encoders_by_type = {datetime: lambda dt: dt.isoformat(timespec='seconds')}
+
+    def _iter(self, **kwargs):
+        for key, value in super()._iter(**kwargs):
+            yield key, self._encoders_by_type.get(type(value), lambda v: v)(value)
     class Config:
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
@@ -41,7 +45,7 @@ class BakingBaseModel(BaseModel):
 
 class FileUploadData(BaseModel):
     url: HttpUrl
-    identidier: str
+    identifier: str
 
 
 class SortOrder(str, Enum):

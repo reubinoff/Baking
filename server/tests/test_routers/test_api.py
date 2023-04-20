@@ -62,3 +62,56 @@ async def test_recipe_not_found():
         response = await ac.get(f"/recipe/644016caff25afc6b20de505")
     assert response.status_code == 404
     assert response.json()["detail"] == "The recipe with this id does not exist"
+
+
+@pytest.mark.anyio
+async def test_recipe_create(procedures):
+    from baking.routers.recipe.models import RecipeCreate, RecipeRead
+    recipe = RecipeCreate(
+        name="test",
+        description="test",
+        procedures=procedures,
+    )
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.post("/recipe", json=recipe.dict())
+    assert response.status_code == 200
+    assert response.json()["name"] == recipe.name
+    assert response.json()["description"] == recipe.description
+    assert len(response.json()["procedures"]) == len(recipe.procedures)
+
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe/{response.json()['_id']}")
+    assert response.status_code == 200
+    assert RecipeRead(**response.json()) == RecipeRead(**response.json())
+
+
+@pytest.mark.anyio
+async def test_recipe_update(recipe_factory):
+    from baking.routers.recipe.models import RecipeUpdate, RecipeRead
+
+    recipe = await recipe_factory.create_async()
+    recipe_update = RecipeUpdate(name="test_update")
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.put(f"/recipe/{recipe.id}", json=recipe_update.dict(exclude_unset=True))
+    assert response.status_code == 200
+    assert response.json()["name"] == recipe_update.name
+
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe/{recipe.id}")
+    assert response.status_code == 200
+    assert RecipeRead(**response.json()) == RecipeRead(**response.json())
+
+@pytest.mark.anyio
+async def test_recipe_delete(recipe_factory):
+    from baking.routers.recipe.models import RecipeRead
+
+    recipe = await recipe_factory.create_async()
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.delete(f"/recipe/{recipe.id}")
+    assert response.status_code == 200
+    assert RecipeRead(**response.json()) == recipe
+
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe/{recipe.id}")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "The recipe with this id does not exist"

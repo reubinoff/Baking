@@ -3,6 +3,7 @@ import os
 import uuid
 from baking.config import settings
 from baking.models import FileUploadData
+from baking.routers.recipe.models import RecipeImage
 from fastapi.logger import logger
 from azure.storage.blob import BlobServiceClient
 
@@ -27,20 +28,22 @@ def upload_image_to_blob(file_name: str, file_content: bytes) -> FileUploadData:
             container=IMAGES_CONTAINER, blob=filename)
         blob_client.upload_blob(file_content)
 
-        f = FileUploadData(url=blob_client.url, identidier=filename)
+        f = FileUploadData(url=blob_client.url, identifier=filename)
         return f
     except Exception as e:
         logger.error(e)
         raise e
 
 
-def delete_image_from_blob(identidier: str):
-    if identidier is None or identidier == "":
-        return None
-
+def delete_image_from_blob(recipe_image: RecipeImage | None):
+    if recipe_image is None:
+        return
+    identifier: str = recipe_image.identifier
+    if identifier is None or identifier == "":
+        return
     try:
         blob_client = _get_blob_client().get_blob_client(
-            container=IMAGES_CONTAINER, blob=identidier)
+            container=IMAGES_CONTAINER, blob=identifier)
         blob_client.delete_blob()
     except Exception as e:
         logger.error(e)

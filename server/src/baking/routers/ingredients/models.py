@@ -1,5 +1,5 @@
 from typing import List, Optional
-
+from datetime import datetime
 from baking.models import NameStr, BakingBaseModel
 from pydantic import Field
 from .enums import IngrediantUnits, IngrediantType, is_type_liquid
@@ -33,10 +33,12 @@ class IngredientCreate(Ingredient):
 
 
 class IngredientUpdate(Ingredient):
-    name: Optional[NameStr] = None
-    quantity: Optional[int] = Field(None, gt=0, lt=100000)
-    units: Optional[IngrediantUnits] = None
-    type: Optional[IngrediantType] = None
+    name: Optional[NameStr]
+    quantity: Optional[int]
+    units: Optional[IngrediantUnits]
+    type: Optional[IngrediantType] 
+    created_at: Optional[datetime]
+
 
 class IngredientRead(Ingredient):
     precentage: Optional[float] = 0.0

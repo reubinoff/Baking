@@ -1,6 +1,7 @@
 from typing import Optional, List
 from datetime import datetime
 from baking.models import FileUploadData, PyObjectId
+from pydantic import validate_arguments, ValidationError
 
 from motor.motor_asyncio import AsyncIOMotorCollection
 
@@ -14,6 +15,7 @@ def get_collection(db) -> AsyncIOMotorCollection:
     return db[RECIPE_COLLECTION_NAME]
 
 
+@validate_arguments
 async def get(*, db, recipe_id: PyObjectId) -> Optional[RecipeRead]:
     """Returns a recipe based on the given recipe id."""
     collection = get_collection(db)
@@ -32,6 +34,7 @@ async def get_all(*, db) -> List[RecipeRead]:
     return recipes
 
 
+@validate_arguments
 async def create(*, db, recipe_in: RecipeCreate) -> Optional[RecipeRead]:
     """Creates a new Recipe."""
     collection = get_collection(db)
@@ -42,13 +45,16 @@ async def create(*, db, recipe_in: RecipeCreate) -> Optional[RecipeRead]:
     return RecipeRead(**created_recipe_item)
 
 
+@validate_arguments
 async def update(*, db, recipe_id: PyObjectId, recipe_in: RecipeUpdate) -> Optional[RecipeRead]:
     """Updates a recipe."""
+    if isinstance(recipe_id, PyObjectId) is False:
+        recipe_id = PyObjectId(recipe_id)
     collection = get_collection(db)
     recipe_in.updated_at = datetime.now()
     recipe_oid = recipe_id
     update_query = {"$set": recipe_in.dict(exclude_unset=True)}
-    result = await collection.update_one({"_id": recipe_oid}, update_query, upsert=True)
+    result = await collection.update_one({"_id": recipe_oid}, update_query)
     if not result.matched_count or not result.modified_count:
         return None
     recipe = await collection.find_one({"_id": recipe_oid})
@@ -61,6 +67,7 @@ async def update_image(*, db, recipe_id: PyObjectId, image: FileUploadData) -> O
     return await update(db=db, recipe_in=RecipeUpdate(id=recipe_id, **img_dict))
 
 
+@validate_arguments
 async def delete(*, db, recipe_id: PyObjectId) -> bool:
     """Deletes a recipe."""
     collection = get_collection(db)

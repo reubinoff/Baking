@@ -20,7 +20,7 @@ from baking.routers.ingredients.models import IngredientRead
 
 class RecipeImage(BakingBaseModel):
     imageurl: str
-    identidier: str
+    identifier: str
 
 class Recipe(BakingBaseModel):
     name: NameStr
@@ -43,10 +43,10 @@ class RecipeRead(Recipe):
 
     @property    
     def cdn_url(self) -> str:
-        if not self.image or not self.image.identidier:
+        if not self.image or not self.image.identifier:
             image_id = 200 + random.randint(1, 30)
             return f"https://baconmockup.com/300/{ image_id }"
-        return f"{settings.azure_cdn_storage_base_url}/{self.image.identidier}"
+        return f"{settings.azure_cdn_storage_base_url}/{self.image.identifier}"
 
     @property
     def hydration(self) -> int:
@@ -93,8 +93,9 @@ class RecipeCreate(Recipe):
 
 
 class RecipeUpdate(Recipe):
-    name: Optional[NameStr] = None
-    procedures: Optional[List[ProcedureUpdate]] = []
+    name: Optional[NameStr]
+    procedures: Optional[List[ProcedureUpdate]]
+    created_at: Optional[datetime]
 
 
 class RecipePagination(BaseModel):

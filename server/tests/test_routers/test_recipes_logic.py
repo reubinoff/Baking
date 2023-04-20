@@ -1,5 +1,7 @@
+from typing import Any
+from baking.routers.recipe.models import ProcedureCreate
 
-async def test_create_and_update(database, procedures, procedure):
+async def test_create_and_update(database: Any, procedures: list[ProcedureCreate], procedure: ProcedureCreate):
     from baking.routers.recipe.service import create, get, update
     from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
 
@@ -30,7 +32,7 @@ async def test_create_and_update(database, procedures, procedure):
 
 
 
-async def test_hydration(database):
+async def test_hydration(database: Any):
     from baking.routers.recipe.service import create, get, update
     from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
     from baking.routers.procedure.models import ProcedureCreate
@@ -120,7 +122,7 @@ async def test_hydration(database):
     assert t_r.hydration == 50
     assert t_r.procedures[1].procedure_hydration == 33
 
-async def test_ingredients(database):
+async def test_ingredients(database: Any):
     from baking.routers.recipe.service import create, get, update
     from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
     from baking.routers.procedure.models import ProcedureCreate
@@ -215,7 +217,7 @@ async def test_ingredients(database):
             assert i.type == IngrediantType.flour
             assert i.precentage == 0.67
 
-async def test_total_recipe_time(database, recipe_factory, steps, procedure):
+async def test_total_recipe_time(database: Any, recipe_factory, steps: list[ProcedureCreate], procedure: ProcedureCreate):
     recipe = await recipe_factory.create_async()
 
     total_recipe_time = 0
