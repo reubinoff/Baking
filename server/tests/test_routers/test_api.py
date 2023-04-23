@@ -1,4 +1,6 @@
 import pytest
+from mock import patch
+import os
 import schemathesis
 from fastapi.testclient import TestClient
 from schemathesis.checks import ALL_CHECKS, DEFAULT_CHECKS
@@ -115,3 +117,46 @@ async def test_recipe_delete(recipe_factory):
         response = await ac.get(f"/recipe/{recipe.id}")
     assert response.status_code == 404
     assert response.json()["detail"] == "The recipe with this id does not exist"
+
+@pytest.mark.anyio
+async def test_recipe_delete_invalid_id(recipe_factory):
+    from baking.routers.recipe.models import RecipeRead
+
+    _: RecipeRead = await recipe_factory.create_async()
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.delete("/recipe/abc")
+        assert response.status_code == 400
+        assert response.json()["detail"] == "Invalid recipe id"
+
+@pytest.mark.anyio
+async def test_recipe_delete_not_found(recipe_factory):
+    from baking.routers.recipe.models import RecipeRead
+
+    _: RecipeRead = await recipe_factory.create_async()
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.delete(f"/recipe/644016caff25afc6b20de505")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "The recipe with this id does not exist"
+
+@pytest.mark.anyio
+async def test_recipe_update_recipe_img(recipe_factory):
+    from baking.routers.recipe.models import RecipeUpdate, RecipeRead
+
+    recipe = await recipe_factory.create_async()
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(parent_dir + "/test_data/test.jpeg", "rb") as image_file:
+        async with AsyncClient(app=app, base_url="http://test") as ac:
+            # mock the method baking.utils.azure_storage.upload_image_to_blob
+            with patch("baking.utils.azure_storage.upload_image_to_blob") as mock_upload_image_to_blob:
+                mock_upload_image_to_blob.return_value = 'bar'
+                response = await ac.post(f"/recipe/{recipe.id}/img", files={"file": image_file})
+    assert response.status_code == 200
+    assert response.json()["file_path"] == "test.jpeg"
+
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe/{recipe.id}")
+    assert response.status_code == 200
+    r_test = RecipeRead(**response.json())
+    assert r_test.image
+
+

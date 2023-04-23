@@ -4,7 +4,7 @@ environ["DB_PASS"] = "test"
 environ["DB_HOST"] = "localhost"
 environ["DB_NAME"] = "test"
 environ["DB_USER"] = "root"
-environ["azure_storage_connection_string"] = "test.com"
+environ["azure_storage_connection_string"] = ""
 environ["is_debug"] = "True"
 
 

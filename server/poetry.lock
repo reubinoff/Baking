@@ -558,6 +558,19 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "mock"
+version = "5.0.2"
+description = "Rolling backport of unittest.mock for all Pythons"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.extras]
+build = ["twine", "wheel", "blurb"]
+docs = ["sphinx"]
+test = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "motor"
 version = "3.1.1"
 description = "Non-blocking MongoDB driver for Tornado or asyncio"
@@ -1196,7 +1209,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10.0"
-content-hash = "dc6a6c95704183d6aee48b45fab4066c055c4798a8607849d9b799f3b4514e3e"
+content-hash = "07b109fcae8b680a2c01e37a5593524f3315973fd5fba7ccee7f71c7e0bae6c5"
 
 [metadata.files]
 anyio = []
@@ -1242,6 +1255,7 @@ junit-xml = []
 lazy-object-proxy = []
 markupsafe = []
 mccabe = []
+mock = []
 motor = []
 multidict = []
 mypy = []

@@ -29,7 +29,6 @@ class Step(BakingBaseModel):
 class StepUpdate(Step):
     description: Optional[str] 
     duration_in_seconds: Optional[int] = Field(None, gt=0, lt=100000)
-    created_at: Optional[datetime]
 
 ############################################################
 
@@ -97,4 +96,3 @@ class ProcedureUpdate(Procedure):
     name: Optional[NameStr]
     ingredients: Optional[List[IngredientCreate]]
     steps: Optional[List[StepUpdate]]
-    created_at: Optional[datetime]

@@ -19,12 +19,20 @@ from baking.routers.ingredients.models import IngredientRead
 ############################################################
 
 class RecipeImage(BakingBaseModel):
-    imageurl: str
+    url: str
     identifier: str
 
 class Recipe(BakingBaseModel):
     name: NameStr
     description: Optional[str] = Field(None, nullable=True)
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
+
+    _encoders_by_type = {datetime: lambda dt: dt.isoformat(timespec='seconds')}
+
+    def _iter(self, **kwargs):
+        for key, value in super()._iter(**kwargs):
+            yield key, self._encoders_by_type.get(type(value), lambda v: v)(value)
 
 
 class RecipeRead(Recipe):
@@ -35,6 +43,8 @@ class RecipeRead(Recipe):
     total_recipe_time: Optional[int]
 
     image: Optional[RecipeImage]
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
 
 
@@ -91,11 +101,16 @@ class RecipeRead(Recipe):
 class RecipeCreate(Recipe):
     procedures: Optional[List[ProcedureCreate]] = []
 
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
+
 
 class RecipeUpdate(Recipe):
     name: Optional[NameStr]
     procedures: Optional[List[ProcedureUpdate]]
     created_at: Optional[datetime]
+    updated_at: datetime = Field(default_factory=datetime.now)
+    image: Optional[RecipeImage]
 
 
 class RecipePagination(BaseModel):

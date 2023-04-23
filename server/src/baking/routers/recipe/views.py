@@ -165,12 +165,14 @@ async def update_recipe_img(*,
             detail="Upload failed",
         )
     try:
-        recipe = update_image(db=db,
-                              recipe=recipe, image=uploaded_file)
+        recipe = await update_image(db=db,
+                              recipe_id=recipe_id, image=uploaded_file)
     except Exception as e:
         delete_image_from_blob(uploaded_file.identifier)
         raise HTTPException(
             status_code=status.HTTP_410_GONE,
             detail="Update failed",
         )
-    return {"file_path": file.filename, "is_valid": is_file_image, **uploaded_file.dict()}
+        
+    return {"file_path": file.filename, "is_valid": is_file_image, "image":recipe.image.dict()}
+

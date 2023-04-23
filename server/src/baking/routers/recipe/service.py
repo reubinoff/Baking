@@ -61,10 +61,11 @@ async def update(*, db, recipe_id: PyObjectId, recipe_in: RecipeUpdate) -> Optio
     return RecipeRead(**recipe)
 
 
+@validate_arguments
 async def update_image(*, db, recipe_id: PyObjectId, image: FileUploadData) -> Optional[RecipeRead]:
     """Updates the image of a recipe."""
     img_dict = {"image": image.dict()}
-    return await update(db=db, recipe_in=RecipeUpdate(id=recipe_id, **img_dict))
+    return await update(db=db,recipe_id=recipe_id, recipe_in=RecipeUpdate(**img_dict))
 
 
 @validate_arguments

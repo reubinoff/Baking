@@ -62,6 +62,9 @@ def delete_all_images_from_blob():
 ###################################################################################################
 
 class FakeAzureBlobClient:
+    def __init__(self):
+        self.url = "https://fake.blob.core.windows.net/images/123.jpeg"
+        self.identifier = "123.jpeg"
     def upload_blob(self, file_content):
         pass
 

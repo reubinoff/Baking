@@ -36,8 +36,7 @@ class IngredientUpdate(Ingredient):
     name: Optional[NameStr]
     quantity: Optional[int]
     units: Optional[IngrediantUnits]
-    type: Optional[IngrediantType] 
-    created_at: Optional[datetime]
+    type: Optional[IngrediantType]
 
 
 class IngredientRead(Ingredient):
