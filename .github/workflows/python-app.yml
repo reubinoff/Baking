@@ -14,7 +14,7 @@ jobs:
     test:
         runs-on: ubuntu-latest
         services:
-          mongo:
+          mongodb:
             # Docker Hub image
             image: mongo:6.0.5
             # Provide the password for mongo
