@@ -16,7 +16,7 @@ jobs:
         services:
           mongodb:
             # Docker Hub image
-            image: mongo:6.0.5
+            image: mongo
             # Provide the password for mongo
             env:
               MONGO_INITDB_ROOT_USERNAME: root
