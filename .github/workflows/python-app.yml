@@ -89,16 +89,17 @@ jobs:
         BASE_REPO: reubinoff/baking
         REGISTRY: reubinoff.azurecr.io
       steps:
-        - name: 'Login via Azure CLI'
-          uses: azure/login@v1
-          with:
-            creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
+        # - name: 'Login via Azure CLI'
+        #   uses: azure/login@v1
+        #   with:
+        #     creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
         - uses: azure/webapps-deploy@v2
           with:
             app-name: ${{ env.AZURE_WEBAPP_NAME }}
             images: ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
+            publish-profile: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
         
-        - name: Azure logout
-          run: |
-            az logout
+        # - name: Azure logout
+        #   run: |
+        #     az logout
 
