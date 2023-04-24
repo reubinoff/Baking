@@ -92,7 +92,7 @@ jobs:
         - name: 'Login via Azure CLI'
           uses: azure/login@v1
           with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
+            creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
         - uses: azure/webapps-deploy@v2
           with:
             app-name: ${{ env.AZURE_WEBAPP_NAME }}
