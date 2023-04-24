@@ -1,70 +1,45 @@
 from typing import List, Optional
-
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-)
-from sqlalchemy.ext.hybrid import hybrid_property
-
-from baking.database.core import Base
-from baking.models import NameStr, OurBase, PrimaryKey
-from baking.models import ProcedureMixin
+from datetime import datetime
+from baking.models import NameStr, BakingBaseModel
 from pydantic import Field
-from .enums import IngrediantUnits, IngrediantType, is_liquid
+from .enums import IngrediantUnits, IngrediantType, is_type_liquid
 
 ############################################################
 # SQL models...
 ############################################################
 
 
-class Ingredient(Base, ProcedureMixin):
+class Ingredient(BakingBaseModel):
     """
     for example: water, 30, grams, flour
     """
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    quantity = Column(Integer)
-    units = Column(String, default=IngrediantUnits.grams)
-    type = Column(String, default=IngrediantType.Other)
+    name: NameStr
+    quantity: Optional[int] = Field(1, gt=0, lt=100000)
+    units: Optional[IngrediantUnits] = Field(IngrediantUnits.grams)
+    type: Optional[IngrediantType] = Field(IngrediantType.Other)
 
-    @hybrid_property
+    @property
     def is_liquid(self) -> bool:
-        a =  is_liquid(self.type)
+        a = is_type_liquid(self.type)
         return a
 
 
-############################################################
-# Pydantic models...
-############################################################
-class IngredientBase(OurBase):
-    name: NameStr
-    quantity: Optional[int] = Field(1, gt=0, lt=100000)
-    units: Optional[IngrediantUnits] = IngrediantUnits.grams
-    type: Optional[IngrediantType] = IngrediantType.Other
-
-
-class IngredientRead(IngredientBase):
-    id: PrimaryKey
-    procedure_id: PrimaryKey
-    precentage: Optional[float] = 0.0
-    is_liquid: Optional[bool]
-
-
-
-class IngredientCreate(IngredientBase):
-    id: Optional[PrimaryKey]
+class IngredientCreate(Ingredient):
     name: NameStr
     quantity: int = Field(1, gt=0, lt=100000)
-    units: IngrediantUnits
-    type: IngrediantType
+    units: IngrediantUnits = Field(IngrediantUnits.grams)
+    type: IngrediantType = Field(IngrediantType.Other)
 
 
-class IngredientUpdate(IngredientBase):
-    pass
+class IngredientUpdate(Ingredient):
+    name: Optional[NameStr]
+    quantity: Optional[int]
+    units: Optional[IngrediantUnits]
+    type: Optional[IngrediantType]
 
 
-class IngredientPagination(OurBase):
-    total: int
-    ingredients: List[IngredientBase] = []
+class IngredientRead(Ingredient):
+    precentage: Optional[float] = 0.0
+
+############################################################

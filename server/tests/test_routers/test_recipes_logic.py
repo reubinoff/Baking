@@ -1,59 +1,45 @@
-def test_create_and_update(session, cleaner, procedures, procedure):
-    from baking.routers.recipe.service import create, get
-    from baking.routers.recipe.models import RecipeCreate
+from typing import Any
+from baking.routers.recipe.models import ProcedureCreate
+
+async def test_create_and_update(database: Any, procedures: list[ProcedureCreate], procedure: ProcedureCreate):
+    from baking.routers.recipe.service import create, get, update
+    from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
 
     recipe_name = "test"
 
     recipe_in = RecipeCreate(name=recipe_name, procedures=procedures)
 
-    recipe = create(db_session=session, recipe_in=recipe_in)
+    recipe = await create(db=database, recipe_in=recipe_in)
     assert recipe
     assert len(recipe.procedures) == len(procedures)
-    assert recipe.procedures[0].recipe.name == recipe_name
+    assert recipe.name == recipe_name
 
-    recipe.procedures.append(procedure)
-    # print(recipe.dict())
-    recipe = get(db_session=session, recipe_id=recipe.id)
-    assert recipe
-    assert len(recipe.procedures) == len(procedures) + 1
+    procedures.append(procedure)
+    
+    recipe_in = RecipeUpdate(
+        procedures=procedures
+    )
+    t_recipe = await update(
+        db=database,
+        recipe_id=recipe.id,
+        recipe_in=recipe_in,
+    )
 
-
-def test_query(session, recipe):
-    from baking.routers.recipe.service import get
-    from baking.routers.recipe.models import RecipeUpdate
-    from baking.database.services import search_filter_sort_paginate, common_parameters
-
-    common_parameters_in = {
-        "db_session": session,
-        "page": 1,
-        "items_per_page": 1,
-        "sort_by": [],
-        "descending": [],
-        "query_str": recipe.name
-    }
-   
-    recipe_q = search_filter_sort_paginate(model="Recipe", **common_parameters_in)
-
-    assert recipe_q
-    assert len(recipe_q["items"]) == 1
-    assert recipe.name == recipe_q["items"][0].name
-
-    common_parameters_in["query_str"] = "not_found"
-    recipe_q = search_filter_sort_paginate(model="Recipe", **common_parameters_in)
-
-    assert recipe_q
-    assert len(recipe_q["items"]) == 0
+    t_recipe = await get(db=database, recipe_id=recipe.id)
+    assert t_recipe
+    assert len(t_recipe.procedures) == len(procedures)
+    assert t_recipe.name == recipe_name
 
 
-def test_hydration(session):
-    from baking.routers.recipe.service import create, get
-    from baking.routers.recipe.models import RecipeCreate
-    from baking.routers.procedure.models import Procedure, ProcedureCreate
-    from baking.routers.procedure.service import create as create_procedure
+
+async def test_hydration(database: Any):
+    from baking.routers.recipe.service import create, get, update
+    from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
+    from baking.routers.procedure.models import ProcedureCreate
     from baking.routers.ingredients.models import IngredientCreate, Ingredient
     from baking.routers.ingredients.enums import IngrediantUnits, IngrediantType
 
-    ingridients = [
+    ingredients = [
         IngredientCreate(
             name="i1_name",
             quantity=100,
@@ -76,17 +62,13 @@ def test_hydration(session):
 
     procedure_in = ProcedureCreate(
         name="test_procedure",
-        ingredients=ingridients,
-    )
-    procedure = create_procedure(
-        db_session=session,
-        procedure_in=procedure_in,
+        ingredients=ingredients,
     )
 
     recipe_name = "test"
 
-    recipe_in = RecipeCreate(name=recipe_name, procedures=[procedure])
-    recipe = create(db_session=session, recipe_in=recipe_in)
+    recipe_in = RecipeCreate(name=recipe_name, procedures=[procedure_in])
+    recipe = await create(db=database, recipe_in=recipe_in)
     assert recipe
     assert recipe.hydration == 150
 
@@ -98,9 +80,19 @@ def test_hydration(session):
             type=IngrediantType.flour,
         )
     )
-    assert recipe.hydration == 75
+    r = RecipeUpdate(
+        procedures=recipe.procedures
+    )
+    recipe = await update(
+        db=database,
+        recipe_id=recipe.id,
+        recipe_in=r,
+    )
+    t_r = await get(db=database, recipe_id=recipe.id)
 
-    p_new = Procedure(
+    assert t_r.hydration == 75
+
+    recipe.procedures.append( ProcedureCreate(
         name="newone",
         ingredients=[
             Ingredient(
@@ -116,19 +108,25 @@ def test_hydration(session):
                 type=IngrediantType.flour,
             ),
         ],
+    ))
+    r = RecipeUpdate(
+        procedures=recipe.procedures
     )
-    recipe.procedures.append(p_new)
+    recipe = await update(
+        db=database,
+        recipe_id=recipe.id,
+        recipe_in=r,
+    )
+    t_r = await get(db=database, recipe_id=recipe.id)
+    assert len(t_r.procedures) == 2
+    assert t_r.hydration == 50
+    assert t_r.procedures[1].procedure_hydration == 33
 
-    assert recipe.hydration == 50
-    assert p_new.procedure_hydration == 33
-
-
-def test_ingredients(session, cleaner):
-    from baking.routers.recipe.service import create, get
-    from baking.routers.recipe.models import RecipeCreate
-    from baking.routers.procedure.models import Procedure, ProcedureCreate
-    from baking.routers.procedure.service import create as create_procedure
-    from baking.routers.ingredients.models import IngredientCreate, Ingredient
+async def test_ingredients(database: Any):
+    from baking.routers.recipe.service import create, get, update
+    from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
+    from baking.routers.procedure.models import ProcedureCreate
+    from baking.routers.ingredients.models import IngredientCreate
     from baking.routers.ingredients.enums import IngrediantUnits, IngrediantType
 
     ingredients = [
@@ -171,23 +169,17 @@ def test_ingredients(session, cleaner):
         name="test_procedure",
         ingredients=ingredients,
     )
-    procedure_a = create_procedure(
-        db_session=session,
-        procedure_in=procedure_in_a,
-    )
-    procedure_b = create_procedure(
-        db_session=session,
-        procedure_in=procedure_in_b,
-    )
 
     recipe_name = "test"
 
     recipe_in = RecipeCreate(name=recipe_name, procedures=[
-                             procedure_a, procedure_b])
-    recipe = create(db_session=session, recipe_in=recipe_in)
+                             procedure_in_a, procedure_in_b])
+    recipe = await create(db=database, recipe_in=recipe_in)
     assert recipe
 
-    r = get(db_session=session, recipe_id=recipe.id)
+    r = await get(db=database, recipe_id=recipe.id)
+    assert r.total_liquid == 550
+    assert r.total_solid == 700
     for i in r.ingredients:
         if i.name == "i3_name":
             assert i.quantity == 400
@@ -195,4 +187,42 @@ def test_ingredients(session, cleaner):
             assert i.type == IngrediantType.flour
             assert i.precentage == 0.57
 
-        
+    # add ingredients to procedure
+    procedure_in_c = ProcedureCreate(
+        name="test_procedure",
+        ingredients=[IngredientCreate(
+            name="i3_name",
+            quantity=200,
+            units=IngrediantUnits.grams,
+            type=IngrediantType.flour,
+        )],
+    )
+    r.procedures.append(procedure_in_c)
+    r = RecipeUpdate(
+        procedures=r.procedures
+    )
+    recipe = await update(
+        db=database,
+        recipe_id=recipe.id,
+        recipe_in=r,
+    )
+    t_r = await get(db=database, recipe_id=recipe.id)
+    assert len(t_r.procedures) == 3
+    assert t_r.total_liquid == 550
+    assert t_r.total_solid == 900
+    for i in t_r.ingredients:
+        if i.name == "i3_name":
+            assert i.quantity == 600
+            assert i.units == IngrediantUnits.grams
+            assert i.type == IngrediantType.flour
+            assert i.precentage == 0.67
+
+async def test_total_recipe_time(database: Any, recipe_factory, steps: list[ProcedureCreate], procedure: ProcedureCreate):
+    recipe = await recipe_factory.create_async()
+
+    total_recipe_time = 0
+    for p in recipe.procedures:
+        for s in p.steps:
+            total_recipe_time += s.duration_in_seconds
+    print(total_recipe_time)
+    assert recipe.total_recipe_time == total_recipe_time

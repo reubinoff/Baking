@@ -1,5 +1,4 @@
 import logging
-import colorlog
 import sys
 from baking.config import settings
 import logging.config

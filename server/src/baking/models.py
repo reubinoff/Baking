@@ -1,85 +1,67 @@
+import pymongo
+from typing import Annotated
+from enum import Enum
 from datetime import datetime
-
-from pydantic import BaseModel, HttpUrl
-from pydantic.types import conint, constr
-
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy import Column, DateTime, Integer, event, ForeignKey
-from sqlalchemy.orm import relationship
-
-from baking.database.filters.filters import Operator
-########################## SQLAlchemy models ##########################
+from bson.objectid import ObjectId
+from pydantic import BaseModel, HttpUrl, constr, conint
 
 
-class RecipeMixin(object):
-    """Recipe mixin"""
-
-    @declared_attr
-    def recipe_id(cls):  # noqa
-        return Column(Integer, ForeignKey("recipe.id", ondelete="CASCADE"))
-
-    @declared_attr
-    def recipe(cls):  # noqa
-        return relationship("Recipe")
+from pydantic.fields import Field
 
 
-class ProcedureMixin(object):
-    """Procedure mixin"""
-
-    @declared_attr
-    def procedure_id(cls):  # noqa
-        return Column(Integer, ForeignKey("procedure.id", ondelete="CASCADE"))
-
-    @declared_attr
-    def procedure(cls):  # noqa
-        return relationship("Procedure")
-
-class TimeStampMixin(object):
-    """Timestamping mixin"""
-
-    created_at = Column(DateTime, default=datetime.utcnow)
-    created_at._creation_order = 9998
-    updated_at = Column(DateTime, default=datetime.utcnow)
-    updated_at._creation_order = 9998
-
-    @staticmethod
-    def _updated_at(mapper, connection, target):
-        target.updated_at = datetime.utcnow()
+NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=3)
+PrimaryKey = constr(strip_whitespace=True)
+class PyObjectId(ObjectId):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
 
     @classmethod
-    def __declare_last__(cls):
-        event.listen(cls, "before_update", cls._updated_at)
+    def validate(cls, v):
+        if not ObjectId.is_valid(v):
+            raise ValueError("Invalid objectid")
+        return ObjectId(v)
+
+    @classmethod
+    def __modify_schema__(cls, field_schema):
+        field_schema.update(type="string")
+    
 
 
-#################################################################
-
-PrimaryKey = conint(gt=0, lt=2147483647)
-NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=3)
-
-########################## Pydantic models ##########################
-class OurBase(BaseModel):
+class BakingBaseModel(BaseModel):
     class Config:
-        orm_mode = True
-        validate_assignment = True
+        allow_population_by_field_name = True
         arbitrary_types_allowed = True
-        anystr_strip_whitespace = True
-
         json_encoders = {
-            # custom output conversion for datetime
-            datetime: lambda v: v.strftime("%Y-%m-%dT%H:%M:%SZ")
-            if v
-            else None
+            ObjectId: str
         }
-
 
 class FileUploadData(BaseModel):
     url: HttpUrl
-    identidier: str
+    identifier: str
+
+    _encoders_by_type = {HttpUrl: lambda url: str(url)}
+    def _iter(self, **kwargs):
+        for key, value in super()._iter(**kwargs):
+            yield key, self._encoders_by_type.get(type(value), lambda v: v)(value)
 
 
-class FilterObject(BaseModel):
-    model: str
-    field: str
-    op: str
-    value: str
+class SortOrder(str, Enum):
+    ASCENDING = pymongo.ASCENDING
+    DESCENDING = pymongo.DESCENDING
+
+class FilterOperator(str, Enum):
+    CONTAINS = "$regex"
+    EQUALS = "$eq"
+    GREATER_THAN = "$gt"
+    GREATER_THAN_OR_EQUAL = "$gte"
+    LESS_THAN = "$lt"
+    LESS_THAN_OR_EQUAL = "$lte"
+
+
+class FilterCriteria(BaseModel):
+    # name mak length 3 chars
+    name: str = Field(..., min_length=1, max_length=20)
+    value: str = Field(..., min_length=1, max_length=50)
+    operator: FilterOperator = Field(..., min_length=1, max_length=50)
 #################################################################

@@ -1,82 +1,73 @@
 from typing import List, Optional
-from baking.models import NameStr, PrimaryKey, RecipeMixin
+from datetime import datetime
+from baking.models import NameStr
 from pydantic import Field
-from sqlalchemy.ext.hybrid import hybrid_property
 
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import relationship
-from baking.database.core import Base
-from baking.models import OurBase
+from baking.models import BakingBaseModel
 
 from baking.routers.ingredients.models import (
     Ingredient,
     IngredientCreate,
     IngredientRead,
 )
-from baking.routers.steps.models import (
-    Step,
-    StepCreate,
-    StepRead,
-)
-from baking.routers.ingredients.enums import IngrediantType, is_liquid
+
 
 ############################################################
-# SQL models...
+# Pydantic models...
 ############################################################
-class Procedure(Base, RecipeMixin):
+
+
+class Step(BakingBaseModel):
     """
-    Procedure in the recipe
+    for example: mixing, mix all the ingredients, 10 seconds
     """
+    name: NameStr
+    description: Optional[str] = Field(None, nullable=True, min_length=2)
+    duration_in_seconds: int = Field(1, gt=0, lt=100000)
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    description = Column(String)
-    order = Column(Integer)
 
-    ingredients = relationship(
-        "Ingredient",
-        lazy="subquery",
-        cascade="all, delete-orphan",
-        back_populates="procedure",
-    )
+class StepUpdate(Step):
+    description: Optional[str] 
+    duration_in_seconds: Optional[int] = Field(None, gt=0, lt=100000)
 
-    steps = relationship(
-        "Step",
-        lazy="subquery",
-        cascade="all, delete-orphan",
-        back_populates="procedure",
-    )
+############################################################
 
-    @hybrid_property
-    def total_liquid(self) -> int:
+class Procedure(BakingBaseModel):
+    name: NameStr
+    description: Optional[str] = Field(None, nullable=True, min_length=2)
+    order: Optional[int] = Field(1, gt=0, lt=100)
+    steps: Optional[List[Step]]
+    ingredients: Optional[List[IngredientRead]]
+
+    @property
+    def total_liquid(self) -> int:  # TODO: need to cover if the units are different
         liquid = 0
         if self.ingredients is not None:
             i: Ingredient = None
             for i in self.ingredients:
-                if is_liquid(i.type) is True:
+                if i.is_liquid is True:
                     liquid = liquid + i.quantity
 
         return liquid
 
-    @hybrid_property
+    @property
     def total_solid(self) -> int:
         solid = 0
         if self.ingredients is not None:
             i: Ingredient = None
             for i in self.ingredients:
-                if is_liquid(i.type) is False:
+                if i.is_liquid is False:
                     solid = solid + i.quantity
 
         return solid
-
-    @hybrid_property
+    
+    @property
     def procedure_hydration(self) -> int:
         if self.total_solid > 0:
             return int((self.total_liquid / self.total_solid) * 100)
         return 100  # precent hydration
 
-
-    @hybrid_property
+    @property
     def duration_in_seconds(self) -> int:
         total_time = 0
         if self.steps is not None:
@@ -90,35 +81,18 @@ class Procedure(Base, RecipeMixin):
 ############################################################
 # Pydantic models...
 ############################################################
-class ProcedureBase(OurBase):
-    name: NameStr
-    description: Optional[str] = Field(None, nullable=True)
-    order: Optional[int] = Field(1, gt=0, lt=100)
-
-    ingredients: Optional[List[IngredientRead]]
-    steps: Optional[List[StepRead]]
 
 
-class ProcedureRead(ProcedureBase):
-    id: PrimaryKey
-    procedure_hydration: int
-    duration_in_seconds: int
+class ProcedureRead(Procedure):
+    pass
 
 
-class ProcedureCreate(ProcedureBase):
-    id: Optional[PrimaryKey]
+class ProcedureCreate(Procedure):
     ingredients: Optional[List[IngredientCreate]] = []
-    steps: Optional[List[StepCreate]] = []
+    steps: Optional[List[Step]] = []
 
 
-class ProcedureUpdate(ProcedureBase):
+class ProcedureUpdate(Procedure):
     name: Optional[NameStr]
-    ingredients: Optional[List[IngredientCreate]] = []
-    steps: Optional[List[StepCreate]] = []
-
-
-class ProcedurePagination(OurBase):
-    total: int
-    itemsPerPage: int
-    page: int
-    items: List[ProcedureRead] = []
+    ingredients: Optional[List[IngredientCreate]]
+    steps: Optional[List[StepUpdate]]

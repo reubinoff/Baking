@@ -7,17 +7,15 @@ authors = ["Moshe Reubinoff <reubinoff@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.10.0"
 
-fastapi = "^0.95.0"
 colorlog = "^6.4.1"
-psycopg2-binary = "^2.9.5"
-python-multipart = "^0.0.5"
 pydantic =  {extras = ["dotenv"], version = "^1.10.2"}
 uvicorn = "0.20.0"
 azure-storage-blob = "^12.13.1"
 cryptography = "^39.0.0"
-SQLAlchemy-Utils = "^0.40.0"
-SQLAlchemy = "^2.0.8"
-alembic = "^1.10.2"
+fastapi = "0.95.1"
+pandas = "^2.0.0"
+motor = "^3.1.1"
+python-multipart = "^0.0.6"
 
 
 
@@ -35,8 +33,14 @@ pytest = "^7.2.2"
 nox = "^2022.11.21"
 nox-poetry = "^1.0.2"
 flake8 = "^6.0.0"
+pytest-asyncio = "^0.21.0"
+polyfactory = "^2.0.0"
+httpx = "^0.24.0"
+anyio = "^3.6.2"
+mock = "^5.0.2"
 
-
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
 
 [build-system]
 requires = ["poetry-core>=1.2.*"]

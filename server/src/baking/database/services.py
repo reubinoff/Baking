@@ -1,215 +1,100 @@
-from http.client import HTTPException
 import json
 import logging
-
+import pymongo
+from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List
-from baking.models import FilterObject
+from baking.models import FilterCriteria, FilterOperator
 
 from fastapi import Depends, Query
-import sqlalchemy
+from typing import Annotated
 
-from sqlalchemy import  orm, func, desc
-
-from baking.database.filters import apply_pagination, apply_sort, apply_filters
-# from sqlalchemy_filters.models import Field, get_model_from_spec
-
-from pydantic.error_wrappers import ErrorWrapper, ValidationError
-from pydantic import BaseModel
-from pydantic.types import Json, constr
+from pydantic.types import Json
 
 from baking.exceptions import (
-    FieldNotFound,
-    FieldNotFoundError,
-    BadFilterFormat,
     InvalidFilterError,
 )
-
-from .core import (
-    Base,
-    get_class_by_tablename,
-    get_model_name_by_tablename,
-    get_db,
-)
-
+from .manage import get_db
 
 LOGGER = logging.getLogger(__name__)
 
-QueryStr = constr(
-    regex=r"^[ -~\u0590-\u05FF\u200f\u200e ]+$", min_length=1)
-
-def common_parameters(
-    db_session: orm.Session = Depends(get_db),
-    page: int = Query(1, gt=0, lt=2147483647),
-    items_per_page: int = Query(5, alias="itemsPerPage", gt=-2, lt=2147483647),
-    sort_by: List[str] = Query([], alias="sortBy[]"),
-    descending: List[bool] = Query([], alias="descending[]"),
-    query_str: QueryStr = Query(None, alias="q"),
-    filter_spec: Json = Query([], alias="filter"),
-
-):
-
-    return {
-        "db_session": db_session,
-        "page": page,
-        "items_per_page": items_per_page,
-        "sort_by": sort_by,
-        "descending": descending,
-        "query_str": query_str,
-        "filter_spec": filter_spec,
-    }
-
-
-def search(*, query_str: str, query: orm.Query, model: str, sort=False):
-    """Perform a search based on the query."""
-    search_model = get_class_by_tablename(model)
-
-    if not query_str.strip():
-        return query
-
-    vector = search_model.search_vector
-
-    query = query.filter(vector.op("@@")(func.tsq_parse(query_str)))
-    if sort:
-        query = query.order_by(desc(func.ts_rank_cd(vector, func.tsq_parse(query_str))))
-
-    return query.params(term=query_str)
-
-
-def create_sort_spec(model, sort_by, descending):
-    """Creates sort_spec."""
-    sort_spec = []
-    if sort_by and descending:
-        for field, direction in zip(sort_by, descending):
-            if field not in model.__fields__:
-                continue
-            direction = "desc" if direction else "asc"
-
-            # we have a complex field, we may need to join
-            if "." in field:
-                complex_model, complex_field = field.split(".")[-2:]
-
-                sort_spec.append(
-                    {
-                        "model": get_model_name_by_tablename(complex_model),
-                        "field": complex_field,
-                        "direction": direction,
-                    }
-                )
-            else:
-                sort_spec.append(
-                    {"model": model, "field": field, "direction": direction}
-                )
-    LOGGER.debug(f"Sort Spec: {json.dumps(sort_spec, indent=2)}")
-    return sort_spec
+class CommonQueryParams:
+    def __init__(   self,
+                    page: Annotated[int, Query(alias="page", gt=0)] = 1, 
+                    items_per_page: Annotated[int, Query(alias="itemsPerPage", gt=0, lt=200)] = 5,
+                    sort_by: Annotated[str, Query(alias="sortBy")] = "",
+                    descending: Annotated[bool, Query(alias="descending")] = False,
+                    filter_criteria: Annotated[Json[List[Json]] | None, Query(alias="filter")] = None,
+                    ):
+            self.page = page
+            self.items_per_page = items_per_page
+            self.sort_by = sort_by
+            self.descending = descending
+            self.filter_criteria = filter_criteria
 
 
 
-def search_filter_sort_paginate(
-    db_session,
-    model,
+async def search_filter_sort_paginate(
+    db: AsyncIOMotorDatabase,
     *,
-    query_str: str = None,
-    filter_spec: List[FilterObject] = None,
-    page: int = 1,
-    items_per_page: int = 5,
-    sort_by: List[str] = None,
-    descending: List[bool] = None,
+    collection_name: str,
+    params: CommonQueryParams
     # current_user: DispatchUser = None,
     # role: UserRoles = UserRoles.member,
 ):
     """Common functionality for searching, filtering, sorting, and pagination."""
-    if db_session is None:
-        return
-    model_cls = get_class_by_tablename(model)
-    try:
-        query = db_session.query(model_cls)
+    # Build the MongoDB filter criteria based on the provided parameters
+    validate_filter_spec(params.filter_criteria)
+    filter_query = {}
+    if params.filter_criteria:
+        for criteria in params.filter_criteria:
+            filter_query[criteria.name] = {f"{criteria.operator}": criteria.value}
 
+    # Connect to the MongoDB server and perform the search
+    collection = db[collection_name]
 
-        if query_str:
-            sort = False if sort_by else True
-            query = search(query_str=query_str, query=query,
-                    model=model, sort=sort)
+    results = collection.find(filter_query)
+    # Apply sorting if requested
+    if params.sort_by:
+        sort_order = pymongo.DESCENDING if params.descending else pymongo.ASCENDING
+        sort_criteria = [(params.sort_by, sort_order)]
+        results = results.sort(sort_criteria)
 
+    # Apply pagination if requested
+    total_items = await collection.count_documents(filter_query)
+    offset = (params.page - 1) * params.items_per_page
+    results = results.skip(offset).limit(params.items_per_page)
 
-        if filter_spec and isinstance(filter_spec, List):
-            validate_filter(filter_spec)
-            # query = apply_filter_specific_joins(model_cls, filter_spec, query)
-            query = apply_filters(query, filter_spec)
-    
-        if sort_by is not None and isinstance(sort_by, List) and len(sort_by) > 0:
-            # print(sort_by)
-            sort_spec = create_sort_spec(model, sort_by, descending)
-            query = apply_sort(query, sort_spec)
-
-    except FieldNotFound as e:
-        raise ValidationError(
-            [
-                ErrorWrapper(FieldNotFoundError(msg=str(e)), loc="filter"),
-            ],
-            model=BaseModel,
-        )
-    except BadFilterFormat as e:
-        raise ValidationError(
-            [ErrorWrapper(InvalidFilterError(msg=str(e)), loc="filter")],
-            model=BaseModel,
-        )
-
-    except AttributeError as e:
-        raise ValidationError(
-            [
-                ErrorWrapper(FieldNotFoundError(msg=str(e)), loc="filter"),
-            ],
-            model=BaseModel,
-        )
-
-    if items_per_page == -1:
-        items_per_page = None
-
-    # sometimes we get bad input for the search function
-    # TODO investigate moving to a different way to parsing queries that won't through errors
-    # e.g. websearch_to_tsquery
-    # https://www.postgresql.org/docs/current/textsearch-controls.html
-    try:
-        query, pagination = apply_pagination(
-            query, page_number=page, page_size=items_per_page
-        )
-        LOGGER.debug(query.statement.compile(compile_kwargs={"literal_binds": True}))
-    except sqlalchemy.exc.ProgrammingError as e:
-        LOGGER.debug(e)
-        return {
-            "items": [],
-            "itemsPerPage": items_per_page,
-            "page": page,
-            "total": 0,
-        }
-    except Exception as e:
-        LOGGER.exception("Error applying pagination.", e)
-        return {
-            "items": [],
-            "itemsPerPage": items_per_page,
-            "page": page,
-            "total": 0,
-        }
-
+    # Return the search results
     return {
-        "items": query.all(),
-        "itemsPerPage": pagination.page_size,
-        "page": pagination.page_number,
-        "total": pagination.total_results,
+        "total": total_items,
+        "itemsPerPage": params.items_per_page,
+        "page": params.page,
+        "items": await results.to_list(length=params.items_per_page),
     }
 
-def validate_filter(filter_spec):
-    for f in filter_spec:
-        if isinstance(f, dict) is False:
-            LOGGER.warning("Invalid filter: %s", str(f))
-            raise ValidationError(
-                        [
-                            ErrorWrapper(FieldNotFoundError(
-                                msg=str("invalid filter")), loc="filter"),
-                        ],
-                        model=FilterObject,
-                    )
+
+
+
+
+def validate_filter_spec(filter_spec: List[dict]):
+    """
+    Validate the filter_spec parameter to ensure that all criteria are well-formed.
+    Raises an InvalidFilterError with a 400 status code if any criteria are invalid.
+    """
+    if not filter_spec:
+        return
+    if not isinstance(filter_spec, list):
+        raise InvalidFilterError(
+            status_code=400, detail="Invalid filter: filter is not a list")
+    for criteria in filter_spec:
+        if not getattr(criteria, "name") or not getattr(criteria, "value") or not getattr(criteria, "operator"):
+            raise InvalidFilterError(
+                status_code=400, detail="Invalid filter criteria: missing name, value, or operator")
+        if not isinstance(criteria.name, str) or not isinstance(criteria.value, str) or not isinstance(criteria.operator, str):
+            raise InvalidFilterError(
+                status_code=400, detail="Invalid filter criteria: name, value, or operator is not a string")
         try:
-            _ =FilterObject.parse_obj(f)
-        except ValidationError as e:
-            LOGGER.warning("Invalid filter: %s", e)
+            operator = FilterOperator(criteria.operator)
+        except ValueError:
+            raise InvalidFilterError(
+                status_code=400, detail=f"Invalid filter criteria operator: {criteria.operator}")
