@@ -7,10 +7,11 @@ from starlette.config import environ
 
 
 # set test config
-environ["DB_PASS"] = "rootsql"
-environ["DB_HOST"] = "localhost"
+
 environ["DB_NAME"] = "baking_db_test_int_" + \
     str(int(random.random() * 1000000))
+environ["DB_CONN_STR"] = "mongodb://baking-mongo:CS8kyisdLwXjNxmL0OKLcA2vJGlJcPft9sPs8k1dUcaI2QCGo3nsme64snV5YSgThLDoTiNsjDnGACDbDWCrIA==@baking-mongo.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@baking-mongo@"
+
 environ["DB_USER"] = "postgres"
 environ["azure_storage_connection_string"] = ""
 
@@ -19,7 +20,7 @@ word_site = "https://www.mit.edu/~ecprice/wordlist.10000"
 response = requests.get(word_site)
 WORDS = response.content.splitlines()
 # print (WORDS)
-TOTAL_RECIPES = 35
+TOTAL_RECIPES = 50
 
 URL = "http://localhost:8888"
 # URL = "https://service.baking.reubinoff.com"
@@ -80,7 +81,7 @@ def create_recipes():
 
 
     t = requests.get(
-        f"{URL}/recipe?page=1&itemsPerPage=500")
+        f"{URL}/recipe?page=1&itemsPerPage=199")
 
     ids = [t["id"] for t in t.json()["items"]]
     print(t.status_code)
@@ -97,7 +98,7 @@ def create_recipes():
 
 def delete_all_recipes():
     t = requests.get(
-        f"{URL}/recipe?page=1&itemsPerPage=500")
+        f"{URL}/recipe?page=1&itemsPerPage=199")
 
     ids = [t["id"] for t in t.json()["items"]]
     print(t.status_code)

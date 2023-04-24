@@ -13,7 +13,7 @@ LOGGER = logging.getLogger(__name__)
 
 @lru_cache
 def get_sql_url() -> str:
-    return f"mongodb://{app_settings.db_user}:{app_settings.db_pass}@{app_settings.db_host}:27017/"
+    return f"{app_settings.db_conn_str}"
 
 
 def get_db(request: Request):
@@ -25,8 +25,11 @@ def init_database() -> AsyncIOMotorDatabase:
     LOGGER.debug(f"conn str: {get_sql_url()}")
     # check if mongiodb exists
     mongo_client: AsyncIOMotorClient = AsyncIOMotorClient(get_sql_url())
-   
-    db = mongo_client[app_settings.db_name]
+    try:
+        db = mongo_client[app_settings.db_name]
+    except Exception as e:
+        LOGGER.error(f"Database {app_settings.db_name} does not exist")
+        raise e
 
     if settings.db_debug_drop_in_startup is True:
         mongo_client.drop_database(app_settings.db_name)

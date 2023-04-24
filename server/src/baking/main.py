@@ -41,4 +41,3 @@ async def startup_event():
 
 logger.info(f"Debug mode is : {settings.is_debug}")
 logger.info(f"Start service: {settings.service_name}")
-logger.info(f"db host: {settings.db_host}")

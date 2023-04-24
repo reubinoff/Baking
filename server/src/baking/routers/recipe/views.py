@@ -34,7 +34,7 @@ async def get_recipes(*, db: appDb, common: Annotated[CommonQueryParams, Depends
     """
     LOGGER.info("Get Recipes filter={0}".format(common.filter_criteria))
     pagination = await search_filter_sort_paginate(
-        collection_name="recipe", params=common)
+        db=db, collection_name="recipe", params=common)
     return RecipePagination(**pagination).dict()
 
 

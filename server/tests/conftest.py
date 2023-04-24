@@ -49,8 +49,8 @@ async def database():
     """
     Creates a new database 
     """
-    from baking.database.manage import drop_database
-    mock_db = mongo_db
+    from baking.database.manage import drop_database, init_database
+    mock_db = init_database()
     yield mock_db
     await drop_database()
     
