@@ -144,7 +144,7 @@ async def update_recipe_img(*,
             detail="No file was uploaded.",
         )
     try:
-        recipe = check_and_raise(db=db, recipe_id=recipe_id)
+        recipe = await check_and_raise(db=db, recipe_id=recipe_id)
     except HTTPException as e:
         raise e
     except Exception as e:
