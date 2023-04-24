@@ -24,7 +24,7 @@ jobs:
               MONGO_INITDB_DATABASE: test
 
             ports:
-              - "27017:27017"
+              - "53535:27017"
             # Set health checks to wait until mongo has started
             options: >-
               --health-cmd "db.getSiblingDB('admin').auth('root', 'test')"
