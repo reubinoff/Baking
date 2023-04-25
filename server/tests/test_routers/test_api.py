@@ -48,6 +48,25 @@ async def test_get_recipe(recipe_factory):
 
 
 @pytest.mark.anyio
+async def test_get_all(recipe_factory):
+    from baking.routers.recipe.models import RecipeRead
+
+    recipes = await recipe_factory.create_batch_async(10)
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe")
+    assert response.status_code == 200
+    # assert RecipeRead(**response.json()) == recipe
+    items_data = response.json()["items"]
+    assert len(items_data) == 5 # default page size is 5
+    assert RecipeRead(**items_data[0]) == recipes[0]
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe?page=2")
+    assert response.status_code == 200
+    items_data = response.json()["items"]
+    assert len(items_data) == 5
+    assert RecipeRead(**items_data[0]) == recipes[5]
+
+@pytest.mark.anyio
 async def test_recipe_get_invalid_id(recipe_factory):
     from baking.routers.recipe.models import RecipeRead
 

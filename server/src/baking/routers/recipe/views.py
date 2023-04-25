@@ -26,6 +26,7 @@ appDb = Annotated[AsyncIOMotorDatabase, Depends(get_db)]
 
 router = APIRouter()
 
+RECIPE_COLLECTION_NAME = "recipes"
 
 @router.get("", response_model=RecipePagination)
 async def get_recipes(*, db: appDb, common: Annotated[CommonQueryParams, Depends()]):
@@ -34,8 +35,8 @@ async def get_recipes(*, db: appDb, common: Annotated[CommonQueryParams, Depends
     """
     LOGGER.info("Get Recipes filter={0}".format(common.filter_criteria))
     pagination = await search_filter_sort_paginate(
-        db=db, collection_name="recipe", params=common)
-    return RecipePagination(**pagination).dict()
+        db=db, collection_name=RECIPE_COLLECTION_NAME, params=common)
+    return RecipePagination(**pagination)
 
 
 @router.get("/{recipe_id}", response_model=RecipeRead)
@@ -56,7 +57,7 @@ async def get_recipe(*, db: appDb, recipe_id: PrimaryKey):
         )
 
 
-@router.post("")
+@router.post("", response_model=RecipeRead)
 async def create_recipe(*, db: appDb, recipe_in: RecipeCreate):
     """
     Create a new recipes.
@@ -64,7 +65,7 @@ async def create_recipe(*, db: appDb, recipe_in: RecipeCreate):
     try:
         recipe = await create(db=db, recipe_in=recipe_in)
         return recipe
-    except HTTPException as e:
+    except HTTPException as e: 
         raise e
     except Exception as e:
         LOGGER.exception(e)

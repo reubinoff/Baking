@@ -26,4 +26,8 @@ class AsyncPersistenceHandler(AsyncPersistenceProtocol[RecipeCreate]):
         for recipe in data:
             await get_recipes_collection(mongo_db).insert_one(recipe.dict())
         await sleep(0.0001)
-        return data
+        created_recipes = []
+        async for recipe in get_recipes_collection(mongo_db).find():
+            created_recipes.append(RecipeRead(**recipe))
+        return created_recipes
+        

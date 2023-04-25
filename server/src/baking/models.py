@@ -25,6 +25,11 @@ class PyObjectId(ObjectId):
     @classmethod
     def __modify_schema__(cls, field_schema):
         field_schema.update(type="string")
+
+    @classmethod
+    def __str__(cls, v):
+        return str(v)
+        
     
 
 

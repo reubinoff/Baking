@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 # from baking.routers.steps.models import Step
 from pydantic import Field
+from bson import ObjectId
 import random
 
 from pydantic import BaseModel
@@ -28,12 +29,17 @@ class Recipe(BakingBaseModel):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
-    _encoders_by_type = {datetime: lambda dt: dt.isoformat(timespec='seconds')}
+    _encoders_by_type = {
+        datetime: lambda dt: dt.isoformat(timespec='seconds'),
+        PyObjectId: lambda id: str(id),
+        ObjectId: lambda id: str(id), 
+    }
 
     def _iter(self, **kwargs):
         for key, value in super()._iter(**kwargs):
             yield key, self._encoders_by_type.get(type(value), lambda v: v)(value)
 
+   
 
 class RecipeRead(Recipe):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
@@ -45,9 +51,6 @@ class RecipeRead(Recipe):
     image: Optional[RecipeImage]
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
-
-
-
 
     procedures: List[ProcedureRead]
 
