@@ -5,7 +5,7 @@ description = ""
 authors = ["Moshe Reubinoff <reubinoff@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10.0"
+python = "^3.10.11"
 
 colorlog = "^6.4.1"
 pydantic =  {extras = ["dotenv"], version = "^1.10.2"}
