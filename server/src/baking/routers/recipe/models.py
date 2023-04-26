@@ -5,7 +5,7 @@ from pydantic import Field
 from bson import ObjectId
 import random
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator, root_validator
 from baking.config import settings
 from baking.models import BakingBaseModel, NameStr, PyObjectId
 
@@ -43,9 +43,7 @@ class Recipe(BakingBaseModel):
 
 class RecipeRead(Recipe):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    hydration: int
 
-    cdn_url: Optional[str]
     total_recipe_time: Optional[int]
 
     image: Optional[RecipeImage]
@@ -54,12 +52,21 @@ class RecipeRead(Recipe):
 
     procedures: List[ProcedureRead]
 
-    @property    
-    def cdn_url(self) -> str:
-        if not self.image or not self.image.identifier:
+    # propeties #######################
+    cdn_url: str 
+    ####################################
+
+    @root_validator(pre=True)
+    def _cdn_url(cls, values) -> str:
+        image = values.get('image')
+
+        if not image or not image.identifier:
             image_id = 200 + random.randint(1, 30)
-            return f"https://baconmockup.com/300/{ image_id }"
-        return f"{settings.azure_cdn_storage_base_url}/{self.image.identifier}"
+            values["cdn_url"] = f"https://baconmockup.com/300/{ image_id }"
+            return values
+        values["cdn_url"] = f"{settings.azure_cdn_storage_base_url}/{image.identifier}"
+        return values
+
 
     @property
     def hydration(self) -> int:

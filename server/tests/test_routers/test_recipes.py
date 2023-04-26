@@ -8,7 +8,7 @@ async def test_get(database, recipe_factory):
     from baking.routers.recipe.service import get
     t_recipe = await get(db=database, recipe_id=recipe.id)
     assert t_recipe.id == recipe.id
-    assert t_recipe.cdn_url 
+    assert isinstance(t_recipe.cdn_url, str) 
 
 
 @pytest.mark.asyncio
