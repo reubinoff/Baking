@@ -56,15 +56,17 @@ class RecipeRead(Recipe):
     cdn_url: str 
     ####################################
 
-    @root_validator(pre=True)
+    @root_validator(pre=True) # TODO: change to comuted_field after pydantic 2.0 released
     def _cdn_url(cls, values) -> str:
         image = values.get('image')
+        _id = values.get('_id')
 
-        if not image or not image.identifier:
-            image_id = 200 + random.randint(1, 30)
+        if not image or not image["identifier"]:
+            image_id = 200 + int(str(_id)[0])
             values["cdn_url"] = f"https://baconmockup.com/300/{ image_id }"
             return values
-        values["cdn_url"] = f"{settings.azure_cdn_storage_base_url}/{image.identifier}"
+        i = image["identifier"]
+        values["cdn_url"] = f"{settings.azure_cdn_storage_base_url}/{i}"
         return values
 
 

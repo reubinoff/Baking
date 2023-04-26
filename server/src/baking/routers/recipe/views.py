@@ -169,7 +169,7 @@ async def update_recipe_img(*,
         recipe = await update_image(db=db,
                               recipe_id=recipe_id, image=uploaded_file)
     except Exception as e:
-        delete_image_from_blob(uploaded_file.identifier)
+        delete_image_from_blob(uploaded_file)
         raise HTTPException(
             status_code=status.HTTP_410_GONE,
             detail="Update failed",

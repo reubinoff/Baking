@@ -65,6 +65,8 @@ async def test_get_all(recipe_factory):
     items_data = response.json()["items"]
     assert len(items_data) == 5
     assert RecipeRead(**items_data[0]) == recipes[5]
+    assert isinstance(items_data[0]["cdn_url"] , str)
+    
 
 @pytest.mark.anyio
 async def test_recipe_get_invalid_id(recipe_factory):
