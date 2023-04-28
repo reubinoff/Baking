@@ -34,22 +34,53 @@ class PyObjectId(ObjectId):
 
 
 class BakingBaseModel(BaseModel):
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {
-            ObjectId: str
-        }
 
-class FileUploadData(BaseModel):
-    url: HttpUrl
-    identifier: str
+    @classmethod
+    def get_properties(cls):
+        return (
+            prop for prop in dir(cls)
+            if isinstance(getattr(cls, prop), property) and prop not in ("__values__", "fields")
+        )
 
-    _encoders_by_type = {HttpUrl: lambda url: str(url)}
+    _encoders_by_type = {
+        datetime: lambda dt: dt.isoformat(timespec='seconds'),
+        PyObjectId: lambda id: str(id),
+        ObjectId: lambda id: str(id), 
+        HttpUrl: lambda url: str(url)
+    }
+
     def _iter(self, **kwargs):
         for key, value in super()._iter(**kwargs):
             yield key, self._encoders_by_type.get(type(value), lambda v: v)(value)
 
+    @classmethod
+    def get_properties(cls):
+        return [prop for prop in dir(cls) if isinstance(getattr(cls, prop), property)]
+
+    def dict(self, *args, **kwargs):
+        self.__dict__.update(
+            {prop: getattr(self, prop) for prop in self.get_properties()}
+        )
+        return super().dict(*args, **kwargs)
+
+    def json(
+        self,
+        *args,
+        **kwargs,
+    ) -> str:
+        self.__dict__.update(
+            {prop: getattr(self, prop) for prop in self.get_properties()}
+        )
+
+        return super().json(*args, **kwargs)
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+
+class FileUploadData(BaseModel):
+    url: HttpUrl
+    identifier: str
 
 class SortOrder(str, Enum):
     ASCENDING = pymongo.ASCENDING

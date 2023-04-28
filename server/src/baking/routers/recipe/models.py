@@ -1,18 +1,14 @@
 from datetime import datetime
 from typing import List, Optional
-# from baking.routers.steps.models import Step
-from pydantic import Field
-from bson import ObjectId
-import random
 
-from pydantic import BaseModel, validator, root_validator
+from pydantic import Field
+
+from pydantic import BaseModel
 from baking.config import settings
 from baking.models import BakingBaseModel, NameStr, PyObjectId
 
 from baking.routers.procedure.models import ProcedureCreate, ProcedureRead, ProcedureUpdate
 from baking.routers.ingredients.models import IngredientRead
-
-# from baking.routers.users.models import User, UserRead
 
 
 ############################################################
@@ -29,17 +25,7 @@ class Recipe(BakingBaseModel):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
-    _encoders_by_type = {
-        datetime: lambda dt: dt.isoformat(timespec='seconds'),
-        PyObjectId: lambda id: str(id),
-        ObjectId: lambda id: str(id), 
-    }
 
-    def _iter(self, **kwargs):
-        for key, value in super()._iter(**kwargs):
-            yield key, self._encoders_by_type.get(type(value), lambda v: v)(value)
-
-   
 
 class RecipeRead(Recipe):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
@@ -53,22 +39,14 @@ class RecipeRead(Recipe):
     procedures: List[ProcedureRead]
 
     # propeties #######################
-    cdn_url: str 
-    ####################################
 
-    @root_validator(pre=True) # TODO: change to comuted_field after pydantic 2.0 released
-    def _cdn_url(cls, values) -> str:
-        image = values.get('image')
-        _id = values.get('_id')
-
-        if not image or not image["identifier"]:
-            image_id = 200 + int(str(_id)[0])
-            values["cdn_url"] = f"https://baconmockup.com/300/{ image_id }"
-            return values
-        i = image["identifier"]
-        values["cdn_url"] = f"{settings.azure_cdn_storage_base_url}/{i}"
-        return values
-
+    @property
+    def cdn_url(self) -> str:
+        if not self.image or not self.image.identifier:
+            image_id = 200 + int(str(self.id)[:1])
+            return f"https://baconmockup.com/300/{ image_id }"
+        i = self.image.identifier
+        return f"{settings.azure_cdn_storage_base_url}/{i}"
 
     @property
     def hydration(self) -> int:
