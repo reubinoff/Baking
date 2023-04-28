@@ -1,6 +1,7 @@
 import logging
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from functools import lru_cache
+from pymongo import MongoClient, TEXT
 
 from starlette.requests import Request
 from baking.config import settings as app_settings
@@ -10,6 +11,9 @@ from baking.config import settings
 
 LOGGER = logging.getLogger(__name__)
 
+INDEXES = {
+    "recipes": ["name", "description"],
+}
 
 @lru_cache
 def get_sql_url() -> str:
@@ -27,6 +31,7 @@ def init_database() -> AsyncIOMotorDatabase:
     mongo_client: AsyncIOMotorClient = AsyncIOMotorClient(get_sql_url())
     try:
         db = mongo_client[app_settings.db_name]
+        _configure_indexes()
     except Exception as e:
         LOGGER.error(f"Database {app_settings.db_name} does not exist")
         raise e
@@ -36,6 +41,19 @@ def init_database() -> AsyncIOMotorDatabase:
         mongo_client[app_settings.db_name]
     return db
 
+def _configure_indexes():
+    """Configures the database indexes."""
+    mongo_client = MongoClient(get_sql_url())
+    db = mongo_client[app_settings.db_name]
+    for collection_name, indexes in INDEXES.items():
+        # create dic of index: "text"
+        indexes = [(index, TEXT) for index in indexes]
+        a = db[collection_name].create_index(indexes)
+    return True
+        
+
+
+    
 
 async def drop_database():
     """Drops the database."""

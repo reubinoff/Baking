@@ -24,12 +24,14 @@ class CommonQueryParams:
                     sort_by: Annotated[str, Query(alias="sortBy")] = "",
                     descending: Annotated[bool, Query(alias="descending")] = False,
                     filter_criteria: Annotated[Json | None, Query(alias="filter")] = None,
+                    query: Annotated[str, Query(alias="q")] = None, # fuzzy search in indexed fields
                     ):
             self.page = page
             self.items_per_page = items_per_page
             self.sort_by = sort_by
             self.descending = descending
             self.filter_criteria = filter_criteria
+            self.query = query
 
 
 
@@ -49,6 +51,9 @@ async def search_filter_sort_paginate(
         filter_obj_list = validate_filter_spec(params.filter_criteria)
         for criteria in filter_obj_list:
             filter_query[criteria.name] = {f"{criteria.operator}": criteria.value}
+    
+    if params.query:
+        filter_query["$text"] = {"$search": params.query}
 
     # Connect to the MongoDB server and perform the search
     collection = db[collection_name]

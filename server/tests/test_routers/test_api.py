@@ -106,6 +106,31 @@ async def test_get_filter(recipe_factory):
 
 
 @pytest.mark.anyio
+async def test_get_query(recipe_factory):
+    from baking.routers.recipe.models import RecipeRead
+    recipe = await recipe_factory.create_async()
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe?q={recipe.name}")
+    assert response.status_code == 200
+    items_data = response.json()["items"]
+    assert len(items_data) == 1
+    assert RecipeRead(**items_data[0]).name == recipe.name
+    # take only part of the name
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe?q={recipe.name[:3]}")
+    assert response.status_code == 200
+    items_data = response.json()["items"]
+    assert len(items_data) == 0
+
+    #change the name
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe?q=REUBINOFF")
+    assert response.status_code == 200
+    items_data = response.json()["items"]
+    assert len(items_data) == 0
+
+
+@pytest.mark.anyio
 async def test_recipe_get_invalid_id(recipe_factory):
     from baking.routers.recipe.models import RecipeRead
 
