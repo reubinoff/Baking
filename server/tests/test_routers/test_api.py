@@ -47,7 +47,7 @@ async def test_get_recipe(recipe_factory):
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get(f"/recipe/{recipe.id}")
     assert response.status_code == 200
-    assert RecipeRead(**response.json()) == recipe
+    assert response.json() == recipe.dict()
 
 
 @pytest.mark.anyio
@@ -61,13 +61,13 @@ async def test_get_all(recipe_factory):
     # assert RecipeRead(**response.json()) == recipe
     items_data = response.json()["items"]
     assert len(items_data) == 5 # default page size is 5
-    assert RecipeRead(**items_data[0]) == recipes[0]
+    assert items_data[0] == recipes[0]
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get(f"/recipe?page=2")
     assert response.status_code == 200
     items_data = response.json()["items"]
     assert len(items_data) == 5
-    assert RecipeRead(**items_data[0]) == recipes[5]
+    assert items_data[0] == recipes[5]
     assert isinstance(items_data[0]["cdn_url"] , str)
     
 @pytest.mark.anyio
@@ -165,9 +165,9 @@ async def test_recipe_create(procedures):
     assert len(response.json()["procedures"]) == len(recipe.procedures)
 
     async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await ac.get(f"/recipe/{response.json()['_id']}")
-    assert response.status_code == 200
-    assert RecipeRead(**response.json()) == RecipeRead(**response.json())
+        response_create = await ac.get(f"/recipe/{response.json()['id']}")
+    assert response_create.status_code == 200
+    assert response_create.json() == response.json()
 
 
 @pytest.mark.anyio

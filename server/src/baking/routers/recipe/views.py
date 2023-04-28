@@ -28,7 +28,8 @@ router = APIRouter()
 
 RECIPE_COLLECTION_NAME = "recipes"
 
-@router.get("", response_model=RecipePagination)
+
+@router.get("", response_model=RecipePagination, response_model_by_alias=False)
 async def get_recipes(*, db: appDb, common: Annotated[CommonQueryParams, Depends()]):
     """
     Get all recipes.
@@ -39,7 +40,7 @@ async def get_recipes(*, db: appDb, common: Annotated[CommonQueryParams, Depends
     return RecipePagination(**pagination)
 
 
-@router.get("/{recipe_id}", response_model=RecipeRead)
+@router.get("/{recipe_id}", response_model=RecipeRead, response_model_by_alias=False)
 async def get_recipe(*, db: appDb, recipe_id: PrimaryKey):
     """
     Get a recipe.
@@ -57,7 +58,7 @@ async def get_recipe(*, db: appDb, recipe_id: PrimaryKey):
         )
 
 
-@router.post("", response_model=RecipeRead)
+@router.post("", response_model=RecipeRead, response_model_by_alias=False)
 async def create_recipe(*, db: appDb, recipe_in: RecipeCreate):
     """
     Create a new recipes.
@@ -75,7 +76,7 @@ async def create_recipe(*, db: appDb, recipe_in: RecipeCreate):
         )
 
 
-@router.delete("/{recipe_id}", response_model=RecipeRead)
+@router.delete("/{recipe_id}", response_model=RecipeRead, response_model_by_alias=False)
 async def delete_recipe(*, db: appDb, recipe_id: PrimaryKey):
     """Delete a recipe."""
     try:
@@ -94,7 +95,7 @@ async def delete_recipe(*, db: appDb, recipe_id: PrimaryKey):
         )
 
 
-@router.put("/{recipe_id}", response_model=RecipeRead)
+@router.put("/{recipe_id}", response_model=RecipeRead, response_model_by_alias=False)
 async def update_recipe(
     *,
     db: appDb,
