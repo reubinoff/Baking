@@ -1,4 +1,6 @@
 import pytest
+import urllib
+import json
 from mock import patch
 import os
 import schemathesis
@@ -9,6 +11,7 @@ from httpx import AsyncClient
 from hypothesis import settings, HealthCheck
 
 from baking.main import app
+from baking.models import FilterCriteria, FilterOperator
 
 
 schemathesis.fixups.install(["fast_api"])
@@ -67,6 +70,40 @@ async def test_get_all(recipe_factory):
     assert RecipeRead(**items_data[0]) == recipes[5]
     assert isinstance(items_data[0]["cdn_url"] , str)
     
+@pytest.mark.anyio
+async def test_get_filter(recipe_factory):
+    from baking.routers.recipe.models import RecipeRead
+    recipe = await recipe_factory.create_async()
+    critiria = FilterCriteria(
+        name="name", operator=FilterOperator.EQUALS, value=recipe.name)
+    url_encoded_critiria = urllib.parse.quote(json.dumps([critiria.dict()]))
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe?filter={url_encoded_critiria}")
+    assert response.status_code == 200
+    items_data = response.json()["items"]
+    assert len(items_data) == 1
+    assert RecipeRead(**items_data[0]).name == recipe.name
+    # take only part of the name
+    critiria = FilterCriteria(
+        name="name", operator=FilterOperator.CONTAINS, value=recipe.name[:3])
+    url_encoded_critiria = urllib.parse.quote(json.dumps([critiria.dict()]))
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe?filter={url_encoded_critiria}")
+    assert response.status_code == 200
+    items_data = response.json()["items"]
+    assert len(items_data) == 1
+    assert RecipeRead(**items_data[0]).name == recipe.name
+
+    #change the name
+    critiria = FilterCriteria(
+        name="name", operator=FilterOperator.EQUALS, value="REUBINOFF")
+    url_encoded_critiria = urllib.parse.quote(json.dumps([critiria.dict()]))
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe?filter={url_encoded_critiria}")
+    assert response.status_code == 200
+    items_data = response.json()["items"]
+    assert len(items_data) == 0
+
 
 @pytest.mark.anyio
 async def test_recipe_get_invalid_id(recipe_factory):

@@ -23,7 +23,7 @@ class CommonQueryParams:
                     items_per_page: Annotated[int, Query(alias="itemsPerPage", gt=0, lt=200)] = 5,
                     sort_by: Annotated[str, Query(alias="sortBy")] = "",
                     descending: Annotated[bool, Query(alias="descending")] = False,
-                    filter_criteria: Annotated[Json[List[Json]] | None, Query(alias="filter")] = None,
+                    filter_criteria: Annotated[Json | None, Query(alias="filter")] = None,
                     ):
             self.page = page
             self.items_per_page = items_per_page
@@ -43,10 +43,11 @@ async def search_filter_sort_paginate(
 ):
     """Common functionality for searching, filtering, sorting, and pagination."""
     # Build the MongoDB filter criteria based on the provided parameters
-    validate_filter_spec(params.filter_criteria)
+   
     filter_query = {}
     if params.filter_criteria:
-        for criteria in params.filter_criteria:
+        filter_obj_list = validate_filter_spec(params.filter_criteria)
+        for criteria in filter_obj_list:
             filter_query[criteria.name] = {f"{criteria.operator}": criteria.value}
 
     # Connect to the MongoDB server and perform the search
@@ -73,10 +74,7 @@ async def search_filter_sort_paginate(
     }
 
 
-
-
-
-def validate_filter_spec(filter_spec: List[dict]):
+def validate_filter_spec(filter_spec: list) -> list[FilterCriteria]:
     """
     Validate the filter_spec parameter to ensure that all criteria are well-formed.
     Raises an InvalidFilterError with a 400 status code if any criteria are invalid.
@@ -86,7 +84,8 @@ def validate_filter_spec(filter_spec: List[dict]):
     if not isinstance(filter_spec, list):
         raise InvalidFilterError(
             status_code=400, detail="Invalid filter: filter is not a list")
-    for criteria in filter_spec:
+    filter_obj_list: list[FilterCriteria] = _cast_to_filter_Critiria_list(filter_spec)
+    for criteria in filter_obj_list:
         if not getattr(criteria, "name") or not getattr(criteria, "value") or not getattr(criteria, "operator"):
             raise InvalidFilterError(
                 status_code=400, detail="Invalid filter criteria: missing name, value, or operator")
@@ -98,3 +97,21 @@ def validate_filter_spec(filter_spec: List[dict]):
         except ValueError:
             raise InvalidFilterError(
                 status_code=400, detail=f"Invalid filter criteria operator: {criteria.operator}")
+    return filter_obj_list
+
+
+def _cast_to_filter_Critiria_list(filter_spec: list) -> list[FilterCriteria]:
+    """
+    Cast the filter_spec parameter to list of FilterCriteria.
+    """
+    if not filter_spec:
+        return
+    if not isinstance(filter_spec, list):
+        filter_spec = json.loads(filter_spec)
+    filter_obj_list: list[FilterCriteria] = []
+    for criteria in filter_spec:
+        if isinstance(criteria, dict):
+            filter_obj_list.append(FilterCriteria(**criteria))
+        elif isinstance(criteria, FilterCriteria):
+            filter_obj_list.append(criteria)
+    return filter_obj_list
