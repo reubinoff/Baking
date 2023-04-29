@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback , useEffect} from "react";
 import {
   Stepper,
   Step,
@@ -10,6 +10,7 @@ import {
 import { useForm, FormProvider } from "react-hook-form";
 import StepperButtonsControl from "./StepperButtonsControl";
 import NewRecipeBasicInfo from "./NewRecipeBasicInfo";
+import NewProcedure from "./NewProcedure";
 
 const NewRecipeMain = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -30,22 +31,32 @@ const NewRecipeMain = () => {
     console.log(data);
   };
 
-  const AddStep = () => {
-    console.log("AddStep");
-    const newStep = {
-      label: "Step 3",
-      content: (
-        <div>
-          <TextField
-            {...methods.register("tetete", { required: true, maxLength: 5 })}
-            id="tetete"
-            label="tetete"
+  
+  const GenerateProcedure = (
+    (procedureName) => {
+      return {
+        label: procedureName,
+        content: (
+          <div>
+          <NewProcedure
+
+            register={methods.register}
+            errors={methods.formState.errors}
           />
+          <Button onClick={AddStep}>Add Step</Button>
         </div>
-      ),
+        ),
+      };
+    }
+  );
+    const AddStep = () => {
+      const procedureName = `Procedure ${steps.length}`;
+      setSteps((prevSteps) => [
+        ...prevSteps,
+        GenerateProcedure(procedureName),
+      ]);
     };
-    setSteps([...steps, newStep]);
-  };
+   
   const [steps, setSteps] = useState([
     {
       label: "Basic info",
@@ -56,22 +67,9 @@ const NewRecipeMain = () => {
         />
       ),
     },
-    {
-      label: "Step 2",
-      content: (
-        <div>
-          <TextField
-            {...methods.register("tetete", { required: true, maxLength: 5 })}
-            id="tetete"
-            label="tetete"
-          />
-          <Button variant="contained" onClick={AddStep}>
-            Add
-          </Button>
-        </div>
-      ),
-    },
+    GenerateProcedure("Procedure 1"),
   ]);
+    
 
   return (
     <FormProvider {...methods}>
