@@ -3,16 +3,10 @@ import urllib
 import json
 from mock import patch
 import os
-import schemathesis
-from fastapi.testclient import TestClient
-from schemathesis.checks import ALL_CHECKS, DEFAULT_CHECKS
 from httpx import AsyncClient
-
-from hypothesis import settings, HealthCheck
 
 from baking.main import app
 from baking.models import FilterCriteria, FilterOperator
-
 
 
 @pytest.mark.anyio
