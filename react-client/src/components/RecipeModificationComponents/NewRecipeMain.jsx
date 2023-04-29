@@ -5,20 +5,18 @@ import {
   StepLabel,
   TextField,
   StepContent,
+  Button,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import StepperButtonsControl from "./StepperButtonsControl";
 import NewRecipeBasicInfo from "./NewRecipeBasicInfo";
-
 
 const NewRecipeMain = () => {
   const [activeStep, setActiveStep] = useState(0);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const methods = useForm({
+    mode: "onChange",
+  });
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -32,25 +30,51 @@ const NewRecipeMain = () => {
     console.log(data);
   };
 
-  const steps = [
+  const AddStep = () => {
+    console.log("AddStep");
+    const newStep = {
+      label: "Step 3",
+      content: (
+        <div>
+          <TextField
+            {...methods.register("tetete", { required: true, maxLength: 5 })}
+            id="tetete"
+            label="tetete"
+          />
+        </div>
+      ),
+    };
+    setSteps([...steps, newStep]);
+  };
+  const [steps, setSteps] = useState([
     {
       label: "Basic info",
-      content: <NewRecipeBasicInfo register={register} errors={errors} />,
+      content: (
+        <NewRecipeBasicInfo
+          register={methods.register}
+          errors={methods.formState.errors}
+        />
+      ),
     },
     {
       label: "Step 2",
       content: (
-        <TextField
-          {...register("tetete", { required: true, maxLength: 5 })}
-          id="tetete"
-          label="tetete"
-        />
+        <div>
+          <TextField
+            {...methods.register("tetete", { required: true, maxLength: 5 })}
+            id="tetete"
+            label="tetete"
+          />
+          <Button variant="contained" onClick={AddStep}>
+            Add
+          </Button>
+        </div>
       ),
     },
-  ];
+  ]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider {...methods}>
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map(({ label, content }) => (
           <Step key={label}>
@@ -59,16 +83,16 @@ const NewRecipeMain = () => {
               {content}
               <StepperButtonsControl
                 activeStep={activeStep}
-                handleNext={handleNext}
+                handleNext={activeStep === steps.length - 1 ? methods.handleSubmit(onSubmit) : handleNext}
                 handleBack={handleBack}
-                isLastStep={activeStep === steps.length-1}
-                errors={errors}
+                isLastStep={activeStep === steps.length - 1}
+                errors={methods.formState.errors}
               />
             </StepContent>
           </Step>
         ))}
       </Stepper>
-    </form>
+    </FormProvider>
   );
 };
 
