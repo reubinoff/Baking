@@ -66,7 +66,7 @@ class StepFactory(ModelFactory[Step]):
     __model__ = Step
 
     name = Use(ModelFactory.__random__.choice, ['step_' + str(i) for i in range(100)])
-    description = Use(ModelFactory.__random__.choice, ['description_' + str(i) for i in range(100)])
+    description = Use(ModelFactory.__random__.choice, ['why am description_' + str(i) for i in range(100)])
     duration_in_seconds = Use(ModelFactory.__random__.randint, 1, 10000)
     
 class IngredientFactory(ModelFactory[IngredientCreate]):
@@ -94,7 +94,7 @@ class RecipeFactory(ModelFactory[RecipeCreate]):
     __async_persistence__ = AsyncPersistenceHandler()
 
     name = Use(ModelFactory.__random__.choice, ['recipe_' + str(i) for i in range(100)])
-    description = Use(ModelFactory.__random__.choice, ['description_' + str(i) for i in range(100)])
+    description = Use(ModelFactory.__random__.choice, ['why am description_' + str(i) for i in range(100)])
     procedures = Use(ProcedureFactory.batch, 2)
     pass
 

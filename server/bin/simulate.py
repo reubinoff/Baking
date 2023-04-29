@@ -91,7 +91,7 @@ def create_recipes():
         if index%3 == 0:
             continue
         t = requests.post(
-            f"{URL}/recipe/{i}/img", files=files[i%2])
+            f"{URL}/recipe/{i}/img", files=files[random.randint(0, 1)])
         
         print(t.status_code)
 

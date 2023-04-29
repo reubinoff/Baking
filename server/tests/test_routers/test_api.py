@@ -14,30 +14,6 @@ from baking.main import app
 from baking.models import FilterCriteria, FilterOperator
 
 
-schemathesis.fixups.install(["fast_api"])
-
-schema = schemathesis.from_asgi("/docs/openapi.json", app, base_url="/")
-
-
-@pytest.fixture(scope="session")
-def token():
-    client = TestClient(app)
-    response = client.post(
-        "/api/v1/default/auth/register",
-        json={"email": "test@example.com", "password": "test123"},
-    )
-    assert response.status_code == 200
-    return response.json()["token"]
-
-
-# @schema.parametrize()
-# @settings(suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much])
-# def test_api(case):
-#     # def test_api(db, token, case):
-#     case.headers = case.headers or {}
-#     # case.headers["Authorization"] = f"Bearer {token}"
-#     response = case.call_asgi(base_url="http://testserver/")
-#     case.validate_response(response, checks=DEFAULT_CHECKS)
 
 @pytest.mark.anyio
 async def test_get_recipe(recipe_factory):
@@ -128,6 +104,25 @@ async def test_get_query(recipe_factory):
     assert response.status_code == 200
     items_data = response.json()["items"]
     assert len(items_data) == 0
+
+
+@pytest.mark.anyio
+async def test_get_query_in_description(recipe_factory):
+    from baking.routers.recipe.models import RecipeRead
+    recipe = await recipe_factory.create_async()
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe?q={recipe.description.split(' ')[2]}")
+    assert response.status_code == 200
+    items_data = response.json()["items"]
+    assert len(items_data) == 1
+    assert RecipeRead(**items_data[0]).name == recipe.name
+    # take only part of the name
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get(f"/recipe?q={recipe.description.split(' ')[2][:3]}")
+    assert response.status_code == 200
+    items_data = response.json()["items"]
+    assert len(items_data) == 0
+
 
 
 @pytest.mark.anyio
