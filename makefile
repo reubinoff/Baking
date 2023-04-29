@@ -27,7 +27,7 @@ build: build-server build-client
 
 test-server:
 	cd server; \
-		poetry run python -m pytest -xv
+		poetry run python -m pytest -xv --cov=src/baking/routers
 
 run-db:
 	docker run --name ${DB_CONTAINER_NAME} --rm -d -e MONGO_INITDB_ROOT_PASSWORD=$(DB_ROOT_PWD) -e MONGO_INITDB_ROOT_USERNAME=$(DB_ROOT_USER) -p 27017:27017 mongo:6.0.5
