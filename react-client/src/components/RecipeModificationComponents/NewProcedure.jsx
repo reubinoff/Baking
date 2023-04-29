@@ -1,15 +1,8 @@
-import React from "react";
-import { PropTypes } from "prop-types";
-import { useForm } from "react-hook-form";
-import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
-import Box from "@mui/material/Box";
-import Dialog from "@mui/material/Dialog";
-import FileUpload from "../recipeComponents/FileUpload";
 
-export default function NewRecipeMain(props) {
-    const [open, setOpen] = React.useState(false);
-    const [data , setData] = React.useState(null);
+
+export default function NewProcedure(props) {
+  const [open, setOpen] = React.useState(false);
+  const [data , setData] = React.useState(null);
   const {
     register,
     handleSubmit,
@@ -24,13 +17,6 @@ export default function NewRecipeMain(props) {
   return (
     //Add Centered Container
     <Box sx={{ display: "flex", justifyContent: "center" }}>
-      <Dialog
-        open={open}
-        // onClose={() => setOpen(false)}
-      >
-        {JSON.stringify(data)}
-        <Button onClick={() => setOpen(false)}>Close</Button>
-      </Dialog>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
@@ -62,15 +48,28 @@ export default function NewRecipeMain(props) {
             helperText="Please enter a Desctiption for your recipe (max 100 characters)"
           />
         </div>
-        <FileUpload limit={3} multiple name="images" />
-        <Button type="submit" variant="contained">
-          Submit
-        </Button>
-      </form>
-    </Box>
-  );
-}
 
-NewRecipeMain.propTypes = {
-  name: PropTypes.string,
-};
+        <div>
+          <TextField
+            color="info"
+            error={
+              errors?.Ingredients?.type === "maxLength" ||
+              errors?.Ingredients?.type === "required"
+            }
+            {...register("Ingredients", { required: true, maxLength: 100 })}
+            id="Ingredients"
+            label="Ingredients"
+            multiline
+            rows={4}
+            helperText="Please enter a Ingredients for your recipe (max 100 characters)"
+          />
+        </div>
+
+        <div>
+          <TextField
+            color="info"
+            error={
+              errors?.Procedure?.type === "maxLength" ||
+              errors?.Procedure?.type === "required"
+            }
+            {...register("Procedure", { required: true, maxLength:

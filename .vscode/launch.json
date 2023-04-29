@@ -42,7 +42,7 @@
       "program": "${workspaceFolder}/server//bin/run.py",
       "env": {
         "SERVICE_NAME": "baking-service",
-        // "DB_CONN_STR": "mongodb://root:test@localhost:27017/",
+        "DB_CONN_STR": "mongodb://root:test@localhost:27017/",
         "DB_NAME": "test",
         "ASYNCIO_DEBUG": "1",
         "DB_DEBUG_DROP_IN_STARTUP": "False",
