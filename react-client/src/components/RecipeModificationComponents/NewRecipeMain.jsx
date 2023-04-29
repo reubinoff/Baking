@@ -1,11 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import {
-  Stepper,
-  Step,
-  StepLabel,
-  StepContent,
-  Button,
-} from "@mui/material";
+import { Stepper, Step, StepLabel, StepContent, Button } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import StepperButtonsControl from "./StepperButtonsControl";
 import NewRecipeBasicInfo from "./NewRecipeBasicInfo";
@@ -18,32 +12,25 @@ const NewRecipeMain = () => {
     mode: "onChange",
   });
 
-  const GetLastProcedureID = useCallback(() => {
-    return procedureId;
-  }, [procedureId]);
-
-  useEffect(() => {
-    if (GetLastProcedureID() > 1) {
-      setSteps((prev) => [
-        ...prev,
-        {
-          label: "Procedure" + GetLastProcedureID(),
-          content: (
-            <div>
-              <NewProcedure
-                register={methods.register}
-                errors={methods.formState.errors}
-              />
-              <Button onClick={() => setProcedureId((prev) => prev + 1)}>
-                Add Step
-              </Button>
-            </div>
-          ),
-        },
-      ]);
-    }
-  }, [GetLastProcedureID, methods.register, methods.formState.errors]);
-
+  const GetNewCompoentn = useCallback(
+    (procedureId) => {
+      return {
+        label: "Procedure" + procedureId,
+        content: (
+          <div>
+            <NewProcedure
+              register={methods.register}
+              errors={methods.formState.errors}
+            />
+            <Button onClick={() => setProcedureId((prev) => prev + 1)}>
+              Add Step
+            </Button>
+          </div>
+        ),
+      };
+    },
+    [methods.register, methods.formState.errors]
+  );
 
   const [steps, setSteps] = useState([
     {
@@ -70,6 +57,12 @@ const NewRecipeMain = () => {
       ),
     },
   ]);
+
+  useEffect(() => {
+    if (procedureId === steps.length) {
+      setSteps((prev) => [...prev, GetNewCompoentn(procedureId)]);
+    }
+  }, [procedureId, GetNewCompoentn, steps.length]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
