@@ -26,7 +26,6 @@ COPY --chown=$USER:$USER scripts/prestart.sh .
 # FastApi Configuration
 ENV service_name="baking-service"
 ENV MODULE_NAME="baking.main"
-ENV VARIABLE_NAME="app"
 ENV WORKERS_PER_CORE=1
 ENV MAX_WORKERS=1
 
