@@ -7,15 +7,16 @@ on:
     - 'react-client/**'
     - '.github/workflows/frontend-react.yml'
 
+env: 
+  RESOURCE_GROUP: baking-aks
+
 
 jobs:
   build-web:
     runs-on: ubuntu-latest
     env:
      ACCOUNT_NAME: reubinoffbakingweb
-     CDN_PROFILE: baking-web-cdb-profile
-     CDN_ENDPOINT: baking
-     RESOURCE_GROUP: baking-aks
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
@@ -30,22 +31,28 @@ jobs:
       - name: 'Login via Azure CLI'
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_WEBSITE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_STORAGE_CDN_LOGIN }}
       
       - name: Upload to blob storage
         uses: azure/CLI@v1
         with:
           inlineScript: |
               az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --overwrite --auth-mode key -d '$web' -s ./react-client/build
+
+  purge-cdn:
+    runs-on: ubuntu-latest
+    env:
+      CDN_PROFILE: baking-web-cdb-profile
+      CDN_ENDPOINT: baking
+    steps:
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_STORAGE_CDN_LOGIN }}
       - name: Purge CDN endpoint
         uses: azure/CLI@v1
         with:
           inlineScript: |
             az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.CDN_PROFILE }} --name ${{ env.CDN_ENDPOINT }} --resource-group ${{ env.RESOURCE_GROUP }}
 
-    # Azure logout
-      - name: logout
-        run: |
-              az logout
-        if: always()
 
