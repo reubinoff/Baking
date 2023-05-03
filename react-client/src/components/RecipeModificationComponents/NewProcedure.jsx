@@ -2,6 +2,8 @@
 import PropTypes from "prop-types";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
+import IngredientsTable from "./Ingredients/IngredientsTable";
+
 
 
 export default function NewProcedure(props) {
@@ -38,6 +40,7 @@ export default function NewProcedure(props) {
         helperText="Please enter a description for your recipe (max 100 characters)"
         sx={{ mb: 2 }}
       />
+      <IngredientsTable />
     </Box>
   );
 }
