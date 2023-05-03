@@ -4,13 +4,43 @@ import IngredientCell from './IngredientCell';
 import IngredientActionsCell from './IngredientActionsCell';
 import { useState } from 'react';
 
-
+class IngredientModel {
+    constructor(name, quantity, unit, type) {
+        this.name = name;
+        this.quantity = quantity;
+        this.unit = unit;
+        this.type = type;
+    }
+}
 
 const IngredientsTable = () => {
     const [ingredients, setIngredients] = useState([
-        { name: 'Flour', quantity: 1, unit: 'cup', type: 'Dry' },
+        new IngredientModel('Flour', 1, 'cup', 'Dry'),
     ]);
     const [editIndex, setEditIndex] = useState(-1);
+
+    const cells = [
+         {
+            label: 'Name',
+            type: 'text',
+        },
+        {
+            label: 'Quantity',
+            type: 'number',
+        },
+       {
+            label: 'Unit',
+            type: 'enum',
+            options: ['cup', 'tsp', 'tbsp', 'oz', 'lb', 'g', 'kg', 'ml', 'l'],
+        },
+         {
+            label: 'Type',
+            type: 'enum',
+            options: ['Dry', 'Wet', 'Dairy', 'Meat', 'Produce', 'Other'],
+        },
+    ];
+
+
 
     const handleDelete = (index) => {
         setEditIndex(-1);
@@ -26,7 +56,7 @@ const IngredientsTable = () => {
     };
 
     const handleAddIngredient = () => {
-        const newIngredient = { name: '', quantity: '', unit: '', type: '' };
+        const newIngredient = new IngredientModel('', 0, '', '');
         setIngredients([...ingredients, newIngredient]);
         const indexOfNewIngredient = ingredients.length;
         setEditIndex(indexOfNewIngredient);
@@ -49,23 +79,22 @@ const IngredientsTable = () => {
             <Table aria-label="Ingredients table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Quantity</TableCell>
-                        <TableCell>Unit</TableCell>
-                        <TableCell>Type</TableCell>
+                        {cells.map((cell) => (
+                            <TableCell key={cell.label}>{cell.label}</TableCell>
+                        ))}
                         <TableCell></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {ingredients.map((ingredient, index) => (
                         <TableRow key={index}>
-                            {['name', 'quantity', 'unit', 'type'].map((key) => (
+                            {cells.map((cell) => (
                                 <IngredientCell
-                                    key={key}
-                                    value={ingredient[key]}
+                                    key={cell.label}
+                                    value={ingredient[cell.label.toLowerCase()]}
                                     index={index}
                                     editIndex={editIndex}
-                                    handleEdit={(index, value) => handleEdit(index, key, value)}
+                                    handleEdit={(index, value) => handleEdit(index, cell.label.toLowerCase(), value)}
                                 />
                             ))}
                             <IngredientActionsCell
