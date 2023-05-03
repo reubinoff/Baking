@@ -92,9 +92,11 @@ const IngredientsTable = () => {
                                 <IngredientCell
                                     key={cell.label}
                                     value={ingredient[cell.label.toLowerCase()]}
+                                    type={cell.type}
                                     index={index}
                                     editIndex={editIndex}
                                     handleEdit={(index, value) => handleEdit(index, cell.label.toLowerCase(), value)}
+                                    options={cell.options}
                                 />
                             ))}
                             <IngredientActionsCell
