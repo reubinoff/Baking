@@ -22,8 +22,8 @@ WORDS = response.content.splitlines()
 # print (WORDS)
 TOTAL_RECIPES = 50
 
-# URL = "http://localhost:8888"
-URL = "https://service.baking.reubinoff.com"
+URL = "http://localhost:8888"
+# URL = "https://service.baking.reubinoff.com"
 
 def get_types():
     from baking.routers.ingredients.enums import IngrediantType

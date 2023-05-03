@@ -102,6 +102,6 @@ export default function ShareButton(params) {
 }
 
 ShareButton.propTypes = {
-  recipe_id: PropTypes.number.isRequired,
+  recipe_id: PropTypes.string.isRequired,
   recipe_name: PropTypes.string.isRequired,
 };
