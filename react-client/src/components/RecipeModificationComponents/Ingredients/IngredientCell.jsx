@@ -2,12 +2,26 @@ import { TextField, TableCell } from '@mui/material';
 import PropTypes from 'prop-types';
 import MenuItem from '@mui/material/MenuItem';
 
+export class IngredientTypeEnum {
+    static get STRING() {
+        return 'string';
+    }
+
+    static get NUMBER() {
+        return 'number';
+    }
+
+    static get ENUM() {
+        return 'enum';
+    }
+}
+
 const IngredientCell = ({ value, index, editIndex, handleEdit, type, options }) => {
 
     const handleInternalEdit = (e) => handleEdit(index, e.target.value);
     const getEditableComponent = () => {
         switch (type) {
-            case 'enum':
+            case IngredientTypeEnum.ENUM:
                 return (
                     <TextField
                         select
@@ -21,7 +35,7 @@ const IngredientCell = ({ value, index, editIndex, handleEdit, type, options }) 
                         ))}
                     </TextField>
                 );
-            case 'number':
+            case IngredientTypeEnum.NUMBER:
                 return (
                     <TextField
                         type="number"

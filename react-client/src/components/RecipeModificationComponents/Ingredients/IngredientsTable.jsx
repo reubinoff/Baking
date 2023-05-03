@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { Button } from '@mui/material';
-import IngredientCell from './IngredientCell';
+import IngredientCell, { IngredientTypeEnum } from './IngredientCell';
 import IngredientActionsCell from './IngredientActionsCell';
 import { useState } from 'react';
 
@@ -20,22 +20,22 @@ const IngredientsTable = () => {
     const [editIndex, setEditIndex] = useState(-1);
 
     const cells = [
-         {
+        {
             label: 'Name',
-            type: 'text',
+            type: IngredientTypeEnum.STRING,
         },
         {
             label: 'Quantity',
-            type: 'number',
+            type: IngredientTypeEnum.NUMBER,
         },
-       {
+        {
             label: 'Unit',
-            type: 'enum',
+            type: IngredientTypeEnum.ENUM,
             options: ['cup', 'tsp', 'tbsp', 'oz', 'lb', 'g', 'kg', 'ml', 'l'],
         },
-         {
+        {
             label: 'Type',
-            type: 'enum',
+            type: IngredientTypeEnum.ENUM,
             options: ['Dry', 'Wet', 'Dairy', 'Meat', 'Produce', 'Other'],
         },
     ];
