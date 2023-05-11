@@ -6,7 +6,7 @@ from starlette.testclient import TestClient
 from .mongo_db import mongo_db
 
 from baking.routers.recipe.models import RecipeCreate
-from baking.routers.ingredients.models import IngrediantType, IngrediantUnits, IngredientCreate
+from baking.routers.ingredients.models import IngredientType, IngredientUnits, IngredientCreate
 from baking.routers.procedure.models import ProcedureCreate, Step
 
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -75,8 +75,8 @@ class IngredientFactory(ModelFactory[IngredientCreate]):
     name = Use(ModelFactory.__random__.choice, [
                'ingredient_' + str(i) for i in range(100)])
     quantity = Use(ModelFactory.__random__.randint, 1, 10000)
-    units = Use(ModelFactory.__random__.choice, list(map(str, IngrediantUnits)))
-    type = Use(ModelFactory.__random__.choice, list(map(str, IngrediantType)))
+    units = Use(ModelFactory.__random__.choice, list(map(str, IngredientUnits)))
+    type = Use(ModelFactory.__random__.choice, list(map(str, IngredientType)))
 
 
 class ProcedureFactory(ModelFactory[ProcedureCreate]):

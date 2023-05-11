@@ -26,8 +26,8 @@ URL = "http://localhost:8888"
 # URL = "https://service.baking.reubinoff.com"
 
 def get_types():
-    from baking.routers.ingredients.enums import IngrediantType
-    TYPES = list(map(str, IngrediantType))
+    from baking.routers.ingredients.enums import IngredientType
+    TYPES = list(map(str, IngredientType))
     return TYPES
 
 def get_words(num_of_words):

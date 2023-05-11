@@ -2,7 +2,7 @@ from typing import List, Optional
 from datetime import datetime
 from baking.models import NameStr, BakingBaseModel
 from pydantic import Field
-from .enums import IngrediantUnits, IngrediantType, is_type_liquid
+from .enums import IngredientUnits, IngredientType, is_type_liquid
 
 ############################################################
 # SQL models...
@@ -16,8 +16,8 @@ class Ingredient(BakingBaseModel):
 
     name: NameStr
     quantity: Optional[int] = Field(1, gt=0, lt=100000)
-    units: Optional[IngrediantUnits] = Field(IngrediantUnits.grams)
-    type: Optional[IngrediantType] = Field(IngrediantType.Other)
+    units: Optional[IngredientUnits] = Field(IngredientUnits.grams)
+    type: Optional[IngredientType] = Field(IngredientType.Other)
 
     @property
     def is_liquid(self) -> bool:
@@ -28,15 +28,15 @@ class Ingredient(BakingBaseModel):
 class IngredientCreate(Ingredient):
     name: NameStr
     quantity: int = Field(1, gt=0, lt=100000)
-    units: IngrediantUnits = Field(IngrediantUnits.grams)
-    type: IngrediantType = Field(IngrediantType.Other)
+    units: IngredientUnits = Field(IngredientUnits.grams)
+    type: IngredientType = Field(IngredientType.Other)
 
 
 class IngredientUpdate(Ingredient):
     name: Optional[NameStr]
     quantity: Optional[int]
-    units: Optional[IngrediantUnits]
-    type: Optional[IngrediantType]
+    units: Optional[IngredientUnits]
+    type: Optional[IngredientType]
 
 
 class IngredientRead(Ingredient):

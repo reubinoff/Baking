@@ -37,26 +37,26 @@ async def test_hydration(database: Any):
     from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
     from baking.routers.procedure.models import ProcedureCreate
     from baking.routers.ingredients.models import IngredientCreate, Ingredient
-    from baking.routers.ingredients.enums import IngrediantUnits, IngrediantType
+    from baking.routers.ingredients.enums import IngredientUnits, IngredientType
 
     ingredients = [
         IngredientCreate(
             name="i1_name",
             quantity=100,
-            units=IngrediantUnits.ml,
-            type=IngrediantType.water,
+            units=IngredientUnits.ml,
+            type=IngredientType.water,
         ),
         IngredientCreate(
             name="i2_name",
             quantity=200,
-            units=IngrediantUnits.ml,
-            type=IngrediantType.oil,
+            units=IngredientUnits.ml,
+            type=IngredientType.oil,
         ),
         IngredientCreate(
             name="i3_name",
             quantity=200,
-            units=IngrediantUnits.grams,
-            type=IngrediantType.flour,
+            units=IngredientUnits.grams,
+            type=IngredientType.flour,
         ),
     ]
 
@@ -76,8 +76,8 @@ async def test_hydration(database: Any):
         Ingredient(
             name="i4_name",
             quantity=200,
-            units=IngrediantUnits.grams,
-            type=IngrediantType.flour,
+            units=IngredientUnits.grams,
+            type=IngredientType.flour,
         )
     )
     r = RecipeUpdate(
@@ -98,14 +98,14 @@ async def test_hydration(database: Any):
             Ingredient(
                 name="i2_name",
                 quantity=200,
-                units=IngrediantUnits.ml,
-                type=IngrediantType.oil,
+                units=IngredientUnits.ml,
+                type=IngredientType.oil,
             ),
             Ingredient(
                 name="i3_name",
                 quantity=600,
-                units=IngrediantUnits.grams,
-                type=IngrediantType.flour,
+                units=IngredientUnits.grams,
+                type=IngredientType.flour,
             ),
         ],
     ))
@@ -127,32 +127,32 @@ async def test_ingredients(database: Any):
     from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
     from baking.routers.procedure.models import ProcedureCreate
     from baking.routers.ingredients.models import IngredientCreate
-    from baking.routers.ingredients.enums import IngrediantUnits, IngrediantType
+    from baking.routers.ingredients.enums import IngredientUnits, IngredientType
 
     ingredients = [
         IngredientCreate(
             name="i1_name",
             quantity=500,
-            units=IngrediantUnits.ml,
-            type=IngrediantType.water,
+            units=IngredientUnits.ml,
+            type=IngredientType.water,
         ),
         IngredientCreate(
             name="i2_name",
             quantity=50,
-            units=IngrediantUnits.ml,
-            type=IngrediantType.oil,
+            units=IngredientUnits.ml,
+            type=IngredientType.oil,
         ),
         IngredientCreate(
             name="i3_name",
             quantity=200,
-            units=IngrediantUnits.grams,
-            type=IngrediantType.flour,
+            units=IngredientUnits.grams,
+            type=IngredientType.flour,
         ),
         IngredientCreate(
             name="i4_name",
             quantity=300,
-            units=IngrediantUnits.grams,
-            type=IngrediantType.flour,
+            units=IngredientUnits.grams,
+            type=IngredientType.flour,
         ),
     ]
 
@@ -161,8 +161,8 @@ async def test_ingredients(database: Any):
         ingredients=[IngredientCreate(
             name="i3_name",
             quantity=200,
-            units=IngrediantUnits.grams,
-            type=IngrediantType.flour,
+            units=IngredientUnits.grams,
+            type=IngredientType.flour,
         )],
     )
     procedure_in_b = ProcedureCreate(
@@ -183,8 +183,8 @@ async def test_ingredients(database: Any):
     for i in r.ingredients:
         if i.name == "i3_name":
             assert i.quantity == 400
-            assert i.units == IngrediantUnits.grams
-            assert i.type == IngrediantType.flour
+            assert i.units == IngredientUnits.grams
+            assert i.type == IngredientType.flour
             assert i.precentage == 0.57
 
     # add ingredients to procedure
@@ -193,8 +193,8 @@ async def test_ingredients(database: Any):
         ingredients=[IngredientCreate(
             name="i3_name",
             quantity=200,
-            units=IngrediantUnits.grams,
-            type=IngrediantType.flour,
+            units=IngredientUnits.grams,
+            type=IngredientType.flour,
         )],
     )
     r.procedures.append(procedure_in_c)
@@ -213,8 +213,8 @@ async def test_ingredients(database: Any):
     for i in t_r.ingredients:
         if i.name == "i3_name":
             assert i.quantity == 600
-            assert i.units == IngrediantUnits.grams
-            assert i.type == IngrediantType.flour
+            assert i.units == IngredientUnits.grams
+            assert i.type == IngredientType.flour
             assert i.precentage == 0.67
 
 async def test_total_recipe_time(database: Any, recipe_factory, steps: list[ProcedureCreate], procedure: ProcedureCreate):

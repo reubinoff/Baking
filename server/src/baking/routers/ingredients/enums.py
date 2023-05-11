@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class IngrediantUnits(str, Enum):
+class IngredientUnits(str, Enum):
     """Grams for sold and ml for liquieds"""
 
     grams = "Grams"
@@ -11,7 +11,7 @@ class IngrediantUnits(str, Enum):
         return str.__str__(self)
 
 
-class IngrediantType(str, Enum):
+class IngredientType(str, Enum):
     water = "Water"
     flour = "Flour"
     salt = "Salt"
@@ -24,20 +24,20 @@ class IngrediantType(str, Enum):
         return str.__str__(self)
 
 
-class IngrediantTypeState(Enum):
+class IngredientTypeState(Enum):
     liquid = 0
     solid = 1
 
 
 convertion_table = {
-    IngrediantType.water: IngrediantTypeState.liquid,
-    IngrediantType.flour: IngrediantTypeState.solid,
-    IngrediantType.salt: IngrediantTypeState.solid,
-    IngrediantType.oil: IngrediantTypeState.liquid,
-    IngrediantType.yeast: IngrediantTypeState.solid,
+    IngredientType.water: IngredientTypeState.liquid,
+    IngredientType.flour: IngredientTypeState.solid,
+    IngredientType.salt: IngredientTypeState.solid,
+    IngredientType.oil: IngredientTypeState.liquid,
+    IngredientType.yeast: IngredientTypeState.solid,
 }
 
 
-def is_type_liquid(ingridiant_type: IngrediantType) -> bool:
-    state = convertion_table.get(ingridiant_type, IngrediantTypeState.solid)
-    return state == IngrediantTypeState.liquid
+def is_type_liquid(ingridiant_type: IngredientType) -> bool:
+    state = convertion_table.get(ingridiant_type, IngredientTypeState.solid)
+    return state == IngredientTypeState.liquid
