@@ -1,9 +1,9 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { Button } from '@mui/material';
 import IngredientCell, { IngredientTypeEnum } from './IngredientCell';
 import IngredientActionsCell from './IngredientActionsCell';
-import { useState } from 'react';
-import { FormControlLabel } from '@mui/material';
+import React, { useState } from 'react';
+import { IconButton } from '@mui/material';
+import { AddCircleOutlineOutlined } from '@mui/icons-material';
 
 class IngredientModel {
     constructor(name, quantity, unit, type) {
@@ -22,11 +22,7 @@ const IngredientsTable = () => {
 
     const cells = [
         {
-            label: 'Name',
-            type: IngredientTypeEnum.STRING,
-        },
-        {
-            label: 'Quantity',
+            label: 'Qty',
             type: IngredientTypeEnum.NUMBER,
         },
         {
@@ -77,6 +73,12 @@ const IngredientsTable = () => {
             <TableContainer component={Paper}>
 
                 <Table size="small" aria-label="Ingredients table">
+                    <caption >
+                        <IconButton size='small' variant="outlined" onClick={handleAddIngredient}>
+                            <AddCircleOutlineOutlined />
+                        </IconButton>
+                    </caption>
+
                     <TableHead>
                         <TableRow>
                             {cells.map((cell) => (
@@ -86,34 +88,45 @@ const IngredientsTable = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
+
                         {ingredients.map((ingredient, index) => (
-                            <TableRow key={index} style={{ height: 23 }}>
-                                {cells.map((cell) => (
+                            <React.Fragment key={index}>
+                                <TableRow key={'name' + index}  >
                                     <IngredientCell
-                                        key={cell.label}
-                                        value={ingredient[cell.label.toLowerCase()]}
-                                        type={cell.type}
+                                        key={'name'}
+                                        value={ingredient.name}
+                                        type={IngredientTypeEnum.STRING}
                                         index={index}
                                         editIndex={editIndex}
-                                        handleEdit={(index, value) => handleEdit(index, cell.label.toLowerCase(), value)}
-                                        options={cell.options}
+                                        handleEdit={(index, value) => handleEdit(index,'name', value)}
+                                        span={3}
                                     />
-                                ))}
-                                <IngredientActionsCell
-                                    index={index}
-                                    editIndex={editIndex}
-                                    handleEditClick={handleEditClick}
-                                    handleDelete={handleDelete}
-                                    handleSaveClick={handleSaveClick}
-                                />
-                            </TableRow>
+                                </TableRow>
+                                <TableRow key={index} >
+                                    {cells.map((cell) => (
+                                        <IngredientCell
+                                            key={cell.label}
+                                            value={ingredient[cell.label.toLowerCase()]}
+                                            type={cell.type}
+                                            index={index}
+                                            editIndex={editIndex}
+                                            handleEdit={(index, value) => handleEdit(index, cell.label.toLowerCase(), value)}
+                                            options={cell.options}
+                                        />
+                                    ))}
+                                    <IngredientActionsCell
+                                        index={index}
+                                        editIndex={editIndex}
+                                        handleEditClick={handleEditClick}
+                                        handleDelete={handleDelete}
+                                        handleSaveClick={handleSaveClick}
+                                    />
+                                </TableRow>
+                            </React.Fragment>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            <FormControlLabel
-                control={<Button variant="contained" onClick={handleAddIngredient}>Add Ingredient</Button>}
-            />
         </Paper>
     );
 };

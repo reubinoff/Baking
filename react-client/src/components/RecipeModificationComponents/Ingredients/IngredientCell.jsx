@@ -16,7 +16,7 @@ export class IngredientTypeEnum {
     }
 }
 
-const IngredientCell = ({ value, index, editIndex, handleEdit, type, options }) => {
+const IngredientCell = ({ value, index, editIndex, handleEdit, type, options, span }) => {
 
     const handleInternalEdit = (e) => handleEdit(index, e.target.value);
     const getEditableComponent = () => {
@@ -24,8 +24,10 @@ const IngredientCell = ({ value, index, editIndex, handleEdit, type, options }) 
             case IngredientTypeEnum.ENUM:
                 return (
                     <TextField
+                        size='small'
                         select
                         value={value}
+                        variant='standard'
                         onChange={handleInternalEdit}
                     >
                         {options.map((option) => (
@@ -38,17 +40,20 @@ const IngredientCell = ({ value, index, editIndex, handleEdit, type, options }) 
             case IngredientTypeEnum.NUMBER:
                 return (
                     <TextField
+                        size='small'
+                        variant='standard'
                         type="number"
+                        sx={{minWidth: '50px'}}
                         value={value}
                         onChange={handleInternalEdit}
                     />
                 );
             default:
-                return <TextField value={value} onChange={handleInternalEdit} />;
+                return <TextField variant='standard' size='small' value={value} onChange={handleInternalEdit} />;
         }
     };
     return (
-        <TableCell>
+        <TableCell colSpan={span}>
             {editIndex === index ? (
                 getEditableComponent()
             ) : (
@@ -61,10 +66,14 @@ const IngredientCell = ({ value, index, editIndex, handleEdit, type, options }) 
 export default IngredientCell;
 
 IngredientCell.propTypes = {
-    value: PropTypes.any.isRequired,
+    value: PropTypes.any,
     index: PropTypes.number.isRequired,
     editIndex: PropTypes.number.isRequired,
     handleEdit: PropTypes.func.isRequired,
-    type: PropTypes.string.isRequired,
+    type: PropTypes.string,
     options: PropTypes.array,
+    span: PropTypes.number,
+};
+IngredientCell.defaultProps = {
+    span: 1,
 };
