@@ -3,6 +3,7 @@ import { Button } from '@mui/material';
 import IngredientCell, { IngredientTypeEnum } from './IngredientCell';
 import IngredientActionsCell from './IngredientActionsCell';
 import { useState } from 'react';
+import { FormControlLabel } from '@mui/material';
 
 class IngredientModel {
     constructor(name, quantity, unit, type) {
@@ -72,46 +73,51 @@ const IngredientsTable = () => {
 
 
     return (
-        <TableContainer component={Paper}>
-            <Button variant="contained" color="primary" onClick={handleAddIngredient}>
-                Add Ingredient
-            </Button>
-            <Table aria-label="Ingredients table">
-                <TableHead>
-                    <TableRow>
-                        {cells.map((cell) => (
-                            <TableCell key={cell.label}>{cell.label}</TableCell>
-                        ))}
-                        <TableCell></TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {ingredients.map((ingredient, index) => (
-                        <TableRow key={index}>
+        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+            <TableContainer component={Paper}>
+
+                <Table size="small" aria-label="Ingredients table">
+                    <TableHead>
+                        <TableRow>
                             {cells.map((cell) => (
-                                <IngredientCell
-                                    key={cell.label}
-                                    value={ingredient[cell.label.toLowerCase()]}
-                                    type={cell.type}
+                                <TableCell key={cell.label}>{cell.label}</TableCell>
+                            ))}
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {ingredients.map((ingredient, index) => (
+                            <TableRow key={index} style={{ height: 23 }}>
+                                {cells.map((cell) => (
+                                    <IngredientCell
+                                        key={cell.label}
+                                        value={ingredient[cell.label.toLowerCase()]}
+                                        type={cell.type}
+                                        index={index}
+                                        editIndex={editIndex}
+                                        handleEdit={(index, value) => handleEdit(index, cell.label.toLowerCase(), value)}
+                                        options={cell.options}
+                                    />
+                                ))}
+                                <IngredientActionsCell
                                     index={index}
                                     editIndex={editIndex}
-                                    handleEdit={(index, value) => handleEdit(index, cell.label.toLowerCase(), value)}
-                                    options={cell.options}
+                                    handleEditClick={handleEditClick}
+                                    handleDelete={handleDelete}
+                                    handleSaveClick={handleSaveClick}
                                 />
-                            ))}
-                            <IngredientActionsCell
-                                index={index}
-                                editIndex={editIndex}
-                                handleEditClick={handleEditClick}
-                                handleDelete={handleDelete}
-                                handleSaveClick={handleSaveClick}
-                            />
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <FormControlLabel
+                control={<Button variant="contained" onClick={handleAddIngredient}>Add Ingredient</Button>}
+            />
+        </Paper>
     );
 };
+
+
 
 export default IngredientsTable;
