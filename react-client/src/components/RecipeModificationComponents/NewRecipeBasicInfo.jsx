@@ -1,48 +1,29 @@
-import { PropTypes } from "prop-types";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
 import FileUpload from "../recipeComponents/FileUpload";
+import BaseFormTextField from "./BaseFormTextField";
+import { Stack } from "@mui/material";
 
-export default function NewRecipeBasicInfo(props) {
-  const { register,errors } = props
+export default function NewRecipeBasicInfo() {
   return (
     //Add Centered Container
-    <Box sx={{ justifyContent: "center" }}>
-      <TextField
-        color="info"
-        error={
-          errors?.Name?.type === "maxLength" ||
-          errors?.Name?.type === "required"
-        }
-        {...register("Name", { required: true, maxLength: 5 })}
-        id="Name"
+    <Stack sx={{ justifyContent: "center" }}>
+      <BaseFormTextField
+        baseName="recipe"
+        name="name"
         label="Name"
-        helperText={
-          errors?.Name?.type === "maxLength" &&
-          "Please enter a name for your recipe (max 5 characters)"
-        }
-        sx={{ mb: 2 }}
+        rules={{ required: true, maxLength: 5 }}
+        helperText="Please enter a name for your recipe (max 30 characters)"
       />
-      <TextField
-        color="info"
-        error={
-          errors?.Desctiption?.type === "maxLength" ||
-          errors?.Desctiption?.type === "required"
-        }
-        {...register("Desctiption", { required: true, maxLength: 100 })}
-        id="Desctiption"
-        label="Desctiption"
-        multiline
+      <BaseFormTextField
+        baseName="recipe"
+        name="description"
+        label="Description"
+        rules={{ required: true, maxLength: 400 }}
+        helperText="Please enter a description for your recipe (max 400 characters)"
+        multiline={true}
         rows={4}
-        helperText= "Please enter a description for your recipe (max 100 characters)"
-        sx={{ mb: 2 }}
+        maxWidth="500px"
       />
       <FileUpload limit={3} multiple name="images" />
-    </Box>
+    </Stack>
   );
 }
-
-NewRecipeBasicInfo.propTypes = {
-  register : PropTypes.func.isRequired,
-  errors : PropTypes.object.isRequired
-};

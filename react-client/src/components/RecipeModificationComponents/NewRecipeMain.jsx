@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState } from "react";
 import { Stepper, Step, StepLabel, StepContent, IconButton, Box, ButtonGroup } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import StepperButtonsControl from "./StepperButtonsControl";
@@ -16,20 +16,7 @@ const NewRecipeMain = () => {
     }
   });
 
-  const GetNewCompoentn = useCallback(
-    (procedureId) => {
-      return {
-        content: (
-            <NewProcedure
-            procedureId={procedureId}
-            />
-        ),
-      };
-    },
-    []
-  );
-
-  const [procedures, setprocedures] = useState([
+  const [procedures, setProcedures] = useState([
     {
       label: "Basic info",
       content: (
@@ -41,23 +28,27 @@ const NewRecipeMain = () => {
     },
     {
       content: (
-        <NewProcedure
-          procedureId={procedureId}
-        />
+        <NewProcedure procedureId={procedureId}/>
       ),
     },
   ]);
 
   const removeProcedure = () => {
-      setProcedureId((prev) => prev - 1);
-    setprocedures((prev) => prev.filter((_, index) => index !== activeStep));
+      setProcedures((prev) => prev.filter((_, index) => index !== activeStep));
+      setActiveStep((prev) => prev - 1);
   };
 
-  useEffect(() => {
-    if (procedureId === procedures.length) {
-      setprocedures((prev) => [...prev, GetNewCompoentn(procedureId)]);
-    }
-  }, [procedureId, GetNewCompoentn, procedures.length]);
+  const addProcedure = () => {
+    setProcedures((prev) => [...prev, {
+      content: (
+        <NewProcedure
+          procedureId={procedureId + 1}
+        />
+      ),
+    }]);
+    setProcedureId((prev) => prev + 1);
+
+  };
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -83,7 +74,7 @@ const NewRecipeMain = () => {
                   <IconButton size='small' variant="outlined" onClick={removeProcedure} disabled={procedures.length < 3 ? true : false}>
                     <RemoveCircleOutlineOutlined />
                   </IconButton>
-                  <IconButton size='small' variant="outlined" onClick={() => setProcedureId((prev) => prev + 1)} >
+                  <IconButton size='small' variant="outlined" onClick={addProcedure} >
                     <AddCircleOutlineOutlined />
                   </IconButton>
                 </ButtonGroup>
