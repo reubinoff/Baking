@@ -19,7 +19,6 @@ const NewRecipeMain = () => {
   const GetNewCompoentn = useCallback(
     (procedureId) => {
       return {
-        label: "Procedure" + procedureId,
         content: (
             <NewProcedure
             procedureId={procedureId}
@@ -41,7 +40,6 @@ const NewRecipeMain = () => {
       ),
     },
     {
-      label: "Procedure 1",
       content: (
         <NewProcedure
           procedureId={procedureId}
@@ -77,7 +75,7 @@ const NewRecipeMain = () => {
     <FormProvider {...methods}>
       <Stepper activeStep={activeStep} orientation="vertical">
         {procedures.map(({ label, content }, index) => (
-          <Step key={label}>
+          <Step key={index}>
             <StepLabel>{methods.getValues(`procedures.p${content.props.procedureId}.name`) ? methods.getValues(`procedures.p${content.props.procedureId}.name`) : label}
               <Box
                 sx={{ float: 'right', display: (index !== activeStep || index === 0) ? "none" : "inline-flex" }}>

@@ -8,12 +8,11 @@ import IngredientsTable from "./Ingredients/IngredientsTable";
 import get from "lodash/get";
 
 function NewProcedure({ procedureId }) {
-  const { formState, control } = useFormContext();
+  const { formState, control, watch } = useFormContext();
   const baseName = `procedures.p${procedureId}`;
 
-  React.useEffect(() => {
-    console.log(formState.errors);
-  }, [formState]);
+
+  watch(`${baseName}.name`);
 
   const renderTextField = useCallback(
     (name, label, rules, helperText, multiline = false, rows = 1, maxWidth = "250px") => (
@@ -33,7 +32,7 @@ function NewProcedure({ procedureId }) {
             helperText={get(formState.errors, `${baseName}.${name}`) && helperText}
             sx={{
               mb: 2,
-              maxWidth: {maxWidth},
+              maxWidth: { maxWidth },
             }}
           />
         )}
@@ -47,7 +46,7 @@ function NewProcedure({ procedureId }) {
       {renderTextField(
         "name",
         "Name",
-        { required: true, maxLength: 50 },
+        { required: true, maxLength: 30 },
         "Please enter a name for your recipe (max 50 characters)"
       )}
       {renderTextField(
