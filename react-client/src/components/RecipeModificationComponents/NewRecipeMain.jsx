@@ -11,6 +11,9 @@ const NewRecipeMain = () => {
   const [procedureId, setProcedureId] = useState(1);
   const methods = useForm({
     mode: "onChange",
+    defaultValues: {
+      'procedures': {}
+    }
   });
 
   const GetNewCompoentn = useCallback(
@@ -18,19 +21,16 @@ const NewRecipeMain = () => {
       return {
         label: "Procedure" + procedureId,
         content: (
-          <div>
             <NewProcedure
-              register={methods.register}
-              errors={methods.formState.errors}
+            procedureId={procedureId}
             />
-          </div>
         ),
       };
     },
-    [methods.register, methods.formState.errors]
+    []
   );
 
-  const [steps, setSteps] = useState([
+  const [procedures, setprocedures] = useState([
     {
       label: "Basic info",
       content: (
@@ -44,8 +44,7 @@ const NewRecipeMain = () => {
       label: "Procedure 1",
       content: (
         <NewProcedure
-          register={methods.register}
-          errors={methods.formState.errors}
+          procedureId={procedureId}
         />
       ),
     },
@@ -53,14 +52,14 @@ const NewRecipeMain = () => {
 
   const removeProcedure = () => {
       setProcedureId((prev) => prev - 1);
-    setSteps((prev) => prev.filter((_, index) => index !== activeStep));
+    setprocedures((prev) => prev.filter((_, index) => index !== activeStep));
   };
 
   useEffect(() => {
-    if (procedureId === steps.length) {
-      setSteps((prev) => [...prev, GetNewCompoentn(procedureId)]);
+    if (procedureId === procedures.length) {
+      setprocedures((prev) => [...prev, GetNewCompoentn(procedureId)]);
     }
-  }, [procedureId, GetNewCompoentn, steps.length]);
+  }, [procedureId, GetNewCompoentn, procedures.length]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -77,13 +76,13 @@ const NewRecipeMain = () => {
   return (
     <FormProvider {...methods}>
       <Stepper activeStep={activeStep} orientation="vertical">
-        {steps.map(({ label, content }, index) => (
+        {procedures.map(({ label, content }, index) => (
           <Step key={label}>
-            <StepLabel>{label}
+            <StepLabel>{methods.getValues(`procedures.p${content.props.procedureId}.name`) ? methods.getValues(`procedures.p${content.props.procedureId}.name`) : label}
               <Box
                 sx={{ float: 'right', display: (index !== activeStep || index === 0) ? "none" : "inline-flex" }}>
                 <ButtonGroup>
-                  <IconButton size='small' variant="outlined" onClick={removeProcedure} disabled={steps.length < 3 ? true : false}>
+                  <IconButton size='small' variant="outlined" onClick={removeProcedure} disabled={procedures.length < 3 ? true : false}>
                     <RemoveCircleOutlineOutlined />
                   </IconButton>
                   <IconButton size='small' variant="outlined" onClick={() => setProcedureId((prev) => prev + 1)} >
@@ -97,12 +96,12 @@ const NewRecipeMain = () => {
               <StepperButtonsControl
                 activeStep={activeStep}
                 handleNext={
-                  index === steps.length - 1
+                  index === procedures.length - 1
                     ? methods.handleSubmit(onSubmit)
                     : handleNext
                 }
                 handleBack={handleBack}
-                isLastStep={index === steps.length - 1}
+                isLastStep={index === procedures.length - 1}
                 errors={methods.formState.errors}
               />
             </StepContent>
