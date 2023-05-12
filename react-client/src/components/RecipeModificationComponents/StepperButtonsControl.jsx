@@ -11,6 +11,15 @@ export default function StepperButtonsControl(props) {
     (
       <Box sx={{ mb: 2 }}>
         <div>
+       
+          <Button
+            
+            disabled={Object.keys(errors).length !== 0}
+            onClick={handleBack}
+            sx={{ mt: 1, mr: 1 , display: activeStep === 0 ? "none" : "inline-flex"}}
+          >
+            Back
+          </Button>
           <Button
             variant="contained"
             onClick={handleNext}
@@ -19,14 +28,6 @@ export default function StepperButtonsControl(props) {
             disabled={Object.keys(errors).length !== 0}
           >
             {isLastStep ? "Submit" : "Next"}
-          </Button>
-          <Button
-            
-            disabled={Object.keys(errors).length !== 0}
-            onClick={handleBack}
-            sx={{ mt: 1, mr: 1 , display: activeStep === 0 ? "none" : "inline-flex"}}
-          >
-            Back
           </Button>
         </div>
       </Box>

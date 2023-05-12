@@ -16,7 +16,7 @@ class IngredientModel {
 
 const IngredientsTable = () => {
     const [ingredients, setIngredients] = useState([
-        new IngredientModel('Flour', 1, 'cup', 'Dry'),
+        new IngredientModel('Flour', 12, 'cup', 'Dry'),
     ]);
     const [editIndex, setEditIndex] = useState(-1);
 

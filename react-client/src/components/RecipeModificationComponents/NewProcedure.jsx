@@ -1,7 +1,7 @@
 
 import PropTypes from "prop-types";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import IngredientsTable from "./Ingredients/IngredientsTable";
 
 
@@ -10,7 +10,7 @@ export default function NewProcedure(props) {
   const { register, errors } = props;
   return (
     //Add Centered Container
-    <Box sx={{ justifyContent: "center" }}>
+    <Stack sx={{ justifyContent: "center" }}>
       <TextField
         color="info"
         error={
@@ -24,7 +24,10 @@ export default function NewProcedure(props) {
           errors?.Name?.type === "maxLength" &&
           "Please enter a name for your recipe (max 5 characters)"
         }
-        sx={{ mb: 2 }}
+        sx={{
+          mb: 2,
+          maxWidth: "250px",
+        }}
       />
       <TextField
         color="info"
@@ -38,10 +41,11 @@ export default function NewProcedure(props) {
         multiline
         rows={4}
         helperText="Please enter a description for your recipe (max 100 characters)"
-        sx={{ mb: 2 }}
+        sx={{ mb: 2,
+          maxWidth: "500px", }}
       />
       <IngredientsTable />
-    </Box>
+    </Stack>
   );
 }
 

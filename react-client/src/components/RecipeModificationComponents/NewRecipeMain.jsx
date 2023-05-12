@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
-import { Stepper, Step, StepLabel, StepContent, Button } from "@mui/material";
+import { Stepper, Step, StepLabel, StepContent, IconButton, Box, ButtonGroup } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import StepperButtonsControl from "./StepperButtonsControl";
 import NewRecipeBasicInfo from "./NewRecipeBasicInfo";
 import NewProcedure from "./NewProcedure";
+import { AddCircleOutlineOutlined, RemoveCircleOutlineOutlined } from "@mui/icons-material";
 
 const NewRecipeMain = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -22,9 +23,6 @@ const NewRecipeMain = () => {
               register={methods.register}
               errors={methods.formState.errors}
             />
-            <Button onClick={() => setProcedureId((prev) => prev + 1)}>
-              Add Step
-            </Button>
           </div>
         ),
       };
@@ -45,18 +43,18 @@ const NewRecipeMain = () => {
     {
       label: "Procedure 1",
       content: (
-        <div>
-          <NewProcedure
-            register={methods.register}
-            errors={methods.formState.errors}
-          />
-          <Button onClick={() => setProcedureId((prev) => prev + 1)}>
-            Add Step
-          </Button>
-        </div>
+        <NewProcedure
+          register={methods.register}
+          errors={methods.formState.errors}
+        />
       ),
     },
   ]);
+
+  const removeProcedure = () => {
+      setProcedureId((prev) => prev - 1);
+    setSteps((prev) => prev.filter((_, index) => index !== activeStep));
+  };
 
   useEffect(() => {
     if (procedureId === steps.length) {
@@ -81,7 +79,19 @@ const NewRecipeMain = () => {
       <Stepper activeStep={activeStep} orientation="vertical">
         {steps.map(({ label, content }, index) => (
           <Step key={label}>
-            <StepLabel>{label}</StepLabel>
+            <StepLabel>{label}
+              <Box
+                sx={{ float: 'right', display: (index !== activeStep || index === 0) ? "none" : "inline-flex" }}>
+                <ButtonGroup>
+                  <IconButton size='small' variant="outlined" onClick={removeProcedure} disabled={steps.length < 3 ? true : false}>
+                    <RemoveCircleOutlineOutlined />
+                  </IconButton>
+                  <IconButton size='small' variant="outlined" onClick={() => setProcedureId((prev) => prev + 1)} >
+                    <AddCircleOutlineOutlined />
+                  </IconButton>
+                </ButtonGroup>
+              </Box>
+            </StepLabel>
             <StepContent>
               {content}
               <StepperButtonsControl
