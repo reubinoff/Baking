@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 import IngredientCell, { IngredientTypeEnum } from './IngredientCell';
 import IngredientActionsCell from './IngredientActionsCell';
 import React, { useState } from 'react';
@@ -70,6 +70,8 @@ const IngredientsTable = () => {
 
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+            <Typography variant="h6">Ingredients</Typography>
+
             <TableContainer component={Paper}>
 
                 <Table size="small" aria-label="Ingredients table">

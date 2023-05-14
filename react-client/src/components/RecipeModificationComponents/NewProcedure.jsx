@@ -4,6 +4,7 @@ import { useFormContext } from "react-hook-form";
 import Stack from "@mui/material/Stack";
 import IngredientsTable from "./Ingredients/IngredientsTable";
 import BaseFormTextField from "./BaseFormTextField";
+import StepsList from "./steps/StepsList";
 
 function NewProcedure({ procedureId }) {
   const { watch } = useFormContext();
@@ -35,6 +36,7 @@ function NewProcedure({ procedureId }) {
         />
       }
       <IngredientsTable />
+      <StepsList />
     </Stack>
   );
 }

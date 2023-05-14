@@ -21,7 +21,6 @@ class Step(BakingBaseModel):
     """
     for example: mixing, mix all the ingredients, 10 seconds
     """
-    name: NameStr
     description: Optional[str] = Field(None, nullable=True, min_length=2)
     duration_in_seconds: int = Field(1, gt=0, lt=100000)
 
