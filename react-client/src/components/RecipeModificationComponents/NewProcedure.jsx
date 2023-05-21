@@ -8,8 +8,7 @@ import StepsList from "./steps/StepsList";
 
 function NewProcedure({ procedureId }) {
   const { watch } = useFormContext();
-  const baseName = `procedures.p${procedureId}`;
-
+  const baseName = `procedures.${procedureId}`;
 
   watch(`${baseName}.name`);
 
@@ -21,7 +20,8 @@ function NewProcedure({ procedureId }) {
           name="name"
           label="Name"
           rules={{ required: true, maxLength: 30 }}
-          helperText="Please enter a name for your recipe (max 50 characters)" />
+          helperText="Please enter a name for your recipe (max 50 characters)"
+          />
       }
       {
         <BaseFormTextField

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Stepper, Step, StepLabel, StepContent, IconButton, Box, ButtonGroup } from "@mui/material";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import StepperButtonsControl from "./StepperButtonsControl";
 import NewRecipeBasicInfo from "./NewRecipeBasicInfo";
 import NewProcedure from "./NewProcedure";
@@ -8,12 +8,15 @@ import { AddCircleOutlineOutlined, RemoveCircleOutlineOutlined } from "@mui/icon
 
 const NewRecipeMain = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [procedureId, setProcedureId] = useState(1);
+  const [procedureId, setProcedureId] = useState(0);
   const methods = useForm({
     mode: "onChange",
     defaultValues: {
-      'procedures': {}
     }
+  });
+  useFieldArray({
+    control: methods.control,
+    name: 'procedures'
   });
 
   const [procedures, setProcedures] = useState([

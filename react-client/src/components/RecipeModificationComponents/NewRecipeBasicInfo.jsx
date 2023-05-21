@@ -7,14 +7,14 @@ export default function NewRecipeBasicInfo() {
     //Add Centered Container
     <Stack sx={{ justifyContent: "center" }}>
       <BaseFormTextField
-        baseName="recipe"
+        baseName=""
         name="name"
         label="Name"
         rules={{ required: true, maxLength: 5 }}
         helperText="Please enter a name for your recipe (max 30 characters)"
       />
       <BaseFormTextField
-        baseName="recipe"
+        baseName=""
         name="description"
         label="Description"
         rules={{ required: true, maxLength: 400 }}

@@ -93,6 +93,7 @@ class RecipeCreate(Recipe):
 
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
+    procedures: Optional[List[ProcedureCreate]]
 
 
 class RecipeUpdate(Recipe):
