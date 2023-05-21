@@ -19,6 +19,7 @@ export default function BaseFormTextField({ baseName, name, label, rules, helper
                     label={label}
                     multiline={multiline}
                     rows={rows}
+                    error={get(formState.errors, `${baseName}.${name}`) ? true : false}
                     helperText={get(formState.errors, `${baseName}.${name}`) && helperText}
                     sx={{
                         mb: 2,

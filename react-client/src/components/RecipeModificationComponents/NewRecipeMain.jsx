@@ -64,7 +64,9 @@ const NewRecipeMain = () => {
 
   return (
     <FormProvider {...methods}>
+      <div>{JSON.stringify(methods.formState.isValid)}</div>
       <Stepper activeStep={activeStep} orientation="vertical">
+       
         {procedures.map(({ label, content }, index) => (
           <Step key={index}>
             <StepLabel>{methods.getValues(`procedures.p${content.props.procedureId}.name`) ? methods.getValues(`procedures.p${content.props.procedureId}.name`) : label}
@@ -74,7 +76,7 @@ const NewRecipeMain = () => {
                   <IconButton size='small' variant="outlined" onClick={removeProcedure} disabled={procedures.length < 3 ? true : false}>
                     <RemoveCircleOutlineOutlined />
                   </IconButton>
-                  <IconButton size='small' variant="outlined" onClick={addProcedure} >
+                  <IconButton size='small' variant="outlined" onClick={addProcedure} disabled={!methods.formState.isValid}>
                     <AddCircleOutlineOutlined />
                   </IconButton>
                 </ButtonGroup>
@@ -91,6 +93,7 @@ const NewRecipeMain = () => {
                 }
                 handleBack={handleBack}
                 isLastStep={index === procedures.length - 1}
+                disabled={!methods.formState.isValid}
                 errors={methods.formState.errors}
               />
             </StepContent>

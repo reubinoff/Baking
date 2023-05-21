@@ -6,17 +6,23 @@ import Box from "@mui/material/Box";
 
 
 export default function StepperButtonsControl(props) {
-  const { activeStep, handleNext, handleBack, isLastStep, errors } = props;
+  const {
+    activeStep,
+    handleNext,
+    handleBack,
+    isLastStep,
+    disabled,
+    errors } = props;
   return (
     (
       <Box sx={{ mb: 2 }}>
         <div>
-       
+
           <Button
-            
+
             disabled={Object.keys(errors).length !== 0}
             onClick={handleBack}
-            sx={{ mt: 1, mr: 1 , display: activeStep === 0 ? "none" : "inline-flex"}}
+            sx={{ mt: 1, mr: 1, display: activeStep === 0 ? "none" : "inline-flex" }}
           >
             Back
           </Button>
@@ -25,7 +31,7 @@ export default function StepperButtonsControl(props) {
             onClick={handleNext}
             sx={{ mt: 1, mr: 1 }}
             type={isLastStep ? "submit" : "button"}
-            disabled={Object.keys(errors).length !== 0}
+            disabled={Object.keys(errors).length !== 0 || disabled}
           >
             {isLastStep ? "Submit" : "Next"}
           </Button>
@@ -36,13 +42,14 @@ export default function StepperButtonsControl(props) {
 }
 
 StepperButtonsControl.propTypes = {
-    activeStep: PropTypes.number.isRequired,
-    handleNext: PropTypes.func.isRequired,
-    handleBack: PropTypes.func.isRequired,
-    isLastStep: PropTypes.bool,
-    errors : PropTypes.object
+  activeStep: PropTypes.number.isRequired,
+  handleNext: PropTypes.func.isRequired,
+  handleBack: PropTypes.func.isRequired,
+  isLastStep: PropTypes.bool,
+  disabled: PropTypes.bool.isRequired,
+  errors: PropTypes.object
 };
 StepperButtonsControl.defaultProps = {
   isLastStep: false,
-  errors : {}
+  errors: {}
 };
