@@ -67,12 +67,11 @@ const NewRecipeMain = () => {
 
   return (
     <FormProvider {...methods}>
-      <div>{JSON.stringify(methods.formState.isValid)}</div>
       <Stepper activeStep={activeStep} orientation="vertical">
        
         {procedures.map(({ label, content }, index) => (
           <Step key={index}>
-            <StepLabel>{methods.getValues(`procedures.p${content.props.procedureId}.name`) ? methods.getValues(`procedures.p${content.props.procedureId}.name`) : label}
+            <StepLabel>{methods.getValues(`procedures.${content.props.procedureId}.name`) ? methods.getValues(`procedures.${content.props.procedureId}.name`) : label}
               <Box
                 sx={{ float: 'right', display: (index !== activeStep || index === 0) ? "none" : "inline-flex" }}>
                 <ButtonGroup>
