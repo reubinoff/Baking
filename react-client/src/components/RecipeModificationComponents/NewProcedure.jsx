@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useFieldArray } from "react-hook-form";
 import Stack from "@mui/material/Stack";
 import IngredientsTable from "./Ingredients/IngredientsTable";
 import BaseFormTextField from "./BaseFormTextField";
@@ -9,6 +9,14 @@ import StepsList from "./steps/StepsList";
 function NewProcedure({ procedureId }) {
   const { watch } = useFormContext();
   const baseName = `procedures.${procedureId}`;
+  useFieldArray({
+    control: useFormContext().control,
+    name: baseName + ".ingredients",
+  });
+  useFieldArray({
+    control: useFormContext().control,
+    name: baseName + ".steps",
+  });
 
   watch(`${baseName}.name`);
 
@@ -20,7 +28,7 @@ function NewProcedure({ procedureId }) {
           name="name"
           label="Name"
           rules={{ required: true, maxLength: 30 }}
-          helperText="Please enter a name for your recipe (max 50 characters)"
+          helperText="Please enter a name for your recipe (max 30 characters)"
           />
       }
       {
@@ -35,7 +43,7 @@ function NewProcedure({ procedureId }) {
           maxWidth="500px"
         />
       }
-      <IngredientsTable />
+      <IngredientsTable formBaseName={baseName + ".ingredients"} />
       <StepsList />
     </Stack>
   );

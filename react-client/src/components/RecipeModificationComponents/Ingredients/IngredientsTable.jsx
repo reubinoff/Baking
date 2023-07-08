@@ -1,9 +1,11 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
-import IngredientCell, { IngredientTypeEnum } from './IngredientCell';
+import { Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography } from '@mui/material';
 import IngredientActionsCell from './IngredientActionsCell';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { IconButton } from '@mui/material';
 import { AddCircleOutlineOutlined } from '@mui/icons-material';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import propTypes from 'prop-types';
+import BaseFormTextField from '../BaseFormTextField';
 
 class IngredientModel {
     constructor(name, quantity, unit, type) {
@@ -14,48 +16,54 @@ class IngredientModel {
     }
 }
 
-const IngredientsTable = () => {
-    const [ingredients, setIngredients] = useState([
-    ]);
+const IngredientsTable = ({ formBaseName }) => {
+    const { control } = useFormContext();
+    const { fields, append, remove, update } = useFieldArray({
+        control: control,
+        name: formBaseName,
+    });
+
     const [editIndex, setEditIndex] = useState(-1);
 
-    const cells = [
+    const cells = {
+        name:
         {
-            label: 'Qty',
-            type: IngredientTypeEnum.NUMBER,
+            name: 'name',
+            label: 'Name',
+            type: "text",
         },
+        quantity:
+        {
+            name: 'quantity',
+            label: 'Qty',
+            type: "number",
+        },
+        unit:
         {
             label: 'Unit',
-            type: IngredientTypeEnum.ENUM,
+            name: 'unit',
+            type: "enum",
             options: ['cup', 'tsp', 'tbsp', 'oz', 'lb', 'g', 'kg', 'ml', 'l'],
         },
+        type:
         {
             label: 'Type',
-            type: IngredientTypeEnum.ENUM,
+            name: 'type',
+            type: "enum",
             options: ['Dry', 'Wet', 'Dairy', 'Meat', 'Produce', 'Other'],
         },
-    ];
-
+    };
 
 
     const handleDelete = (index) => {
         setEditIndex(-1);
-        const newIngredients = [...ingredients];
-        newIngredients.splice(index, 1);
-        setIngredients(newIngredients);
-    };
-
-    const handleEdit = (index, key, value) => {
-        const newIngredients = [...ingredients];
-        newIngredients[index][key] = value;
-        setIngredients(newIngredients);
+        remove(index);
     };
 
     const handleAddIngredient = () => {
         const newIngredient = new IngredientModel('', 0, '', '');
-        setIngredients([...ingredients, newIngredient]);
-        const indexOfNewIngredient = ingredients.length;
-        setEditIndex(indexOfNewIngredient);
+        append(newIngredient);
+        setEditIndex(fields.length);
     };
 
     const handleEditClick = (index) => {
@@ -64,8 +72,39 @@ const IngredientsTable = () => {
 
     const handleSaveClick = (index) => {
         setEditIndex(-1);
+        const newFields = [...fields];
+        update(newFields);
+
     };
 
+    const getIngredientCell = (cell, index, val) => {
+        const isEditing = index === editIndex;
+
+        if (isEditing) {
+            return (
+                <TableCell key={cell.label}>
+                    <BaseFormTextField
+                        key={cell.label}
+                        baseName={`${formBaseName}.${index}`}
+                        name={cell.name}
+                        label={cell.label}
+                        options={cell.options}
+                        size='small'
+                        fieldType={cell.type}
+                        maxWidth='100px'
+                        rules={{ required: true, maxLength: 30 }}
+                        helperText="Please enter a name for your recipe (max 30 characters)"
+                    />
+                </TableCell>
+            );
+        }
+        else {
+            return (
+                <TableCell key={cell.label}
+                >{val[cell.name]}</TableCell>
+            );
+        }
+    };
 
     return (
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -80,50 +119,24 @@ const IngredientsTable = () => {
                         </IconButton>
                     </caption>
 
-                    <TableHead>
-                        <TableRow>
-                            {cells.map((cell) => (
-                                <TableCell key={cell.label}>{cell.label}</TableCell>
-                            ))}
-                            <TableCell></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-
-                        {ingredients.map((ingredient, index) => (
-                            <React.Fragment key={index}>
-                                <TableRow key={'name' + index}  >
-                                    <IngredientCell
-                                        key={'name'}
-                                        value={ingredient.name}
-                                        type={IngredientTypeEnum.STRING}
-                                        index={index}
-                                        editIndex={editIndex}
-                                        handleEdit={(index, value) => handleEdit(index,'name', value)}
-                                        span={3}
-                                    />
-                                </TableRow>
-                                <TableRow key={index} >
-                                    {cells.map((cell) => (
-                                        <IngredientCell
-                                            key={cell.label}
-                                            value={ingredient[cell.label.toLowerCase()]}
-                                            type={cell.type}
-                                            index={index}
-                                            editIndex={editIndex}
-                                            handleEdit={(index, value) => handleEdit(index, cell.label.toLowerCase(), value)}
-                                            options={cell.options}
-                                        />
-                                    ))}
-                                    <IngredientActionsCell
-                                        index={index}
-                                        editIndex={editIndex}
-                                        handleEditClick={handleEditClick}
-                                        handleDelete={handleDelete}
-                                        handleSaveClick={handleSaveClick}
-                                    />
-                                </TableRow>
-                            </React.Fragment>
+                    <TableBody sx={{ marginTop: '10px' }}>
+                        {fields.map((ingredient, index) => (
+                            // getIngredientCell(ingredient, index) 
+                            <TableRow key={index}>
+                                {
+                                    Object.keys(cells).map((key) => {
+                                        const cell = cells[key];
+                                        return getIngredientCell(cell, index, ingredient);
+                                    })
+                                }
+                                <IngredientActionsCell
+                                    index={index}
+                                    editIndex={editIndex}
+                                    handleEditClick={handleEditClick}
+                                    handleDelete={handleDelete}
+                                    handleSaveClick={handleSaveClick}
+                                />
+                            </TableRow>
                         ))}
                     </TableBody>
                 </Table>
@@ -132,6 +145,9 @@ const IngredientsTable = () => {
     );
 };
 
+IngredientsTable.propTypes = {
+    formBaseName: propTypes.string.isRequired,
+};
 
 
 export default IngredientsTable;
