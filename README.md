@@ -20,6 +20,43 @@ To delete a recipe, click on the recipe in the list and then click on the "Delet
 Contributing
 If you would like to contribute to the project, please follow these steps:
 
+# Makefile
+This is the Makefile for the baking recipes project. It provides a set of commands for building, testing, and running the project.
+
+## Commands
+build
+Builds the server and client components of the project.
+
+`test-server`
+Runs the server tests using pytest and generates a coverage report.
+
+`run-db`
+Starts a MongoDB container with the specified root password and username.
+
+`stop-db`
+Stops the MongoDB container.
+
+`check-updates`
+Checks for outdated packages in the server and client components and updates them.
+
+## Variables
+`DOCKER_REG`
+The Docker registry to use for building and pushing Docker images.
+
+`DB_ROOT_PWD`
+The root password to use for the MongoDB container.
+
+`DB_ROOT_USER`
+The root username to use for the MongoDB container.
+
+`DB_CONTAINER_NAME`
+The name to use for the MongoDB container.
+
+## Usage
+To use the Makefile, run the make command followed by the name of the command you want to run. For example, to build the server and client components, run:
+
+
+
 # Fork the repository.
 Create a new branch for your changes.
 Make your changes and commit them.
