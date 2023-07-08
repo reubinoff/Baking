@@ -40,6 +40,7 @@ jobs:
               az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --overwrite --auth-mode key -d '$web' -s ./react-client/build
 
   purge-cdn:
+    needs: build-web
     runs-on: ubuntu-latest
     env:
       CDN_PROFILE: baking-web-cdb-profile
