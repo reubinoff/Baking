@@ -60,7 +60,7 @@ async def exceptions(request: Request, call_next) -> Response:
         response = JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={
-                "detail": [{"msg": str(e), "loc": ["Unknown"], "type": "Unknown"}]
+                "detail": [{"msg": "Value error"  , "loc": ["Unknown"], "type": "Unknown"}]
             },
         )
 
