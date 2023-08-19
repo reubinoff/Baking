@@ -1,7 +1,7 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from pydantic.errors import PydanticValueError
+from pydantic.errors import PydanticUserError
 
 
 async def base_error_handler(req: Request, exc: Exception):
@@ -19,7 +19,7 @@ class FieldNotFound(Exception):
     pass
 
 
-class FieldNotFoundError(PydanticValueError):
+class FieldNotFoundError(PydanticUserError):
     code = "not_found.field"
     msg_template = "{msg}"
 
@@ -28,6 +28,5 @@ class BadFilterFormat(Exception):
     pass
 
 
-class InvalidFilterError(PydanticValueError):
+class InvalidFilterError(PydanticUserError):
     code = "invalid.filter"
-    msg_template = "{msg}"

@@ -17,7 +17,7 @@ async def test_get_recipe(recipe_factory):
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get(f"/recipe/{recipe.id}")
     assert response.status_code == 200
-    assert response.json() == recipe.dict()
+    assert response.json() == recipe.model_dump()
 
 
 @pytest.mark.anyio
@@ -31,13 +31,13 @@ async def test_get_all(recipe_factory):
     # assert RecipeRead(**response.json()) == recipe
     items_data = response.json()["items"]
     assert len(items_data) == 5 # default page size is 5
-    assert items_data[0] == recipes[0]
+    assert items_data[0] == recipes[0].model_dump()
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get(f"/recipe?page=2")
     assert response.status_code == 200
     items_data = response.json()["items"]
     assert len(items_data) == 5
-    assert items_data[0] == recipes[5]
+    assert items_data[0] == recipes[5].model_dump()
     assert isinstance(items_data[0]["cdn_url"] , str)
     
 @pytest.mark.anyio
@@ -46,7 +46,7 @@ async def test_get_filter(recipe_factory):
     recipe = await recipe_factory.create_async()
     critiria = FilterCriteria(
         name="name", operator=FilterOperator.EQUALS, value=recipe.name)
-    url_encoded_critiria = urllib.parse.quote(json.dumps([critiria.dict()]))
+    url_encoded_critiria = urllib.parse.quote(json.dumps([critiria.model_dump()]))
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get(f"/recipe?filter={url_encoded_critiria}")
     assert response.status_code == 200
@@ -56,7 +56,7 @@ async def test_get_filter(recipe_factory):
     # take only part of the name
     critiria = FilterCriteria(
         name="name", operator=FilterOperator.CONTAINS, value=recipe.name[:3])
-    url_encoded_critiria = urllib.parse.quote(json.dumps([critiria.dict()]))
+    url_encoded_critiria = urllib.parse.quote(json.dumps([critiria.model_dump()]))
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get(f"/recipe?filter={url_encoded_critiria}")
     assert response.status_code == 200
@@ -67,7 +67,7 @@ async def test_get_filter(recipe_factory):
     #change the name
     critiria = FilterCriteria(
         name="name", operator=FilterOperator.EQUALS, value="REUBINOFF")
-    url_encoded_critiria = urllib.parse.quote(json.dumps([critiria.dict()]))
+    url_encoded_critiria = urllib.parse.quote(json.dumps([critiria.model_dump()]))
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.get(f"/recipe?filter={url_encoded_critiria}")
     assert response.status_code == 200
@@ -147,7 +147,7 @@ async def test_recipe_create(procedures):
         procedures=procedures,
     )
     async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await ac.post("/recipe", json=recipe.dict())
+        response = await ac.post("/recipe", json=recipe.model_dump())
     assert response.status_code == 200
     assert response.json()["name"] == recipe.name
     assert response.json()["description"] == recipe.description
@@ -166,7 +166,7 @@ async def test_recipe_update(recipe_factory):
     recipe = await recipe_factory.create_async()
     recipe_update = RecipeUpdate(name="test_update")
     async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await ac.put(f"/recipe/{recipe.id}", json=recipe_update.dict(exclude_unset=True))
+        response = await ac.put(f"/recipe/{recipe.id}", json=recipe_update.model_dump(exclude_unset=True))
     assert response.status_code == 200
     assert response.json()["name"] == recipe_update.name
 

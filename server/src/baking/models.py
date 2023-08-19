@@ -1,86 +1,76 @@
 import pymongo
-from typing import Annotated
+from typing import Annotated, Callable, Dict, List, Optional, Union
 from enum import Enum
 from datetime import datetime
 from bson.objectid import ObjectId
-from pydantic import BaseModel, HttpUrl, constr, conint
+from pydantic import BaseModel, HttpUrl, constr, GetJsonSchemaHandler, field_serializer
+from typing import Any, Dict, List, Optional, Union 
+from pydantic_core import CoreSchema, core_schema
+from pydantic.json_schema import JsonSchemaValue
 
 
 from pydantic.fields import Field
 
 
-NameStr = constr(regex=r"^(?!\s*$).+", strip_whitespace=True, min_length=3)
+NameStr = constr(pattern=r"^\S.*\S$", strip_whitespace=True, min_length=3)
 PrimaryKey = constr(strip_whitespace=True)
-class PyObjectId(ObjectId):
+
+class _PyObjectIdAnnotation:
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+    def __get_pydantic_core_schema__(
+            cls,
+            _source_type: Any,
+            _handler: Callable[[Any], core_schema.CoreSchema],
+    ) -> core_schema.CoreSchema:
+
+        def validate_from_str(id_: str) -> ObjectId:
+            return ObjectId(id_)
+
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(),
+                core_schema.no_info_plain_validator_function(
+                    validate_from_str),
+            ]
+        )
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_str_schema,
+            python_schema=core_schema.union_schema(
+                [
+                    # check if it's an instance first before doing any further work
+                    core_schema.is_instance_schema(ObjectId),
+                    from_str_schema,
+                ]
+            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda instance: str(instance)
+            ),
+        )
 
     @classmethod
-    def validate(cls, v):
-        if not ObjectId.is_valid(v):
-            raise ValueError("Invalid objectid")
-        return ObjectId(v)
+    def __get_pydantic_json_schema__(
+            cls, _core_schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        # Use the same schema that would be used for `str`
+        return handler(core_schema.str_schema())
 
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(type="string")
-
-    @classmethod
-    def __str__(cls, v):
-        return str(v)
-        
-    
-
+PyObjectId = Annotated[ObjectId, _PyObjectIdAnnotation()]
 
 class BakingBaseModel(BaseModel):
 
-    @classmethod
-    def get_properties(cls):
-        return (
-            prop for prop in dir(cls)
-            if isinstance(getattr(cls, prop), property) and prop not in ("__values__", "fields")
-        )
-
-    _encoders_by_type = {
-        datetime: lambda dt: dt.isoformat(timespec='seconds'),
-        PyObjectId: lambda id: str(id),
-        ObjectId: lambda id: str(id), 
-        HttpUrl: lambda url: str(url)
-    }
-
-    def _iter(self, **kwargs):
-        for key, value in super()._iter(**kwargs):
-            yield key, self._encoders_by_type.get(type(value), lambda v: v)(value)
-
-    @classmethod
-    def get_properties(cls):
-        return [prop for prop in dir(cls) if isinstance(getattr(cls, prop), property)]
-
-    def dict(self, *args, **kwargs):
-        self.__dict__.update(
-            {prop: getattr(self, prop) for prop in self.get_properties()}
-        )
-        return super().dict(*args, **kwargs)
-
-    def json(
-        self,
-        *args,
-        **kwargs,
-    ) -> str:
-        self.__dict__.update(
-            {prop: getattr(self, prop) for prop in self.get_properties()}
-        )
-
-        return super().json(*args, **kwargs)
-
-    class Config:
-        allow_population_by_field_name = True
+    class ConfigDict:
+        populate_by_name = True
         arbitrary_types_allowed = True
 
 class FileUploadData(BaseModel):
     url: HttpUrl
     identifier: str
+
+    @field_serializer('url')
+    def serialize_created_at(self, url: HttpUrl, _info):
+        return str(url)
+
 
 class SortOrder(str, Enum):
     ASCENDING = pymongo.ASCENDING

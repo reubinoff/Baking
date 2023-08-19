@@ -9,7 +9,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.responses import JSONResponse
 
-from pydantic.error_wrappers import ValidationError
+from pydantic import ValidationError
 from starlette.middleware.cors import CORSMiddleware
 
 
@@ -60,7 +60,7 @@ async def exceptions(request: Request, call_next) -> Response:
         response = JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={
-                "detail": [{"msg": "Unknown", "loc": ["Unknown"], "type": "Unknown"}]
+                "detail": [{"msg": str(e), "loc": ["Unknown"], "type": "Unknown"}]
             },
         )
 

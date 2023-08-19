@@ -4,6 +4,7 @@ from baking.routers.recipe.models import ProcedureCreate
 async def test_create_and_update(database: Any, procedures: list[ProcedureCreate], procedure: ProcedureCreate):
     from baking.routers.recipe.service import create, get, update
     from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
+    from baking.routers.procedure.models import ProcedureUpdate
 
     recipe_name = "test"
 
@@ -17,7 +18,8 @@ async def test_create_and_update(database: Any, procedures: list[ProcedureCreate
     procedures.append(procedure)
     
     recipe_in = RecipeUpdate(
-        procedures=procedures
+        procedures=[ProcedureUpdate(**a.model_dump())
+                    for a in procedures]
     )
     t_recipe = await update(
         db=database,
@@ -35,8 +37,8 @@ async def test_create_and_update(database: Any, procedures: list[ProcedureCreate
 async def test_hydration(database: Any):
     from baking.routers.recipe.service import create, get, update
     from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
-    from baking.routers.procedure.models import ProcedureCreate
-    from baking.routers.ingredients.models import IngredientCreate, Ingredient
+    from baking.routers.procedure.models import ProcedureCreate, ProcedureUpdate
+    from baking.routers.ingredients.models import IngredientCreate, Ingredient, IngredientUpdate
     from baking.routers.ingredients.enums import IngredientUnits, IngredientType
 
     ingredients = [
@@ -81,7 +83,8 @@ async def test_hydration(database: Any):
         )
     )
     r = RecipeUpdate(
-        procedures=recipe.procedures
+        procedures=[ProcedureUpdate(**a.model_dump())
+                    for a in recipe.procedures]
     )
     recipe = await update(
         db=database,
@@ -92,16 +95,16 @@ async def test_hydration(database: Any):
 
     assert t_r.hydration == 75
 
-    recipe.procedures.append( ProcedureCreate(
+    recipe.procedures.append(ProcedureUpdate(
         name="newone",
         ingredients=[
-            Ingredient(
+            IngredientUpdate(
                 name="i2_name",
                 quantity=200,
                 units=IngredientUnits.ml,
                 type=IngredientType.oil,
             ),
-            Ingredient(
+            IngredientUpdate(
                 name="i3_name",
                 quantity=600,
                 units=IngredientUnits.grams,
@@ -110,7 +113,8 @@ async def test_hydration(database: Any):
         ],
     ))
     r = RecipeUpdate(
-        procedures=recipe.procedures
+        procedures=[ProcedureUpdate(**a.model_dump())
+                    for a in recipe.procedures]
     )
     recipe = await update(
         db=database,
@@ -125,7 +129,7 @@ async def test_hydration(database: Any):
 async def test_ingredients(database: Any):
     from baking.routers.recipe.service import create, get, update
     from baking.routers.recipe.models import RecipeCreate, RecipeUpdate
-    from baking.routers.procedure.models import ProcedureCreate
+    from baking.routers.procedure.models import ProcedureCreate, ProcedureUpdate
     from baking.routers.ingredients.models import IngredientCreate
     from baking.routers.ingredients.enums import IngredientUnits, IngredientType
 
@@ -199,7 +203,8 @@ async def test_ingredients(database: Any):
     )
     r.procedures.append(procedure_in_c)
     r = RecipeUpdate(
-        procedures=r.procedures
+        procedures=[ProcedureUpdate(**a.model_dump())
+                    for a in r.procedures]
     )
     recipe = await update(
         db=database,

@@ -1,11 +1,11 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Annotated
 
 from pydantic import Field
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_serializer, computed_field, AliasChoices
 from baking.config import settings
-from baking.models import BakingBaseModel, NameStr, PyObjectId
+from baking.models import BakingBaseModel, NameStr, PyObjectId, ObjectId
 
 from baking.routers.procedure.models import ProcedureCreate, ProcedureRead, ProcedureUpdate
 from baking.routers.ingredients.models import IngredientRead
@@ -25,22 +25,28 @@ class Recipe(BakingBaseModel):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
+    @field_serializer('created_at', 'updated_at')
+    def serialize_created_at(self, dt: datetime, _info):
+        return dt.isoformat(timespec='seconds')
+
 
 
 class RecipeRead(Recipe):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    # id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: PyObjectId = Field(
+        alias="_id", validation_alias=AliasChoices("id", "_id"))
 
-    total_recipe_time: Optional[int]
-
-    image: Optional[RecipeImage]
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
+    image: Optional[RecipeImage] = None
 
     procedures: List[ProcedureRead]
 
-    # propeties #######################
 
-    @property
+    @field_serializer('id')
+    def serialize_updated_at(self, _id: PyObjectId, _info):
+        return str(_id)
+
+    # propeties #######################
+    @computed_field
     def cdn_url(self) -> str:
         if not self.image or not self.image.identifier:
             image_id = 200 + int(str(self.id)[:1])
@@ -48,24 +54,25 @@ class RecipeRead(Recipe):
         i = self.image.identifier
         return f"{settings.azure_cdn_storage_base_url}/{i}"
 
-    @property
+    @computed_field
     def hydration(self) -> int:
         if self.total_solid > 0:
             return int((self.total_liquid / self.total_solid) * 100)
         return 100  # precent hydration
 
-    @property
+    @computed_field(return_type=int)
     def total_recipe_time(self) -> int:
         return sum(p.duration_in_seconds for p in self.procedures or [])
 
-    @property 
+    @computed_field
     def total_liquid(self) -> int:
         return sum(p.total_liquid for p in self.procedures or [])
-    @property  
+    
+    @computed_field
     def total_solid(self) -> int:
         return sum(p.total_solid for p in self.procedures or [])
 
-    @property
+    @computed_field
     def ingredients(self) -> List[IngredientRead]:
         max_precentage_liquid: float = self.hydration/100
         # Use a defaultdict to simplify the logic of adding ingredients to the dictionary
@@ -73,7 +80,7 @@ class RecipeRead(Recipe):
         for p in self.procedures:
             for i in p.ingredients or []:
                 if i.name not in ingredients:
-                    ingredients[i.name] = IngredientRead(**i.dict())
+                    ingredients[i.name] = IngredientRead(**i.model_dump())
                 else:
                     ingredients[i.name].quantity += i.quantity
                 #TODO normilzed units
@@ -97,11 +104,11 @@ class RecipeCreate(Recipe):
 
 
 class RecipeUpdate(Recipe):
-    name: Optional[NameStr]
-    procedures: Optional[List[ProcedureUpdate]]
-    created_at: Optional[datetime]
+    name: Optional[NameStr] = Field(None, nullable=True)
+    procedures: Optional[List[ProcedureUpdate]] = Field(None, nullable=True)
+    created_at: Optional[datetime] = Field(None, nullable=True) 
     updated_at: datetime = Field(default_factory=datetime.now)
-    image: Optional[RecipeImage]
+    image: Optional[RecipeImage] = Field(None, nullable=True)
 
 
 class RecipePagination(BaseModel):

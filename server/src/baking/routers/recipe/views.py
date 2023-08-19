@@ -176,5 +176,5 @@ async def update_recipe_img(*,
             detail="Update failed",
         )
         
-    return {"file_path": file.filename, "is_valid": is_file_image, "image":recipe.image.dict()}
+    return {"file_path": file.filename, "is_valid": is_file_image, "image":recipe.image.model_dump()}
 

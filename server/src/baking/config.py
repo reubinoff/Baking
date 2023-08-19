@@ -1,5 +1,4 @@
-import os
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 class BakingConfig(BaseSettings):
     is_debug: bool = False
     service_name: str = "testing-service"  # will be replaced in env var
@@ -10,8 +9,6 @@ class BakingConfig(BaseSettings):
     db_name: str
 
     db_debug_drop_in_startup: bool = False
-
-    revisions_location = f"{os.path.dirname(os.path.realpath(__file__))}/database/revisions" 
 
     root_path:str = ""
 

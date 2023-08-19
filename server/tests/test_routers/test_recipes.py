@@ -24,7 +24,7 @@ async def test_search_filter_not_list(database, recipe_factory):
     query = CommonQueryParams(filter_criteria=filter)
     with pytest.raises(InvalidFilterError) as exc_info:
         results = await search_filter_sort_paginate(db=database, collection_name=COLLECTION_RECIPE, params=query)
-    assert 'Invalid filter: filter is not a list' == exc_info.value.detail
+    assert 'Invalid filter: filter is not a list' == exc_info.value.message
 
 
 @pytest.mark.asyncio

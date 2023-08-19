@@ -50,7 +50,7 @@ async def search_filter_sort_paginate(
     if params.filter_criteria:
         filter_obj_list = validate_filter_spec(params.filter_criteria)
         for criteria in filter_obj_list:
-            filter_query[criteria.name] = {f"{criteria.operator}": criteria.value}
+            filter_query[criteria.name] = {f"{criteria.operator.value}": criteria.value}
     
     if params.query:
         filter_query["$text"] = {"$search": params.query}
@@ -88,20 +88,20 @@ def validate_filter_spec(filter_spec: list) -> list[FilterCriteria]:
         return
     if not isinstance(filter_spec, list):
         raise InvalidFilterError(
-            status_code=400, detail="Invalid filter: filter is not a list")
+            code=400, message="Invalid filter: filter is not a list")
     filter_obj_list: list[FilterCriteria] = _cast_to_filter_Critiria_list(filter_spec)
     for criteria in filter_obj_list:
         if not getattr(criteria, "name") or not getattr(criteria, "value") or not getattr(criteria, "operator"):
             raise InvalidFilterError(
-                status_code=400, detail="Invalid filter criteria: missing name, value, or operator")
+                code=400, message="Invalid filter criteria: missing name, value, or operator")
         if not isinstance(criteria.name, str) or not isinstance(criteria.value, str) or not isinstance(criteria.operator, str):
             raise InvalidFilterError(
-                status_code=400, detail="Invalid filter criteria: name, value, or operator is not a string")
+                code=400, message="Invalid filter criteria: name, value, or operator is not a string")
         try:
             operator = FilterOperator(criteria.operator)
         except ValueError:
             raise InvalidFilterError(
-                status_code=400, detail=f"Invalid filter criteria operator: {criteria.operator}")
+                code=400, message=f"Invalid filter criteria operator: {criteria.operator}")
     return filter_obj_list
 
 

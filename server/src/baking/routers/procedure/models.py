@@ -1,7 +1,7 @@
 from typing import List, Optional
 from datetime import datetime
 from baking.models import NameStr
-from pydantic import Field
+from pydantic import Field, computed_field
 
 from baking.models import BakingBaseModel
 
@@ -9,6 +9,7 @@ from baking.routers.ingredients.models import (
     Ingredient,
     IngredientCreate,
     IngredientRead,
+    IngredientUpdate,
 )
 
 
@@ -38,6 +39,7 @@ class Procedure(BakingBaseModel):
     steps: Optional[List[Step]]
     ingredients: Optional[List[IngredientRead]]
 
+    @computed_field
     @property
     def total_liquid(self) -> int:  # TODO: need to cover if the units are different
         liquid = 0
@@ -49,6 +51,7 @@ class Procedure(BakingBaseModel):
 
         return liquid
 
+    @computed_field
     @property
     def total_solid(self) -> int:
         solid = 0
@@ -60,12 +63,14 @@ class Procedure(BakingBaseModel):
 
         return solid
     
+    @computed_field
     @property
     def procedure_hydration(self) -> int:
         if self.total_solid > 0:
             return int((self.total_liquid / self.total_solid) * 100)
         return 100  # precent hydration
 
+    @computed_field
     @property
     def duration_in_seconds(self) -> int:
         total_time = 0
@@ -92,6 +97,6 @@ class ProcedureCreate(Procedure):
 
 
 class ProcedureUpdate(Procedure):
-    name: Optional[NameStr]
-    ingredients: Optional[List[IngredientCreate]]
-    steps: Optional[List[StepUpdate]]
+    name: Optional[NameStr] = Field(None, nullable=True)
+    ingredients: Optional[List[IngredientUpdate]] = Field(None, nullable=True)
+    steps: Optional[List[StepUpdate]] = Field(None, nullable=True)
