@@ -34,10 +34,10 @@ class IngredientCreate(Ingredient):
 
 
 class IngredientUpdate(Ingredient):
-    name: Optional[NameStr]= Field(None, nullable=True)
-    quantity: Optional[int]= Field(None, nullable=True)
-    units: Optional[IngredientUnits]= Field(None, nullable=True)
-    type: Optional[IngredientType]= Field(None, nullable=True)
+    name: Optional[NameStr]= Field(None)
+    quantity: Optional[int]= Field(None)
+    units: Optional[IngredientUnits]= Field(None)
+    type: Optional[IngredientType]= Field(None)
 
 
 class IngredientRead(Ingredient):

@@ -5,7 +5,7 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory import Use
 from polyfactory.pytest_plugin import register_fixture
 
-from .mongo_db import mongo_db
+
 from baking.routers.recipe.models import RecipeCreate
 from baking.routers.ingredients.models import IngredientType, IngredientUnits, IngredientCreate
 from baking.routers.procedure.models import ProcedureCreate, Step

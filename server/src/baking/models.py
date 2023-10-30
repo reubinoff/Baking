@@ -1,10 +1,10 @@
 import pymongo
-from typing import Annotated, Callable, Dict, List, Optional, Union
+from typing import Annotated, Callable
 from enum import Enum
 from bson.objectid import ObjectId
 from pydantic import BaseModel, HttpUrl, constr, GetJsonSchemaHandler, field_serializer
 from typing import Any
-from pydantic_core import CoreSchema, core_schema
+from pydantic_core import core_schema
 from pydantic.json_schema import JsonSchemaValue
 
 
@@ -42,9 +42,7 @@ class _PyObjectIdAnnotation:
                     from_str_schema,
                 ]
             ),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                lambda instance: str(instance)
-            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(str),
         )
 
     @classmethod

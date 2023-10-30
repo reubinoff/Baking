@@ -21,7 +21,7 @@ class RecipeImage(BakingBaseModel):
 
 class Recipe(BakingBaseModel):
     name: NameStr
-    description: Optional[str] = Field(None, nullable=True)
+    description: Optional[str] = Field(None)
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
@@ -104,11 +104,11 @@ class RecipeCreate(Recipe):
 
 
 class RecipeUpdate(Recipe):
-    name: Optional[NameStr] = Field(None, nullable=True)
-    procedures: Optional[List[ProcedureUpdate]] = Field(None, nullable=True)
-    created_at: Optional[datetime] = Field(None, nullable=True) 
+    name: Optional[NameStr] = Field(None)
+    procedures: Optional[List[ProcedureUpdate]] = Field(None)
+    created_at: Optional[datetime] = Field(None) 
     updated_at: datetime = Field(default_factory=datetime.now)
-    image: Optional[RecipeImage] = Field(None, nullable=True)
+    image: Optional[RecipeImage] = Field(None)
 
 
 class RecipePagination(BaseModel):

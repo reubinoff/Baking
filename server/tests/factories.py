@@ -4,9 +4,12 @@ from asyncio import sleep
 from typing import List
 
 from baking.routers.recipe.models import RecipeRead, RecipeCreate
+from baking.database.manage import init_database
 
-from .mongo_db import mongo_db
 from polyfactory import AsyncPersistenceProtocol
+
+
+mongo_db = init_database()
 
 
 def get_recipes_collection(db):

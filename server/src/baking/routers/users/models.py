@@ -17,7 +17,7 @@ class User(Base, TimeStampMixin):
     """ """
 
     id = Column(Integer, primary_key=True)
-    username = Column(String(32), nullable=False)
+    username = Column(String(32))
 
     recipes = relationship("Recipe", backref="user")
 
