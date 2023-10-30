@@ -37,5 +37,5 @@ app.include_router(api_router)
 app.add_exception_handler(Exception, base_error_handler)
 
 
-logger.info(f"Debug mode is : {settings.is_debug}")
-logger.info(f"Start service: {settings.service_name}")
+logger.info("Debug mode is : %s", settings.is_debug)
+logger.info("Start service: %s", settings.service_name)

@@ -5,3 +5,4 @@ disable=
     C0116, # missing-function-docstring
     C0303, # trailing-whitespace
     C0301, # line-too-long
+    C0411, # wrong-import-order

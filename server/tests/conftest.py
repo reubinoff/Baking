@@ -9,6 +9,7 @@ from polyfactory.pytest_plugin import register_fixture
 from baking.routers.recipe.models import RecipeCreate
 from baking.routers.ingredients.models import IngredientType, IngredientUnits, IngredientCreate
 from baking.routers.procedure.models import ProcedureCreate, Step
+from baking.database.manage import drop_database, init_database
 from baking.main import app
 
 
@@ -25,17 +26,16 @@ def event_loop():
     yield loop
     loop.close()
 
-@pytest.fixture(scope="session")
-def testapp():
+@pytest.fixture(scope="session", name="testapp")
+def fixture_testapp():
     return app
 
 
-@pytest.fixture(scope="function", autouse=True)
-async def database():
+@pytest.fixture(scope="function", autouse=True, name="database")
+async def fixture_database():
     """
     Creates a new database 
     """
-    from baking.database.manage import drop_database, init_database
     mock_db = init_database()
     yield mock_db
     await drop_database()
@@ -78,7 +78,6 @@ class RecipeFactory(ModelFactory[RecipeCreate]):
     name = Use(ModelFactory.__random__.choice, ['recipe_' + str(i) for i in range(100)])
     description = Use(ModelFactory.__random__.choice, ['why am description_' + str(i) for i in range(100)])
     procedures = Use(ProcedureFactory.batch, 2)
-    pass
 
 
 @pytest.fixture(scope="function")

@@ -161,7 +161,7 @@ async def test_recipe_delete(recipe_factory, client):
 
 @pytest.mark.anyio
 async def test_recipe_delete_invalid_id(recipe_factory, client):
-    _: RecipeRead = await recipe_factory.create_async()
+    _ = await recipe_factory.create_async()
     response = await client.delete("/recipe/abc")
     assert response.status_code == 400
     assert response.json()["detail"] == "Invalid recipe id"
