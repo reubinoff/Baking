@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
@@ -15,6 +16,10 @@ init_logger()
 db = init_database()
 logger = logging.getLogger(__name__)
 
+@asynccontextmanager
+async def startup_event(fastapi_app: FastAPI):
+    fastapi_app.db = db
+    yield
 
 # base_path = f"/{settings.root_path}" if settings.root_path else ""
 app = FastAPI(
@@ -26,17 +31,10 @@ app = FastAPI(
     openapi_url=None if settings.is_debug is False else "/docs/openapi.json",
 
     root_path=f"{settings.root_path}",
-    
+    lifespan=startup_event
 )
 app.include_router(api_router)
 app.add_exception_handler(Exception, base_error_handler)
-
-app.db = db
-
-
-@app.on_event("startup")
-async def startup_event():
-    app.db = db
 
 
 logger.info(f"Debug mode is : {settings.is_debug}")

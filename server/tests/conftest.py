@@ -3,8 +3,8 @@ import pytest
 import asyncio
 from starlette.testclient import TestClient
 
+from httpx import AsyncClient
 from .mongo_db import mongo_db
-
 from baking.routers.recipe.models import RecipeCreate
 from baking.routers.ingredients.models import IngredientType, IngredientUnits, IngredientCreate
 from baking.routers.procedure.models import ProcedureCreate, Step
@@ -26,6 +26,11 @@ def event_loop():
         loop = asyncio.new_event_loop()
     yield loop
     loop.close()
+
+@pytest.fixture(scope="session")
+def testapp():
+    from baking.main import app
+    return app
 
 def pytest_runtest_setup(item):
     if "slow" in item.keywords and not item.config.getoption("--runslow"):
@@ -53,13 +58,11 @@ async def database():
     mock_db = init_database()
     yield mock_db
     await drop_database()
-    
-    
-
 
 @pytest.fixture(scope="function")
-def client(testapp):
-    yield TestClient(testapp)
+def client(testapp,database):
+    testapp.db = database
+    yield AsyncClient(app=testapp, base_url="http://test")
 
 
 class StepFactory(ModelFactory[Step]):
