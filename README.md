@@ -57,8 +57,6 @@ The name to use for the MongoDB container.
 ## Usage
 To use the Makefile, run the make command followed by the name of the command you want to run. For example, to build the server and client components, run:
 
-
-
 # Fork the repository.
 Create a new branch for your changes.
 Make your changes and commit them.
