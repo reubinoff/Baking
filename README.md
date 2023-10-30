@@ -1,3 +1,5 @@
+[![server-ci](https://github.com/reubinoff/Baking/actions/workflows/python-app.yml/badge.svg?branch=develop)](https://github.com/reubinoff/Baking/actions/workflows/python-app.yml)
+
 # Baking
 This is a web application for managing baking recipes. It allows users to create, edit, and delete recipes, as well as view a list of all recipes.
 
