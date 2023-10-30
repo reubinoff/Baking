@@ -46,7 +46,7 @@ jobs:
             cd server
             poetry env use 3.11
             poetry install 
-            poetry run python -m pytest -xv --cov=src/baking/routers --cov-fail-under=80 --cov-report html  --junit-xml=pytest-report.xml
+            poetry run python -m pytest -xv --cov=src/baking/routers --cov-fail-under=80 --cov-report html  --junit-xml=../pytest-report.xml
         - name: Test Report
           uses: dorny/test-reporter@v1
           if: success() || failure()    # run this step even if previous step failed
