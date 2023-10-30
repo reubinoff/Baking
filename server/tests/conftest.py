@@ -12,8 +12,6 @@ from baking.routers.procedure.models import ProcedureCreate, Step
 from baking.database.manage import drop_database, init_database
 from baking.main import app
 
-
-
 from .factories import AsyncPersistenceHandler
 
 

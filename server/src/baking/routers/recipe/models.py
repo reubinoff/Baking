@@ -1,11 +1,11 @@
 from datetime import datetime
-from typing import List, Optional, Annotated
+from typing import List, Optional
 
 from pydantic import Field
 
 from pydantic import BaseModel, field_serializer, computed_field, AliasChoices
 from baking.config import settings
-from baking.models import BakingBaseModel, NameStr, PyObjectId, ObjectId
+from baking.models import BakingBaseModel, NameStr, PyObjectId
 
 from baking.routers.procedure.models import ProcedureCreate, ProcedureRead, ProcedureUpdate
 from baking.routers.ingredients.models import IngredientRead
