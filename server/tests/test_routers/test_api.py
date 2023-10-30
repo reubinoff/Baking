@@ -1,17 +1,15 @@
-import pytest
 import urllib
 import json
-from mock import patch
 import os
-from httpx import AsyncClient
+import pytest
 
-from baking.main import app
+from mock import patch
+
 from baking.models import FilterCriteria, FilterOperator
+from baking.routers.recipe.models import RecipeCreate, RecipeRead, RecipeUpdate
 
 @pytest.mark.anyio
 async def test_get_recipe(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeRead
-
     recipe: RecipeRead = await recipe_factory.create_async()
     response = await client.get(f"/recipe/{recipe.id}")
     assert response.status_code == 200
@@ -20,8 +18,6 @@ async def test_get_recipe(recipe_factory, client):
 
 @pytest.mark.anyio
 async def test_get_all(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeRead
-
     recipes = await recipe_factory.create_batch_async(10)
     response = await client.get("/recipe")
     assert response.status_code == 200
@@ -29,8 +25,7 @@ async def test_get_all(recipe_factory, client):
     items_data = response.json()["items"]
     assert len(items_data) == 5 # default page size is 5
     assert items_data[0] == recipes[0].model_dump()
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await client.get(f"/recipe?page=2")
+    response = await client.get("/recipe?page=2")
     assert response.status_code == 200
     items_data = response.json()["items"]
     assert len(items_data) == 5
@@ -39,7 +34,6 @@ async def test_get_all(recipe_factory, client):
     
 @pytest.mark.anyio
 async def test_get_filter(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeRead
     recipe = await recipe_factory.create_async()
     critiria = FilterCriteria(
         name="name", operator=FilterOperator.EQUALS, value=recipe.name)
@@ -72,7 +66,6 @@ async def test_get_filter(recipe_factory, client):
 
 @pytest.mark.anyio
 async def test_get_query(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeRead
     recipe = await recipe_factory.create_async()
     response = await client.get(f"/recipe?q={recipe.name}")
     assert response.status_code == 200
@@ -86,7 +79,7 @@ async def test_get_query(recipe_factory, client):
     assert len(items_data) == 0
 
     #change the name
-    response = await client.get(f"/recipe?q=REUBINOFF")
+    response = await client.get("/recipe?q=REUBINOFF")
     assert response.status_code == 200
     items_data = response.json()["items"]
     assert len(items_data) == 0
@@ -94,7 +87,6 @@ async def test_get_query(recipe_factory, client):
 
 @pytest.mark.anyio
 async def test_get_query_in_description(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeRead
     recipe = await recipe_factory.create_async()
     response = await client.get(f"/recipe?q={recipe.description.split(' ')[2]}")
     assert response.status_code == 200
@@ -111,8 +103,6 @@ async def test_get_query_in_description(recipe_factory, client):
 
 @pytest.mark.anyio
 async def test_recipe_get_invalid_id(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeRead
-
     _: RecipeRead = await recipe_factory.create_async()
     response = await client.get("/recipe/abc")
     assert response.status_code == 400
@@ -121,14 +111,13 @@ async def test_recipe_get_invalid_id(recipe_factory, client):
 
 @pytest.mark.anyio
 async def test_recipe_not_found(client):
-    response = await client.get(f"/recipe/644016caff25afc6b20de505")
+    response = await client.get("/recipe/644016caff25afc6b20de505")
     assert response.status_code == 404
     assert response.json()["detail"] == "The recipe with this id does not exist"
 
 
 @pytest.mark.anyio
 async def test_recipe_create(procedures, client):
-    from baking.routers.recipe.models import RecipeCreate, RecipeRead
     recipe = RecipeCreate(
         name="test",
         description="test",
@@ -147,8 +136,6 @@ async def test_recipe_create(procedures, client):
 
 @pytest.mark.anyio
 async def test_recipe_update(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeUpdate, RecipeRead
-
     recipe = await recipe_factory.create_async()
     recipe_update = RecipeUpdate(name="test_update")
     response = await client.put(f"/recipe/{recipe.id}", json=recipe_update.model_dump(exclude_unset=True))
@@ -162,8 +149,6 @@ async def test_recipe_update(recipe_factory, client):
 
 @pytest.mark.anyio
 async def test_recipe_delete(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeRead
-
     recipe = await recipe_factory.create_async()
     response = await client.delete(f"/recipe/{recipe.id}")
     assert response.status_code == 200
@@ -176,8 +161,6 @@ async def test_recipe_delete(recipe_factory, client):
 
 @pytest.mark.anyio
 async def test_recipe_delete_invalid_id(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeRead
-
     _: RecipeRead = await recipe_factory.create_async()
     response = await client.delete("/recipe/abc")
     assert response.status_code == 400
@@ -186,18 +169,14 @@ async def test_recipe_delete_invalid_id(recipe_factory, client):
 
 @pytest.mark.anyio
 async def test_recipe_delete_not_found(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeRead
-
     _: RecipeRead = await recipe_factory.create_async()
-    response = await client.delete(f"/recipe/644016caff25afc6b20de505")
+    response = await client.delete("/recipe/644016caff25afc6b20de505")
     assert response.status_code == 404
     assert response.json()["detail"] == "The recipe with this id does not exist"
 
 
 @pytest.mark.anyio
 async def test_recipe_update_recipe_img(recipe_factory, client):
-    from baking.routers.recipe.models import RecipeUpdate, RecipeRead
-
     recipe = await recipe_factory.create_async()
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     with open(parent_dir + "/test_data/test.jpeg", "rb") as image_file:

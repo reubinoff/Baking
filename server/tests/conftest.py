@@ -1,17 +1,15 @@
-
 import pytest
 import asyncio
-from starlette.testclient import TestClient
-
 from httpx import AsyncClient
+from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory import Use
+from polyfactory.pytest_plugin import register_fixture
+
 from .mongo_db import mongo_db
 from baking.routers.recipe.models import RecipeCreate
 from baking.routers.ingredients.models import IngredientType, IngredientUnits, IngredientCreate
 from baking.routers.procedure.models import ProcedureCreate, Step
-
-from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory import Use
-from polyfactory.pytest_plugin import register_fixture
+from baking.main import app
 
 
 
@@ -29,24 +27,7 @@ def event_loop():
 
 @pytest.fixture(scope="session")
 def testapp():
-    from baking.main import app
     return app
-
-def pytest_runtest_setup(item):
-    if "slow" in item.keywords and not item.config.getoption("--runslow"):
-        pytest.skip("need --runslow option to run")
-
-    if "incremental" in item.keywords:
-        previousfailed = getattr(item.parent, "_previousfailed", None)
-        if previousfailed is not None:
-            pytest.xfail("previous test failed ({0})".format(previousfailed.name))
-
-
-def pytest_runtest_makereport(item, call):
-    if "incremental" in item.keywords:
-        if call.excinfo is not None:
-            parent = item.parent
-            parent._previousfailed = item
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -60,7 +41,7 @@ async def database():
     await drop_database()
 
 @pytest.fixture(scope="function")
-def client(testapp,database):
+def client(testapp, database):
     testapp.db = database
     yield AsyncClient(app=testapp, base_url="http://test")
 
