@@ -11,6 +11,8 @@ on:
 
 permissions:
   id-token: write
+  contents: read
+  checks: write
 
 jobs:
     test:
