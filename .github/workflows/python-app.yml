@@ -9,6 +9,8 @@ on:
     - 'server/**'
     - '.github/workflows/python-app.yml'
 
+permissions:
+  id-token: write
 
 jobs:
     test:
@@ -54,8 +56,6 @@ jobs:
             name: Tests results
             path: pytest-report.xml
             reporter: java-junit 
-        - name: Coveralls
-          uses: coverallsapp/github-action@v2
 
     build:
         runs-on: ubuntu-latest
