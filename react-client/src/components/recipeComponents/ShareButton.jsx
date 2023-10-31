@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Box from "@mui/material/Box";
 import SpeedDial from "@mui/material/SpeedDial";
 import { styled } from "@mui/material/styles";
@@ -14,7 +14,12 @@ function isMobileOrTablet() {
   return navigator.userAgentData.mobile;
 }
 
-
+const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
+  "&.MuiSpeedDial-directionRight": {
+    top: theme.spacing(2),
+    left: theme.spacing(2),
+  },
+}));
 
 export default function ShareButton(params) {
   const { recipe_id, recipe_name } = params;
@@ -24,23 +29,16 @@ export default function ShareButton(params) {
     return url;
   }, [recipe_id]);
 
-  const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
-    "&.MuiSpeedDial-directionRight": {
-      top: theme.spacing(2),
-      left: theme.spacing(2),
-    },
-  }));
-
-  const shareToWhatsapp = () => {
+  const shareToWhatsapp = useCallback(() => {
     const message = `🍞 Check out this recipe *${recipe_name}* I found on: ${GetRecipeUrl}`;
     const tempUrl = "https://" + (isMobileOrTablet() ? "api" : "web");
     const url = `${tempUrl}.whatsapp.com/send?text=${encodeURIComponent(
       message
     )}`;
     window.open(url, "_blank");
-  };
+  }, [recipe_name, GetRecipeUrl]);
 
-  const shareToFacebook = () => {
+  const shareToFacebook = useCallback(() => {
     const url_to_share = GetRecipeUrl;
     const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
       url_to_share
@@ -48,13 +46,13 @@ export default function ShareButton(params) {
       `Check out this recipe ${recipe_name} I found on`
     )}`;
     window.open(url, "_blank");
-  };
+  }, [recipe_name, GetRecipeUrl]);
 
-  const shareToEmail = () => {
+  const shareToEmail = useCallback(() => {
     const message = `Check out this recipe ${recipe_name} I found on: ${GetRecipeUrl}`;
     const url = `mailto:?subject=subject&body=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
-  };
+  }, [recipe_name, GetRecipeUrl]);
 
   const [actions] = React.useState(
     [
@@ -92,6 +90,7 @@ export default function ShareButton(params) {
             boxShadow: "none",
 
             "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
+            "&:clicked": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
           },
         }}
       >
