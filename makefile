@@ -24,7 +24,7 @@ stop-db:
 
 check-updates:
 	cd server; \
-		pip list --outdated
+		poetry run pip list --outdated
 	cd react-client; \
 		npx npm-check-updates -u
 		npm update
