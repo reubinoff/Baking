@@ -17,7 +17,6 @@ python-multipart = "^0.0.6"
 pydantic-settings = "^2.0.2"
 motor = "^3.3.1"
 
-
 [tool.poetry.dev-dependencies]
 pylint = "^2.11.1"
 black = "^23.1.0"
