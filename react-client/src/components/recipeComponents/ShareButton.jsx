@@ -88,8 +88,8 @@ export default function ShareButton(params) {
             backgroundColor: "transparent",
             color: "black",
             boxShadow: "none",
-            "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
-            "&:clicked": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
+            // "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
+            // "&:clicked": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
           },
         }}
       >
