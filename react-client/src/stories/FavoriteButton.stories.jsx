@@ -4,7 +4,6 @@ import FavoriteRecipeButton from '../components/recipeComponents/FavoriteRecipeB
 export default {
     title: 'Components/FavoriteRecipeButton',
     component: FavoriteRecipeButton,
-    tags: ['autodocs'],
 };
 
 export const FavoriteRecipeButtonStory = {

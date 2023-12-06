@@ -4,11 +4,11 @@ import Hydration from '../components/recipeComponents/Hydration';
 export default {
     title: 'Components/Hydration',
     component: Hydration,
-    tags: ['autodocs'],
 };
 
 export const HydrationStory = {
     args: {
+        hydration: 100,
     },
 };
 

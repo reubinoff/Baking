@@ -9,6 +9,7 @@ const config = {
     "@storybook/addon-interactions",
     "@storybook/addon-themes",
     "storybook-addon-pseudo-states",
+    "@storybook/addon-actions",
   ],
   framework: {
     name: "@storybook/react-webpack5",

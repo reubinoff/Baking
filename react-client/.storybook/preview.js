@@ -7,6 +7,7 @@ import "@fontsource/roboto/700.css";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 // import { lightTheme, darkTheme } from "../src/themes.js";
+import "../src/App.css";
 
 const preview = {
   parameters: {

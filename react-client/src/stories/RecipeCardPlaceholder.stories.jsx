@@ -4,12 +4,13 @@ import RecipeCardPlaceholder from '../components/RecipeCardPlaceholder';
 export default {
     title: 'Components/RecipeCardPlaceholder',
     component: RecipeCardPlaceholder,
+    // decorators: [(Story) => <div style={{ width: '300px', height: '300px' }}><Story /></div>],
+
     tags: ['autodocs'],
 };
 
 export const RecipeCardPlaceholderStory = {
     args: {
-        favoirite: false,
     },
 };
 

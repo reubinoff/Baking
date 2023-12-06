@@ -21,7 +21,7 @@ export default function RecipeCard(props) {
   };
 
   return (
-    <Card>
+    <Card className="baking-card">
       <CardHeader
         title={recipe.name}
         action={<Hydration hydration={recipe.hydration} />}
@@ -32,13 +32,17 @@ export default function RecipeCard(props) {
         image={recipe.cdn_url}
         onLoad={() => setLoading(false)}
         onClick={navigateToRecipe}
+        sx={{ maxHeight: "200px" }}
+        style={{ display: loading ? 'none' : 'block' }}
+
       />
-      {loading && <CardMedia variant="top" src="images/placeholder.png" />}
-      <Skeleton
-        sx={{ height: 190, width: "90%", display: loading ? "flex" : "none" }}
-        animation="wave"
-        variant="rectangular"
-      />
+      {loading &&
+        <Skeleton
+          height={200}
+          sx={{ width: "90%" }}
+          animation="wave"
+          variant="rectangular"
+        />}
 
       <CardContent onClick={navigateToRecipe}>
         <Typography variant="body2" color="text.secondary">

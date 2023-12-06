@@ -6,10 +6,9 @@ import CardMedia from '@mui/material/CardMedia';
 import Skeleton from '@mui/material/Skeleton';
 
 
-
 export default function RecipeCardPlaceholder() {
   return (
-    <Card sx={{ width: 'auto' }}>
+    <Card className="baking-card">
       <CardHeader
         title={
           <Skeleton
