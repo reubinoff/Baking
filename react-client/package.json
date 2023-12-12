@@ -17,7 +17,6 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.20.1",
     "react-scripts": "^5.0.1",
-    "storybook-addon-pseudo-states": "^2.1.2",
     "web-vitals": "^3.5.0"
   },
   "scripts": {
@@ -25,8 +24,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "storybook": "storybook dev -p 6006 --disable-telemetry",
+    "build-storybook": "storybook build --disable-telemetry"
   },
   "eslintConfig": {
     "extends": [
@@ -64,6 +63,7 @@
     "@storybook/react": "^7.6.4",
     "@storybook/react-webpack5": "^7.6.4",
     "@storybook/test": "^7.6.4",
+    "storybook-addon-pseudo-states": "^2.1.2",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "eslint-plugin-storybook": "^0.6.15",
