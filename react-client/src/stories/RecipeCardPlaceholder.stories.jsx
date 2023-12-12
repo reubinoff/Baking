@@ -1,7 +1,7 @@
 import RecipeCardPlaceholder from '../components/RecipeCardPlaceholder';
 
 //👇 This default export determines where your story goes in the story list
-export default {
+const _RecipeCardPlaceholderStory = {
     title: 'Components/RecipeCardPlaceholder',
     component: RecipeCardPlaceholder,
     // decorators: [(Story) => <div style={{ width: '300px', height: '300px' }}><Story /></div>],
@@ -14,3 +14,4 @@ export const RecipeCardPlaceholderStory = {
     },
 };
 
+export default _RecipeCardPlaceholderStory;

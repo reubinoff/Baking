@@ -2,7 +2,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import RecipeCard from '../components/RecipeCard';
 
 //👇 This default export determines where your story goes in the story list
-export default {
+const _RecipeCardStory = {
     title: 'Components/RecipeCard',
     component: RecipeCard,
     decorators: [(Story) => <Router><Story /></Router>],
@@ -23,3 +23,4 @@ export const RecipeCardStory = {
     },
 };
 
+export default _RecipeCardStory;

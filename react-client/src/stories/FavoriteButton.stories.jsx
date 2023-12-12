@@ -1,7 +1,7 @@
 import FavoriteRecipeButton from '../components/recipeComponents/FavoriteRecipeButton';
 
 //👇 This default export determines where your story goes in the story list
-export default {
+const _FavoriteRecipeButtonStory = {
     title: 'Components/FavoriteRecipeButton',
     component: FavoriteRecipeButton,
 };
@@ -12,3 +12,4 @@ export const FavoriteRecipeButtonStory = {
     },
 };
 
+export default _FavoriteRecipeButtonStory;

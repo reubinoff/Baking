@@ -1,7 +1,7 @@
 import Hydration from '../components/recipeComponents/Hydration';
 
 //👇 This default export determines where your story goes in the story list
-export default {
+const HydrationStoryComponent =  {
     title: 'Components/Hydration',
     component: Hydration,
 };
@@ -12,3 +12,4 @@ export const HydrationStory = {
     },
 };
 
+export default HydrationStoryComponent;

@@ -1,0 +1,26 @@
+{
+  "name": "Baking",
+  "short_name": "Baking",
+  "description": "Bake all you need",
+  "icons": [
+        {
+          "src": "/android-chrome-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "src": "/android-chrome-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        },
+    {
+      "src": "images/bread.jpeg",
+      "type": "image/jpeg",
+      "sizes": "1248x832"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

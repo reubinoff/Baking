@@ -2,7 +2,7 @@ name: React App
 
 on:
   push:
-    branches: [ develop]
+    branches: [ develop, reubinoff/storybook]
     paths:
     - 'react-client/**'
     - '.github/workflows/frontend-react.yml'
@@ -12,16 +12,13 @@ env:
 
 
 jobs:
-  build-web:
+  test-storybook:
     runs-on: ubuntu-latest
-    env:
-     ACCOUNT_NAME: reubinoffbakingweb
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 21
           cache: 'npm'
           cache-dependency-path: react-client/package-lock.json
       - name: Cache node modules
@@ -37,39 +34,74 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-
-      - name: 'Build react App'
+      - name: 'Install dependencies'
         run: |
           cd react-client
           npm install
-          npm run build --output-path=build --configuration=production
+      - name: 'Run storybook'
+        run: |
+          cd react-client
+          npm run build-storybook
+          npm run build
 
-      - name: 'Login via Azure CLI'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_STORAGE_CDN_LOGIN }}
+  # build-web:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #    ACCOUNT_NAME: reubinoffbakingweb
+    
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 21
+  #         cache: 'npm'
+  #         cache-dependency-path: react-client/package-lock.json
+  #     - name: Cache node modules
+  #       id: cache-npm
+  #       uses: actions/cache@v3
+  #       env:
+  #         cache-name: cache-node-modules
+  #       with:
+  #         # npm cache files are stored in `~/.npm` on Linux/macOS
+  #         path: ~/.npm
+  #         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('react-client/package-lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-build-${{ env.cache-name }}-
+  #           ${{ runner.os }}-build-
+  #           ${{ runner.os }}-
+
+  #     - name: 'Build react App'
+  #       run: |
+  #         cd react-client
+  #         npm install
+  #         npm run build --output-path=build --configuration=production
+
+  #     - name: 'Login via Azure CLI'
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_STORAGE_CDN_LOGIN }}
       
-      - name: Upload to blob storage
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-              az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --overwrite --auth-mode key -d '$web' -s ./react-client/build
+  #     - name: Upload to blob storage
+  #       uses: azure/CLI@v1
+  #       with:
+  #         inlineScript: |
+  #             az storage blob upload-batch --account-name ${{ env.ACCOUNT_NAME }}  --overwrite --auth-mode key -d '$web' -s ./react-client/build
 
-  purge-cdn:
-    needs: build-web
-    runs-on: ubuntu-latest
-    env:
-      CDN_PROFILE: baking-web-cdb-profile
-      CDN_ENDPOINT: baking
-    steps:
-      - name: 'Login via Azure CLI'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_STORAGE_CDN_LOGIN }}
-      - name: Purge CDN endpoint
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.CDN_PROFILE }} --name ${{ env.CDN_ENDPOINT }} --resource-group ${{ env.RESOURCE_GROUP }}
+  # purge-cdn:
+  #   needs: build-web
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     CDN_PROFILE: baking-web-cdb-profile
+  #     CDN_ENDPOINT: baking
+  #   steps:
+  #     - name: 'Login via Azure CLI'
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_STORAGE_CDN_LOGIN }}
+  #     - name: Purge CDN endpoint
+  #       uses: azure/CLI@v1
+  #       with:
+  #         inlineScript: |
+  #           az cdn endpoint purge --content-paths  "/*" --profile-name ${{ env.CDN_PROFILE }} --name ${{ env.CDN_ENDPOINT }} --resource-group ${{ env.RESOURCE_GROUP }}
 
 
