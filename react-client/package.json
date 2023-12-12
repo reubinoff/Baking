@@ -49,7 +49,10 @@
   },
   "proxy": "http://localhost:8888",
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/eslint-parser": "^7.23.3",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@storybook/addon-actions": "^7.6.4",
     "@storybook/addon-essentials": "^7.6.4",
     "@storybook/addon-interactions": "^7.6.4",
@@ -66,9 +69,7 @@
     "eslint-plugin-storybook": "^0.6.15",
     "prop-types": "^15.8.1",
     "storybook": "^7.6.4",
-    "webpack": "^5.89.0",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0"
+    "webpack": "^5.89.0"
   },
   "engines": {
     "node": "21.x"
