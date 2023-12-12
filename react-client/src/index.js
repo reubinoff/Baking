@@ -11,27 +11,25 @@ import reportWebVitals from "./reportWebVitals";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Provider } from "react-redux";
 
 import DefaultAppContextProvider from "./components/context/DefaultAppContextProvider";
-import configureStore from "./configureStore";
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      light: "#757ce8",
-      main: "#e65100",
-      dark: "#002884",
-      contrastText: "#fff",
+  const theme = createTheme({
+    palette: {
+      primary: {
+        light: "#757ce8",
+        main: "#e65100",
+        dark: "#002884",
+        contrastText: "#fff",
+      },
+      secondary: {
+        light: "#ff7961",
+        main: "#e65100",
+        dark: "#ba000d",
+        contrastText: "#000",
+      },
     },
-    secondary: {
-      light: "#ff7961",
-      main: "#e65100",
-      dark: "#ba000d",
-      contrastText: "#000",
-    },
-  },
-});
+  });
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,27 +39,21 @@ const queryClient = new QueryClient({
     },
   },
 });
-const store = configureStore();
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <DefaultAppContextProvider>
-            <QueryClientProvider client={queryClient}>
-              <App />
-            </QueryClientProvider>
-          </DefaultAppContextProvider>
-        </BrowserRouter>
-      </Provider>
+    <BrowserRouter>
+      <DefaultAppContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </DefaultAppContextProvider>
+    </BrowserRouter>
     </ThemeProvider>
   </React.StrictMode>
 );
-
-if (process.env.NODE_ENV !== "production" && module.hot) {
-  module.hot.accept("./components/App", root);
-}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
