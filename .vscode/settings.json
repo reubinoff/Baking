@@ -16,4 +16,5 @@
         "-p",
         "test_*.py"
       ],
+      "makefile.configureOnOpen": false,
 }

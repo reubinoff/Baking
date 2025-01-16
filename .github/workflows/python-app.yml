@@ -86,7 +86,7 @@ jobs:
         - name: Build And Publish Docker
           run: |
             cd server
-            docker-compose build
+            docker compose build
             docker tag ${{ env.BASE_REPO }}:latest ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
             docker tag ${{ env.BASE_REPO }}:latest ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:latest
             docker push ${{ env.REGISTRY }}/${{ env.BASE_REPO }}:${{ github.sha }}
