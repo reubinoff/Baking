@@ -21,7 +21,7 @@ export function UseInfinateScroll(key, queryFunc, reactQueryOptions) {
   });
 }
 
-export function useFetch(key, path, reactQueryOptions, defaultResponse) {
+export function useFetch(key, path, reactQueryOptions = {}, defaultResponse) {
   const { fetchWithContext } = useAppContext();
 
   return useQuery(
