@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
+import { Grid } from '@mui/system';
 
 import RecipeCard from "./RecipeCard";
 import RecipeCardPlaceholder from "./RecipeCardPlaceholder";

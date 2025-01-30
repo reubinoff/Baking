@@ -3,7 +3,7 @@ import {
   useQuery,
   useMutation,
   useInfiniteQuery,
-} from "react-query";
+} from "@tanstack/react-query";
 import useAppContext from "../hooks/useAppContext";
 
 export function UseInfinateScroll(key, queryFunc, reactQueryOptions) {
