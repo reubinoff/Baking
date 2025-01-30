@@ -17,7 +17,7 @@ python-multipart = "^0.0.6"
 pydantic-settings = "^2.0.2"
 motor = "^3.3.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pylint = "^2.11.1"
 black = "^23.1.0"
 autopep8 = "^2.0.2"
@@ -31,11 +31,6 @@ pytest-asyncio = "^0.21.1"
 polyfactory = "^2.7.2"
 httpx = "^0.25.0"
 mock = "^5.1.0"
-
-
-[tool.poetry.group.dev.dependencies]
-anyio = "^3.7.1"
-pytest-asyncio = "^0.21.1"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
