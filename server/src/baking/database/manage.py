@@ -43,7 +43,7 @@ def init_database() -> AsyncIOMotorDatabase:
 
 def _configure_indexes():
     """Configures the database indexes."""
-    mongo_client = MongoClient(get_sql_url())
+    mongo_client = MongoClient(get_sql_url(), connect=True)
     db = mongo_client[app_settings.db_name]
     for collection_name, indexes in INDEXES.items():
         # create dic of index: "text"

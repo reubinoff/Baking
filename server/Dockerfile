@@ -1,4 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.12-slim
+FROM python:3.12-slim
 
 ARG USER=baking
 ARG WORKDIR=/app/
@@ -24,9 +24,9 @@ COPY --chown=$USER:$USER src/ .
 COPY --chown=$USER:$USER scripts/prestart.sh .
 
 # FastApi Configuration
-ENV service_name="baking-service"
-ENV MODULE_NAME="baking.main"
 ENV WORKERS_PER_CORE=1
 ENV MAX_WORKERS=1
 
 RUN apt-get clean && apt-get autoclean
+
+CMD ["fastapi", "run", "baking/main.py", "--port", "8000"]
