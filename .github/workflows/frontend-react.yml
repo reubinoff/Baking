@@ -12,6 +12,14 @@ env:
 
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDS }}
+
   build-web:
     runs-on: ubuntu-latest
     env:
