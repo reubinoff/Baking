@@ -1,4 +1,4 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11-slim
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.12-slim
 
 ARG USER=baking
 ARG WORKDIR=/app/
